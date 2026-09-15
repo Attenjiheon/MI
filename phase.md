@@ -93,13 +93,15 @@ P3에서 행동 gate에 실패하면 규정된 연장 또는 중단 절차로 �
 | 미달, 마지막 4평가에서 얻은 3변화 중 ≥2개 CE 개선 ≥1e-4 nats | 동일 상태로 누적 3M까지 한 번 연장 후 같은 선택·gate 적용 |
 | 1M 개선 조건 미충족 또는 3M에서도 미달 | 학습 중단 → CPU 데이터/구현 확인 → P11 중단 보고 |
 
-- [ ] 판정에 사용한 checkpoint hash, val 수치, 표본 수, 마지막 4평가, 연장 여부·근거를 저장했다.
-- [ ] 다른 gate 통과 checkpoint로 교체하거나 test로 선택하지 않았다.
-- [ ] Actual token 수, overshoot, 최종 cursor/update, 시간·VRAM을 저장했다.
+- [x] 판정에 사용한 checkpoint hash, val 수치, 표본 수, 마지막 4평가, 연장 여부·근거를 저장했다.
+- [x] 다른 gate 통과 checkpoint로 교체하거나 test로 선택하지 않았다.
+- [x] Actual token 수, overshoot, 최종 cursor/update, 시간·VRAM을 저장했다.
 
 **산출물:** seed 0 init/best/last, 학습 곡선, gate 결정 기록, 동결 예산 또는 중단 사유.
 
 **주의:** 데이터/구현 수정이나 짧은 시퀀스 v1.1은 별도 변경 기록과 재검증이 필요하다. Gate 실패 상태로 해석 단계에 진입하지 않는다.
+
+**판정 (2026-09-16): `failed` — 3M까지 실행·증빙 검증 후 행동 gate 미달로 중단. 체크박스는 기록 검증 완료이며 gate 통과가 아니다. [중단 보고](./experiment_v1/results/p3_stop_report.md), [증빙 감사](./experiment_v1/results/p3_evidence_verification.json). P4로 진행하지 않는다.**
 
 ## 6. P4 — LM seed 1·2 재현과 최종 행동 평가
 

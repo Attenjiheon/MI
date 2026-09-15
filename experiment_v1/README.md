@@ -64,3 +64,14 @@ restore Python and NumPy RNG state. Do not load an untrusted downloaded checkpoi
 feature count before the within-count §7.1 rules. The P0 probe config lists feature
 count last in a combined order; this discrepancy is recorded in P2_STATUS.md and
 the explicit detailed specification takes precedence. P0 config bytes are preserved.
+
+## P3 Colab handoff (2026-09-16)
+
+The current P3 runner implements the seed-0 gate and conditional 3M continuation;
+this supersedes the P2-era limitation described above. Open
+`notebooks/01_colab_lm.ipynb` in a fresh Colab GPU runtime and upload
+`bundles/p3_colab_bundle_v4.zip`. The notebook verifies every bundled file, runs
+pytest and GPU smoke, trains the pilot, conditionally continues, and exports the
+evidence ZIP. Use `RESUME=True` in a new runtime to restore the last fully published
+Drive snapshot. P3 ended with a failed behavior gate after the 3M extension; do not continue this run or proceed to P4. See `results/p3_stop_report.md`. See
+`P3_STATUS.md` for checksums, local validation, and outstanding completion evidence.

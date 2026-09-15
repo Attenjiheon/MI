@@ -1,0 +1,123 @@
+{
+  "status": "passed",
+  "meaning": "Evidence consistency verified; behavior gate FAILED",
+  "decision": "failed",
+  "evidence_zip_sha256": "045e00dea98bbad101f18bfc2b4879ea806bf555a3e208fcfa83a19b6c8b96ed",
+  "checks": [
+    "107 corpus file hashes and config hashes",
+    "executed code and GPU smoke hashes",
+    "407 ordered full updates and token counts",
+    "warmup LR and finite losses/gradients",
+    "30 validation boundaries",
+    "1M extension and 3M stopping rule",
+    "minimum CE checkpoint selection",
+    "checkpoint model/optimizer/RNG/progress",
+    "first 50 updates measurement",
+    "CPU validation reevaluation"
+  ],
+  "checkpoints": {
+    "init.pt": {
+      "sha256": "bb87088e3db68681bd5a94fba3a1855b9dbeca58d8ceb56e693b9f13fcb0f079",
+      "state": {
+        "update": 0,
+        "prediction_tokens": 0,
+        "next_data_cursor": 0,
+        "next_validation_boundary": 100000,
+        "best_validation": null
+      }
+    },
+    "best.pt": {
+      "sha256": "066126c223478c78d842ca52a2b30d4ee375c9687111619bcaf970add0e1936f",
+      "state": {
+        "update": 407,
+        "prediction_tokens": 3004531,
+        "next_data_cursor": 26048,
+        "next_validation_boundary": 3100000,
+        "best_validation": 0.6469506572851308
+      }
+    },
+    "last.pt": {
+      "sha256": "066126c223478c78d842ca52a2b30d4ee375c9687111619bcaf970add0e1936f",
+      "state": {
+        "update": 407,
+        "prediction_tokens": 3004531,
+        "next_data_cursor": 26048,
+        "next_validation_boundary": 3100000,
+        "best_validation": 0.6469506572851308
+      }
+    }
+  },
+  "first_50": {
+    "updates": 50,
+    "prediction_tokens": 371385,
+    "training_seconds": 3.534909209000034,
+    "peak_memory_bytes": 166763008,
+    "tokens_per_second": 105062.104298022
+  },
+  "environment": {
+    "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+    "executable": "/usr/bin/python3",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.1.3",
+    "cuda": "12.8",
+    "cudnn": 91900,
+    "disk_free_bytes": 201476775936,
+    "ram_bytes": 13605830656,
+    "gpu": "Tesla T4",
+    "vram_bytes": 15637086208,
+    "lock_sha256": "855ad8dea8f742c42f146cb8fa928ed6fbd3f1cb2dc70de8ff0dcfd7a250ffc7",
+    "environment_id": "e74fb1dcf8112ca0"
+  },
+  "cpu_validation": {
+    "general": {
+      "all_token_ce": 1.0458046002163728,
+      "prediction_tokens": 59511,
+      "answer_count": 8171,
+      "answer_ce": 0.6469506576443926,
+      "correct": 0.6143678864276099,
+      "binary_correct": 0.6143678864276099,
+      "bit_mass": 0.996513252603484
+    },
+    "diagnostics": {
+      "other_variable": {
+        "all_token_ce": 1.0384656085535926,
+        "prediction_tokens": 59901,
+        "answer_count": 512,
+        "answer_ce": 0.6725635569018777,
+        "correct": 0.615234375,
+        "binary_correct": 0.615234375,
+        "bit_mass": 0.9966410718625411
+      },
+      "repeated_update": {
+        "all_token_ce": 1.0408740836575945,
+        "prediction_tokens": 60731,
+        "answer_count": 512,
+        "answer_ce": 0.6373032966366736,
+        "correct": 0.642578125,
+        "binary_correct": 0.642578125,
+        "bit_mass": 0.9966734031913802
+      },
+      "first_read_after_set": {
+        "all_token_ce": 1.043163088970812,
+        "prediction_tokens": 59560,
+        "answer_count": 512,
+        "answer_ce": 0.6323333110485692,
+        "correct": 0.61328125,
+        "binary_correct": 0.61328125,
+        "bit_mass": 0.9962866477435455
+      }
+    }
+  },
+  "actual_tokens": 3004531,
+  "updates": 407,
+  "evaluations": 30,
+  "total_session_elapsed_seconds": 198.11204481124878,
+  "training_seconds": 28.872708568000007,
+  "validation_seconds": 131.0286460919998,
+  "limitations": [
+    "1M checkpoint bytes were superseded in the export; its hash and selection metrics remain in the 1M decision and logs. Drive snapshots were not included.",
+    "CPU re-evaluation verifies the final selected checkpoint; it does not establish why learning failed."
+  ],
+  "elapsed_seconds": 4.641239643096924
+}

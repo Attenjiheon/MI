@@ -1,16 +1,21 @@
 """P2 executable interfaces. Debug runs never qualify as experiment results."""
 import argparse
 import copy
+import hashlib
 import json
+import shlex
+import sys
 import time
+from datetime import datetime,timezone
 from pathlib import Path
 import numpy as np
 import torch
 from .runtime import deterministic,verify_inputs,sha,save,restore,seed,environment,verified_copy,rng_state,restore_rng
 from .model import Transformer,batch
+from .persistence import publish
 from .training import lm_optimizer,lm_update,Progress
 from .data import token_rows,metadata,extract
-from .behavior import evaluate
+from .behavior import GATE_DIAGNOSTICS,adjudicate,evaluate
 from . import dictionary as sparse
 from .probe import fit_probe
 from .patching import capture,patch,sparse_patch
@@ -25,6 +30,39 @@ def jsonable(x):
 
 
 def write(path,obj): Path(path).write_text(json.dumps(jsonable(obj),indent=2,allow_nan=False))
+
+
+def json_digest(obj):
+    return hashlib.sha256(json.dumps(obj,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+
+
+def metric_summary(metrics):
+    return {k:v for k,v in metrics.items() if k!='rows'}
+
+
+def evaluate_gate_suite(model,root,microbatch):
+    general=evaluate(model,metadata(root/'data/language_v1/val_iid.jsonl.gz'),microbatch=microbatch)
+    diagnostics={name:evaluate(model,metadata(root/f'data/language_v1/diagnostics/val_{name}.jsonl.gz'),
+                               diagnostic=True,microbatch=microbatch) for name in GATE_DIAGNOSTICS}
+    return general,diagnostics
+
+
+def validation_history(path):
+    if not path.exists(): return []
+    values=[]
+    with path.open() as f:
+        for line in f:
+            record=json.loads(line)
+            if 'validation' in record: values.append(record['validation']['general']['answer_ce'])
+    return values
+
+
+def sync_run_files(output,persistent,names):
+    if persistent is None: return
+    if output.resolve()==persistent.resolve(): raise ValueError('Persistent directory must differ from output')
+    for name in names:
+        source=output/name
+        if source.exists(): verified_copy(source,persistent/name)
 
 
 def checkpoint_model(path,device,debug=False):
@@ -46,27 +84,63 @@ def main():
     p.add_argument('--position-type',choices=['read','update'],default='read'); p.add_argument('--resume',type=Path)
     p.add_argument('--persistent-dir',type=Path); p.add_argument('--debug',action='store_true')
     p.add_argument('--microbatch',type=int,choices=[1,2,4,8,16],default=16)
+    p.add_argument('--prediction-token-budget',type=int,choices=[1_000_000,3_000_000],default=1_000_000)
+    p.add_argument('--extension-approved',action='store_true')
     a=p.parse_args(); deterministic(a.seed); torch.set_num_threads(2)
-    a.output.mkdir(parents=True,exist_ok=False)
+    if a.extension_approved and a.prediction_token_budget!=3_000_000:
+        raise ValueError('--extension-approved is valid only for the 3M continuation')
+    if a.output.exists():
+        if not (a.command=='train_lm' and a.resume): raise FileExistsError(f'Output already exists: {a.output}')
+    else: a.output.mkdir(parents=True)
     hashes=verify_inputs(a.root); hashes['code']={str(q.relative_to(a.root)):sha(q) for q in sorted((a.root/'interp').glob('*.py'))}
     hashes['run_settings']=dict(command=a.command,seed=a.seed,sparse_seed=a.sparse_seed,kind=a.kind,k=a.k,
                                 split=a.split,layer=a.layer,position_type=a.position_type,debug=a.debug)
     for name in ('input','validation','checkpoint','positions'):
         q=getattr(a,name)
         if q is not None: hashes[name]=sha(q)
-    result={}; start=time.time()
+    result={}; start=time.time(); started_at=datetime.now(timezone.utc).isoformat()
     if a.command=='train_lm':
         # P2 debug pipeline is executable locally; pilot execution requires the GPU environment.
         if not a.debug and a.device!='cuda': raise ValueError('Production LM requires Colab CUDA')
+        if not a.debug and a.seed!=0: raise ValueError('P3 supports seed 0 only; P4 requires a frozen budget')
+        runtime_environment=environment(a.output)
+        session_id=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%f')
+        sessions=a.output/'sessions.jsonl'
+        with sessions.open('a') as f:
+            f.write(json.dumps(dict(started_at=started_at,environment=runtime_environment,resume=str(a.resume),command=shlex.join(sys.argv)))+'\n')
+        for name in ('requirements.lock.txt','nvidia-smi.txt'):
+            if (a.output/name).exists(): verified_copy(a.output/name,a.output/(session_id+'-'+name))
         model=Transformer().to(a.device); opt=lm_optimizer(model); state=Progress()
         if a.debug:
             examples=json.loads((a.root/'experiment_v1/debug/sequences.json').read_text()); rows=[e['token_ids'] for e in examples]
         else: rows=list(token_rows((a.root/'data/language_v1/train_shards').glob('*.tokens.jsonl')))
+        measurement=dict(updates=0,prediction_tokens=0,training_seconds=0.,peak_memory_bytes=0)
         if a.resume:
+            if not a.resume.exists(): raise FileNotFoundError(a.resume)
+            if a.resume.name not in ('last.pt','init.pt') or (a.resume.name=='init.pt' and (a.output/'last.pt').exists()):
+                raise ValueError('Resume from the last complete checkpoint, never best.pt')
+            if a.resume.parent.resolve()!=a.output.resolve(): raise ValueError('Resume checkpoint must be inside the same run directory')
+            if a.prediction_token_budget==3_000_000:
+                decision_path=a.output/'gate_decision.json'
+                if not a.extension_approved or not decision_path.exists() or json.loads(decision_path.read_text()).get('decision')!='extend_to_3m':
+                    raise ValueError('3M extension requires the recorded 1M extension decision and --extension-approved')
             payload=restore(a.resume,model,opt,hashes); state=Progress(**payload['state'])
+            if a.prediction_token_budget==3_000_000 and state.prediction_tokens<1_000_000:
+                raise ValueError('Extension checkpoint must have completed the 1M pilot')
+            measurement=payload.get('measurement',measurement)
+            a.microbatch=min(a.microbatch,payload.get('microbatch',a.microbatch))
+            log_path=a.output/'training.jsonl'
+            if log_path.exists():
+                entries=[json.loads(line) for line in log_path.read_text().splitlines()]
+                if any(e['state']['update']>state.update for e in entries):
+                    verified_copy(log_path,a.output/(session_id+'-discarded-training.jsonl'))
+                    log_path.write_text(''.join(json.dumps(e)+'\n' for e in entries if e['state']['update']<=state.update))
+            if state.prediction_tokens!=sum(len(row)-1 for row in rows[:state.next_data_cursor]) or state.next_data_cursor!=64*state.update:
+                raise ValueError('Checkpoint cursor/token/update mismatch')
         else: save(a.output/'init.pt',model,opt,state.payload(),hashes=hashes,debug_only=a.debug)
-        # Pilot endpoint is 1M; extension/reproduction requires a separately recorded P3 decision.
-        budget=1_000_000; last_saved=time.monotonic(); logs=[]
+        if not a.debug and a.prediction_token_budget==3_000_000 and not a.resume: raise ValueError('A 3M run must resume the approved 1M pilot')
+        publish(a.output,a.persistent_dir)
+        budget=1_000_000 if a.debug else a.prediction_token_budget; last_saved=time.monotonic()
         while state.prediction_tokens<budget and (not a.debug or state.update<2):
             chunk=rows[state.next_data_cursor:state.next_data_cursor+64]
             if len(chunk)!=64: raise ValueError('Insufficient corpus for a complete update')
@@ -79,29 +153,61 @@ def main():
                 return copy.deepcopy(value)
             model_before=cpu_copy(model.state_dict()); optimizer_before=cpu_copy(opt.state_dict())
             while True:
-                try: log=lm_update(model,opt,chunk,state,a.microbatch); break
+                try:
+                    if a.device=='cuda': torch.cuda.reset_peak_memory_stats()
+                    if a.device=='cuda': torch.cuda.synchronize()
+                    update_start=time.monotonic()
+                    log=lm_update(model,opt,chunk,state,a.microbatch)
+                    if a.device=='cuda': torch.cuda.synchronize()
+                    update_seconds=time.monotonic()-update_start
+                    break
                 except torch.cuda.OutOfMemoryError:
                     if a.microbatch==1: raise
                     opt.zero_grad(set_to_none=True); torch.cuda.empty_cache()
                     model.load_state_dict(model_before); opt.load_state_dict(optimizer_before)
                     state=Progress(**before); restore_rng(rng_before)
                     a.microbatch//=2
+            if state.update<=50:
+                measurement['updates']+=1; measurement['prediction_tokens']+=log['tokens']; measurement['training_seconds']+=update_seconds
+                if a.device=='cuda': measurement['peak_memory_bytes']=max(measurement['peak_memory_bytes'],torch.cuda.max_memory_allocated())
+            log['training_seconds']=update_seconds
+            checkpoint_due=False
             final=state.prediction_tokens>=budget or (a.debug and state.update==2)
             if log['validation_due'] or final:
-                validation=evaluate(model,examples[:32] if a.debug else metadata(a.root/'data/language_v1/val_iid.jsonl.gz'),microbatch=a.microbatch)
-                log['validation']={k:v for k,v in validation.items() if k!='rows'}
-                if validation['answer_ce']<state.best_validation:
-                    state.best_validation=validation['answer_ce']
-                    save(a.output/'best.pt',model,opt,state.payload(),hashes=hashes,debug_only=a.debug)
-                save(a.output/'last.pt',model,opt,state.payload(),hashes=hashes,debug_only=a.debug); last_saved=time.monotonic()
+                validation_start=time.monotonic()
+                if a.debug:
+                    general=evaluate(model,examples[:32],microbatch=a.microbatch); diagnostics={}
+                else: general,diagnostics=evaluate_gate_suite(model,a.root,a.microbatch)
+                log['validation_seconds']=time.monotonic()-validation_start
+                log['validation']=dict(general=metric_summary(general),diagnostics={k:metric_summary(v) for k,v in diagnostics.items()})
+                if general['answer_ce']<state.best_validation:
+                    state.best_validation=general['answer_ce']
+                    save(a.output/'best.pt',model,opt,state.payload(),hashes=hashes,debug_only=a.debug,measurement=measurement,microbatch=a.microbatch)
+                save(a.output/'last.pt',model,opt,state.payload(),hashes=hashes,debug_only=a.debug,measurement=measurement,microbatch=a.microbatch); last_saved=time.monotonic(); checkpoint_due=True
             elif time.monotonic()-last_saved>=900:
-                save(a.output/'last.pt',model,opt,state.payload(),hashes=hashes,debug_only=a.debug); last_saved=time.monotonic()
-            log.update(state=state.payload(),microbatch=a.microbatch); logs.append(log)
+                save(a.output/'last.pt',model,opt,state.payload(),hashes=hashes,debug_only=a.debug,measurement=measurement,microbatch=a.microbatch); last_saved=time.monotonic(); checkpoint_due=True
+            log.update(state=state.payload(),microbatch=a.microbatch)
             with (a.output/'training.jsonl').open('a') as f: f.write(json.dumps(log)+'\n')
-            if a.persistent_dir and (a.output/'last.pt').exists():
-                verified_copy(a.output/'last.pt',a.persistent_dir/'last.pt')
+            if checkpoint_due: publish(a.output,a.persistent_dir)
+            if log.get('validation') or state.update==50:
+                print(json.dumps(dict(update=state.update,tokens=state.prediction_tokens,validation=log.get('validation'),measurement=measurement)),flush=True)
+        if a.debug:
+            decision=dict(decision='not_adjudicated_debug')
+        else:
+            selected_model,selected_payload=checkpoint_model(a.output/'best.pt',a.device)
+            general,diagnostics=evaluate_gate_suite(selected_model,a.root,a.microbatch)
+            history=validation_history(a.output/'training.jsonl')
+            decision=adjudicate(general,diagnostics,history,budget)
+            decision.update(selected_checkpoint=str(a.output/'best.pt'),selected_checkpoint_sha256=sha(a.output/'best.pt'),
+                            selected_update=selected_payload['state']['update'],actual_tokens=state.prediction_tokens,
+                            overshoot=max(0,state.prediction_tokens-budget),final_cursor=state.next_data_cursor,final_update=state.update)
+        write(a.output/'gate_decision.json',decision)
+        write(a.output/f'gate_decision_{budget}.json',decision)
+        throughput=measurement['prediction_tokens']/measurement['training_seconds'] if measurement['training_seconds'] else None
         result=dict(state=state.payload(),actual_tokens=state.prediction_tokens,overshoot=max(0,state.prediction_tokens-budget),
-                    gate='not_adjudicated: P3 must evaluate selected checkpoint on three diagnostics',selected_checkpoint=str(a.output/'best.pt'))
+                    measurement_first_50_updates=dict(**measurement,tokens_per_second=throughput),gate=decision,
+                    parameter_count=sum(p.numel() for p in model.parameters()),microbatch=a.microbatch,
+                    selected_checkpoint=str(a.output/'best.pt'))
     elif a.command in ('eval_behavior','cache_activations'):
         model,_=checkpoint_model(a.checkpoint,a.device,a.debug)
         if a.command=='eval_behavior':
@@ -175,8 +281,37 @@ def main():
     else:
         paths=sorted(a.input.glob('*/manifest.json')); result=dict(runs=[json.loads(path.read_text()) for path in paths],source_files=[str(x) for x in paths])
     write(a.output/'result.json',result)
-    write(a.output/'manifest.json',dict(command=a.command,status='passed',debug_only=a.debug,input_hashes=hashes,
-        environment=environment(a.output),elapsed_seconds=time.time()-start,result_path=str(a.output/'result.json')))
+    if a.command=='train_lm': write(a.output/f'result_{budget}.json',result)
+    if a.command=='train_lm': sync_run_files(a.output,a.persistent_dir,
+        ['init.pt','best.pt','last.pt','training.jsonl','gate_decision.json','result.json'])
+    runtime_environment=runtime_environment if a.command=='train_lm' else environment(a.output); elapsed=time.time()-start
+    manifest=dict(command=a.command,status='passed',debug_only=a.debug,input_hashes=hashes,
+        environment=runtime_environment,elapsed_seconds=elapsed,result_path=str(a.output/'result.json'))
+    if a.command=='train_lm' and not a.debug:
+        decision=result['gate']; selected_hash=decision['selected_checkpoint_sha256']
+        run_status={'passed':'passed','extend_to_3m':'paused','failed':'failed'}[decision['decision']]
+        next_action={'passed':'Freeze the P3 budget and proceed to P4',
+                     'extend_to_3m':'Resume last.pt once to the cumulative 3M boundary',
+                     'failed':'Stop LM training; audit CPU data and implementation, then prepare the P11 stop report'}[decision['decision']]
+        manifest.update(
+            phase='P3',
+            run_id=f'experiment-spec-v1.0__lm-{a.seed}__ckpt-{selected_hash[:12]}__layer-na__hook-na__pos-na__tool-lm__k-na__sparse-na',
+            status=run_status,started_at=started_at,ended_at=datetime.now(timezone.utc).isoformat(),
+            config_sha256=hashes['configs'],code_sha256=json_digest(hashes['code']),input_sha256=hashes['corpus_manifest'],
+            environment_id=runtime_environment['environment_id'],seed=a.seed,derived_seed_keys_and_values={},
+            actual_tokens=result['actual_tokens'],actual_positions=None,actual_draws=None,
+            peak_memory_bytes=result['measurement_first_50_updates']['peak_memory_bytes'],
+            throughput=result['measurement_first_50_updates']['tokens_per_second'],
+            evidence_paths=[str(a.output/name) for name in ('gate_decision.json','training.jsonl','best.pt','last.pt','result.json')],
+            selected_checkpoint=decision['selected_checkpoint'],checkpoint_sha256=selected_hash,best_update=decision['selected_update'],
+            failure_or_skip_reason=None if run_status!='failed' else 'Selected checkpoint failed the frozen P3 behavior gate',
+            resume_checkpoint_and_cursor=dict(checkpoint=str(a.output/'last.pt'),cursor=result['state']['next_data_cursor']) if run_status=='paused' else None,
+            next_action=next_action,actual_command=shlex.join(sys.argv),nominal_budget=decision['nominal_budget'])
+    write(a.output/'manifest.json',manifest)
+    if a.command=='train_lm': write(a.output/f'manifest_{budget}.json',manifest)
+    if a.command=='train_lm': sync_run_files(a.output,a.persistent_dir,
+        ['init.pt','best.pt','last.pt','training.jsonl','gate_decision.json','result.json','manifest.json','requirements.lock.txt','nvidia-smi.txt'])
+    if a.command=='train_lm': publish(a.output,a.persistent_dir)
 
 
 if __name__=='__main__': main()
