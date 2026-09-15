@@ -1,0 +1,86 @@
+{
+  "spec_version": "experiment-spec-v1.0",
+  "phase": "P2",
+  "recorded_at": "2026-09-10T11:45:19+00:00",
+  "note": "Environments below are the ones that actually passed the P2 smoke test. Debug checkpoints produced by these runs are not reused in the main experiment.",
+  "shared_inputs": {
+    "corpus_manifest_sha256": "bff7bc9bd4d13bc264c604ea9104210d3e3da64ff529f980c4f53589543e5b26",
+    "configs_combined_sha256": "b00d015dd498c5abe4d4053a0cebc1f667050e54c7afe5bd42492965d2d21bdf",
+    "verified_input_files": 107,
+    "debug_fixture_sha256": "815194b8b5795ba1238484e20531052c30cbfeecf6e1f13074d3e3f12d356e50",
+    "code_sha256": {
+      "interp/__init__.py": "61e115ee4b4a66d4b413aae01d8f4e80e6f8aace7171a75f31fdb2ccb5e73475",
+      "interp/behavior.py": "599703aabdb2bd9028b0b1d6461178e35642541d17a3c0cd7792e03e92141264",
+      "interp/cli.py": "ab722a31734d40039b7cf6cd43fb3187c0ff59ec7ab51ae6641b5b35ed655581",
+      "interp/data.py": "dd21ad13cde95bf3c11d5ca08b6c66e5aead13a31c7150b28ab5d5268adb267c",
+      "interp/dictionary.py": "ece4d1beca294b0d3b819af16bba1a98261247fc9036a903ce7bf5bfdbdfd54c",
+      "interp/model.py": "1012d7e79f7392a36be20a357978c19b481e99fbd99b57fb22a54080feeb74b2",
+      "interp/patching.py": "190dd3f2b7f846c8bac7422a1b2d03602e6a4cac600599dd8552bdda22206ff5",
+      "interp/probe.py": "7b60477d1a4fe00442141f0dce34b4454343be606c8f7d1eba8bc0296830343e",
+      "interp/runtime.py": "2fba989095472f11866f3f6b0b68f390b2d5c50113c9f95b4f194d1e2150f399",
+      "interp/smoke.py": "68889ab33097380699cd0a05560920d863273ab08165a7c0a146ec62eee1cba3",
+      "interp/training.py": "75f5d340dd0ddb0e268e26a62fbe0c32387a8e872a2f6abbe531abcc2c1abed8"
+    }
+  },
+  "environments": [
+    {
+      "role": "cpu",
+      "environment_id": "96a2bbce68883fdf",
+      "lock_file": "experiment_v1/environment/requirements-cpu.lock.txt",
+      "lock_sha256": "ec616cdc554c3bdd9e83a50359025a85a700de3c121854310f6ae437f53c4cbd",
+      "runtime": {
+        "python": "3.13.4 (v3.13.4:8a526ec7cbe, Jun  3 2025, 21:14:54) [Clang 16.0.0 (clang-1600.0.26.6)]",
+        "executable": "/Users/jangjiheon/Desktop/Mechanistic Interpretability Project/.venv-p2/bin/python",
+        "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+        "torch": "2.13.0",
+        "numpy": "2.2.6",
+        "cuda": null,
+        "cudnn": null,
+        "gpu": null,
+        "vram_bytes": 0,
+        "ram_bytes": 8589934592,
+        "disk_free_bytes": 18823163904
+      },
+      "evidence": "experiment_v1/smoke/cpu_attempt_02/smoke.json",
+      "command": ".venv-p2/bin/python -m interp.smoke --device cpu --output experiment_v1/smoke/cpu_attempt_02",
+      "elapsed_seconds": 8.191089868545532,
+      "peak_memory_bytes": 304152576,
+      "peak_memory_source": "maximum resident set size (resource.getrusage)",
+      "ended_at": "2026-09-10T08:01:03+00:00"
+    },
+    {
+      "role": "colab_gpu",
+      "environment_id": "e74fb1dcf8112ca0",
+      "lock_file": "experiment_v1/environment/requirements-colab.lock.txt",
+      "lock_sha256": "855ad8dea8f742c42f146cb8fa928ed6fbd3f1cb2dc70de8ff0dcfd7a250ffc7",
+      "runtime": {
+        "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+        "executable": "/usr/bin/python3",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "torch": "2.11.0+cu128",
+        "numpy": "2.1.3",
+        "cuda": "12.8",
+        "cudnn": 91900,
+        "gpu": "Tesla T4",
+        "vram_bytes": 15637086208,
+        "ram_bytes": 13605822464,
+        "disk_free_bytes": 201835798528
+      },
+      "driver": "NVIDIA-SMI 580.82.07 / driver 580.82.07 / nvidia-smi reports CUDA 13.0 (torch built against 12.8)",
+      "workspace": "/content/boolean_interp",
+      "evidence": "experiment_v1/smoke/colab_gpu_01/smoke.json",
+      "command": "python3 -m interp.smoke --device cuda --output experiment_v1/smoke/colab_gpu_01",
+      "elapsed_seconds": 8.016836166381836,
+      "peak_memory_bytes": 167518208,
+      "peak_memory_source": "torch.cuda.max_memory_allocated() (peak allocated VRAM)",
+      "ended_at": "2026-09-10T10:10:58+00:00",
+      "gpu_input": {
+        "bundle": "experiment_v1/bundles/p2_colab_bundle_v1.zip",
+        "bundle_sha256": "91e1d91d24349e6390600c0bb85e33cc30eb7cb8d5be3747430189ba7ac7251a",
+        "supplement": "experiment_v1/results/run_registry.csv",
+        "supplement_sha256": "5f06ae39a8f958304b7595dc88c1432582265d786d02531702205cb4e758bdc5",
+        "reason": "bundle v1 omitted the registry file required by tests/test_p0_config.py"
+      }
+    }
+  ]
+}

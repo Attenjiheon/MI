@@ -1,0 +1,93 @@
+{
+  "config_version": "p0-config-v1",
+  "spec_version": "experiment-spec-v1.0",
+  "device": "cpu",
+  "dtype": "float64",
+  "binary_model": "logistic_regression",
+  "multiclass_model": "softmax_regression",
+  "objective": "mean_cross_entropy + lambda/2 * squared_weight_norm",
+  "penalize_bias": false,
+  "lambda_grid": [0.01, 0.1, 1.0, 10.0],
+  "optimizer": {
+    "library": "scipy",
+    "method": "L-BFGS-B",
+    "initialization": "zeros",
+    "bounds": null,
+    "maxiter": 2000,
+    "maxls": 50,
+    "ftol": 1e-12,
+    "gtol": 1e-07,
+    "retry_maxiter_once_on_nonconvergence": 10000
+  },
+  "preprocessing": {
+    "fit_split": "interpretation_train",
+    "kind": "per_dimension_standardization",
+    "remove_columns_with_std_below": 1e-08,
+    "freeze_for_validation_and_test": true,
+    "distinct_from_dictionary_scalar_normalization": true
+  },
+  "binary_thresholds": [
+    0.05,
+    0.10,
+    0.15,
+    0.20,
+    0.25,
+    0.30,
+    0.35,
+    0.40,
+    0.45,
+    0.50,
+    0.55,
+    0.60,
+    0.65,
+    0.70,
+    0.75,
+    0.80,
+    0.85,
+    0.90,
+    0.95
+  ],
+  "selection": {
+    "ranking": "train_anova_f_score",
+    "exclude_constant_features": true,
+    "ranking_tie_break": "smaller_feature_id",
+    "feature_prefix_sizes": [1, 2, 3, 4],
+    "search_arbitrary_combinations": false,
+    "report_single_and_up_to_four": true,
+    "validation_tie_break_order": [
+      "higher_balanced_accuracy",
+      "lower_cross_entropy",
+      "larger_lambda",
+      "threshold_closer_to_0.5",
+      "smaller_threshold",
+      "smaller_feature_count"
+    ],
+    "multiclass_argmax_tie_break": "smaller_class_id",
+    "test_used_for_selection": false
+  },
+  "support": {
+    "minimum_train_or_validation_positions_per_class": 32,
+    "minimum_train_or_validation_distinct_sequences_per_class": 16,
+    "insufficient_support_action": "do_not_fit_and_report_na_with_reason"
+  },
+  "random_projection": {
+    "distribution": "unit_norm_normal",
+    "candidate_count": 512,
+    "matched_candidate_subset_count": 128,
+    "subset_before_train_ranking": true
+  },
+  "required_inputs": {
+    "sae": ["full_h", "h_coordinate", "normalized_h_random_projection", "sae_latent"],
+    "transcoder": ["full_u", "full_m", "m_coordinate", "normalized_m_random_projection", "transcoder_latent"]
+  },
+  "controls": [
+    "initial_untrained_lm_full_probe",
+    "token_one_hot_15_plus_position_and_position_squared_17d",
+    "train_label_permutation"
+  ],
+  "transfer": {
+    "variable": "select_on_read_query_or_update_dst_A_B_C_then_test_D",
+    "operator": "select_on_binary_update_AND_OR_then_test_XOR",
+    "source_domain_selects_preprocessing_features_lambda_and_threshold": true
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "config_version": "p0-config-v1",
+  "spec_version": "experiment-spec-v1.0",
+  "path_base": "project_root",
+  "paths": {
+    "configs": "experiment_v1/configs",
+    "environment": "experiment_v1/environment",
+    "corpus_source": "data/language_v1",
+    "corpus_mapping": "experiment_v1/data/README.md",
+    "runs": "experiment_v1/runs",
+    "lm_run": "experiment_v1/runs/lm_seed_{lm_seed}",
+    "results": "experiment_v1/results",
+    "registry": "experiment_v1/results/run_registry.csv"
+  },
+  "run_id": {
+    "field_order": [
+      "spec_version",
+      "lm_seed",
+      "checkpoint_sha256_12",
+      "layer",
+      "hook",
+      "position_type",
+      "tool",
+      "k",
+      "sparse_seed"
+    ],
+    "template": "experiment-spec-v1.0__lm-{lm_seed}__ckpt-{checkpoint_sha256_12}__layer-{layer}__hook-{hook}__pos-{position_type}__tool-{tool}__k-{k_or_na}__sparse-{sparse_seed_or_na}",
+    "unknown_fields_before_dependency_exists": "na",
+    "checkpoint_hash_length_in_id": 12,
+    "full_checkpoint_hash_required_in_manifest": true,
+    "feature_ids_are_local_to_dictionary_run": true
+  },
+  "seed_namespace": {
+    "master_seed": 20260909,
+    "analysis_derivation": "SHA256(20260909|experiment-spec-v1.0|<purpose>|<run_key>)[:8] as unsigned big-endian",
+    "numpy_rng": "PCG64",
+    "torch_seed": "derived_unsigned_integer modulo (2^63-1)",
+    "purposes": [
+      "dictionary_init",
+      "position_draw",
+      "random_projection",
+      "candidate_subset",
+      "shuffle_label",
+      "reconstruction_target",
+      "random_patch",
+      "bootstrap"
+    ],
+    "position_draw_shared_key_excludes": ["tool"],
+    "reconstruction_target_shared_key_excludes": ["lm_seed", "tool"],
+    "lm_seed_and_sparse_seed_are_distinct_namespaces": true,
+    "derived_integer_and_key_required_in_manifest": true
+  },
+  "status": {
+    "allowed": ["pending", "running", "passed", "failed", "paused", "skipped"],
+    "failed_or_skipped_reason_required": true,
+    "paused_requires_resume_checkpoint_and_next_action": true,
+    "success_requires_evidence_path": true
+  },
+  "manifest_required_fields": [
+    "phase",
+    "run_id",
+    "status",
+    "started_at",
+    "ended_at",
+    "config_sha256",
+    "code_sha256",
+    "input_sha256",
+    "environment_id",
+    "seed",
+    "derived_seed_keys_and_values",
+    "actual_tokens",
+    "actual_positions",
+    "actual_draws",
+    "peak_memory_bytes",
+    "throughput",
+    "elapsed_seconds",
+    "evidence_paths",
+    "selected_checkpoint",
+    "failure_or_skip_reason",
+    "resume_checkpoint_and_cursor",
+    "next_action",
+    "actual_command"
+  ],
+  "checkpoint_write": {
+    "atomic_temp_then_rename": true,
+    "persistent_copy_checksum_required": true,
+    "resume_from_last_complete_update": true,
+    "do_not_double_count_recomputed_unsaved_work": true
+  }
+}

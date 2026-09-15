@@ -1,0 +1,35 @@
+usage: cli.py [-h] [--root ROOT] --output OUTPUT [--device {cpu,cuda}]
+              [--checkpoint CHECKPOINT] [--input INPUT]
+              [--validation VALIDATION] [--positions POSITIONS] [--seed SEED]
+              [--sparse-seed SPARSE_SEED] [--kind {sae,transcoder}]
+              [--k {4,16}] [--split {train,val,test}] [--layer {0,1}]
+              [--position-type {read,update}] [--resume RESUME]
+              [--persistent-dir PERSISTENT_DIR] [--debug]
+              [--microbatch {1,2,4,8,16}]
+              {train_lm,eval_behavior,cache_activations,fit_probes,train_dictionary,evaluate_dictionary,run_patching,aggregate_results}
+
+P2 executable interfaces. Debug runs never qualify as experiment results.
+
+positional arguments:
+  {train_lm,eval_behavior,cache_activations,fit_probes,train_dictionary,evaluate_dictionary,run_patching,aggregate_results}
+
+options:
+  -h, --help            show this help message and exit
+  --root ROOT
+  --output OUTPUT
+  --device {cpu,cuda}
+  --checkpoint CHECKPOINT
+  --input INPUT
+  --validation VALIDATION
+  --positions POSITIONS
+  --seed SEED
+  --sparse-seed SPARSE_SEED
+  --kind {sae,transcoder}
+  --k {4,16}
+  --split {train,val,test}
+  --layer {0,1}
+  --position-type {read,update}
+  --resume RESUME
+  --persistent-dir PERSISTENT_DIR
+  --debug
+  --microbatch {1,2,4,8,16}
