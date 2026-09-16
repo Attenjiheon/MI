@@ -1,0 +1,153 @@
+{
+  "config_version": "p0-config-v1.1",
+  "spec_version": "experiment-spec-v1.1",
+  "model": {
+    "type": "causal_decoder_only",
+    "blocks": 4,
+    "vocab_size": 15,
+    "residual_width": 128,
+    "attention_heads": 4,
+    "head_width": 32,
+    "qkv_bias": true,
+    "attention_output_bias": true,
+    "mlp_width": 512,
+    "mlp_activation": "gelu_exact",
+    "mlp_bias": true,
+    "pre_layer_norm": true,
+    "layer_norm_affine": true,
+    "layer_norm_epsilon": 1e-05,
+    "final_layer_norm": true,
+    "unembedding_bias": false,
+    "tie_embedding_unembedding": false,
+    "embedding_scale": null,
+    "dropout": 0.0,
+    "context_length": 768,
+    "maximum_observed_train_sequence_length": 302,
+    "rope": {
+      "enabled": true,
+      "base": 10000,
+      "dimensions": 32,
+      "pairing": "adjacent",
+      "apply_to": [
+        "q",
+        "k"
+      ],
+      "apply_to_v": false,
+      "position_scaling": null
+    },
+    "excluded": [
+      "learned_position_embedding",
+      "gqa",
+      "gated_mlp",
+      "kv_cache",
+      "packing"
+    ],
+    "expected_trainable_parameters": 797184
+  },
+  "hooks": {
+    "blocks.{layer}.resid_post": "h_l = r_mid_l + m_l",
+    "blocks.{layer}.mlp_in": "u_l = LN_mlp(r_mid_l)",
+    "blocks.{layer}.mlp_out": "m_l after output projection and bias, before residual addition"
+  },
+  "initialization": {
+    "lm_seeds": [
+      0,
+      1,
+      2
+    ],
+    "embedding_and_linear_weight": "independent_normal_mean_0_std_0.02",
+    "attention_and_mlp_output_weight_multiplier": 0.35355339059327373,
+    "linear_bias": 0.0,
+    "layer_norm_weight": 1.0,
+    "layer_norm_bias": 0.0,
+    "save_init_checkpoint": true
+  },
+  "training": {
+    "dtype": "float32",
+    "loss": "full_vocabulary_next_token_cross_entropy",
+    "label_smoothing": 0.0,
+    "ignore_pad_targets_only": true,
+    "keep_pad_and_bos_logits": true,
+    "optimizer": {
+      "name": "AdamW",
+      "learning_rate": 0.0003,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "epsilon": 1e-08,
+      "amsgrad": false,
+      "weight_decay": 0.01,
+      "weight_decay_scope": "embedding_and_matrix_weights_only"
+    },
+    "effective_batch_sequences": 64,
+    "initial_microbatch_sequences": 16,
+    "initial_accumulation_steps": 4,
+    "oom_microbatch_fallback": [
+      16,
+      8,
+      4,
+      2,
+      1
+    ],
+    "gradient_accumulation": "sum_microbatch_ce_divided_by_effective_batch_valid_target_count",
+    "global_gradient_clip_norm": 1.0,
+    "warmup_prediction_tokens": 50000,
+    "warmup_formula": "3e-4 * min(1, (T_before + N) / 50000)",
+    "learning_rate_after_warmup": 0.0003,
+    "validation_every_prediction_tokens": 100000,
+    "pilot_prediction_tokens": 1000000,
+    "maximum_extended_prediction_tokens": 3000000,
+    "finish_first_complete_update_after_budget": true,
+    "train_shard_order_from_language_config": true
+  },
+  "masking": {
+    "right_padding": true,
+    "causal_mask": true,
+    "key_padding_mask": true,
+    "pad_query_outputs_are_not_evaluated": true
+  },
+  "determinism": {
+    "python_numpy_torch_cuda_rng_seeded": true,
+    "torch_deterministic_algorithms": true,
+    "cudnn_benchmark": false,
+    "amp": false,
+    "tf32": false,
+    "torch_compile": false,
+    "cross_environment_bitwise_identity_claimed": false
+  },
+  "checkpoint": {
+    "save_at_each_validation": true,
+    "save_after_elapsed_minutes_at_next_update": 15,
+    "atomic_temp_then_rename": true,
+    "verify_persistent_copy_checksum": true,
+    "select_metric": "general_validation_answer_cross_entropy",
+    "select_mode": "minimum",
+    "tie_break": "earlier_update",
+    "required_payload": [
+      "model",
+      "optimizer",
+      "rng_states",
+      "update",
+      "prediction_tokens",
+      "next_data_cursor",
+      "next_validation_boundary",
+      "best_validation",
+      "config_and_hashes"
+    ]
+  },
+  "gate": {
+    "general_validation_full_vocabulary_answer_accuracy_min": 0.99,
+    "diagnostic_full_vocabulary_target_accuracy_min_each": 0.95,
+    "diagnostic_conditions": [
+      "other_variable",
+      "repeated_update",
+      "first_read_after_set"
+    ],
+    "diagnostic_sequences_each": 512,
+    "extension_recent_evaluations": 4,
+    "extension_min_improving_transitions": 2,
+    "extension_min_ce_improvement_nats": 0.0001,
+    "test_may_select_checkpoint": false
+  }
+}

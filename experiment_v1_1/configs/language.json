@@ -1,0 +1,128 @@
+{
+  "config_version": "p0-config-v1.1",
+  "spec_version": "experiment-spec-v1.1",
+  "path_base": "project_root",
+  "corpus": {
+    "schema_version": "language-v1.0",
+    "generator_version": "1.0.0",
+    "root": "data/language_v1",
+    "immutable": true,
+    "reuse_decision": "reuse_as_is",
+    "generation_device": "cpu",
+    "pre_generated_shards_required": true,
+    "generate_in_gpu_runtime": false,
+    "manifest": {
+      "logical_name": "corpus_manifest.json",
+      "path": "data/language_v1/manifest.json",
+      "sha256": "bff7bc9bd4d13bc264c604ea9104210d3e3da64ff529f980c4f53589543e5b26"
+    },
+    "cpu_validation": {
+      "path": "data/language_v1/cpu_validation.json",
+      "sha256": "7f75348e5c3fcbe1a120e303437276a555ad5b1d39b9de293211e6570525c635",
+      "required_status": "passed"
+    },
+    "postwrite_audit": {
+      "path": "data/language_v1/postwrite_audit.json",
+      "sha256": "6937c49ae9ef95f2a4a89c629951ad5e2564fc03a7aaf2a99895a56957c72ae9",
+      "required_status": "passed"
+    },
+    "statistics": {
+      "path": "data/language_v1/corpus_statistics.json",
+      "sha256": "04d9f744ea31a7e02c45fc29425115526fc59fc53a366ae35f33d5ed05842587"
+    }
+  },
+  "vocabulary": {
+    "size": 15,
+    "path": "data/language_v1/vocab.json",
+    "ids": {
+      "PAD": 0,
+      "BOS": 1,
+      "EOS": 2,
+      "SET": 3,
+      "NOT": 4,
+      "AND": 5,
+      "OR": 6,
+      "XOR": 7,
+      "READ": 8,
+      "A": 9,
+      "B": 10,
+      "C": 11,
+      "D": 12,
+      "B0": 13,
+      "B1": 14
+    }
+  },
+  "generation": {
+    "master_seed": 20260909,
+    "rng": "numpy.random.Generator(PCG64)",
+    "seed_derivation": "SHA256(20260909|language-v1.0|<purpose>|<index>)[:8] as unsigned big-endian",
+    "max_attempts_per_target": 100000,
+    "reservation_order": [
+      "validation_and_test",
+      "interpretation",
+      "causal",
+      "lm_train"
+    ],
+    "holdout_patterns": [
+      [
+        "XOR",
+        "AND",
+        "OR"
+      ],
+      [
+        "OR",
+        "XOR",
+        "AND"
+      ]
+    ]
+  },
+  "train": {
+    "token_files_glob": "data/language_v1/train_shards/*.tokens.jsonl",
+    "metadata_files_glob": "data/language_v1/train_shards/*.jsonl.gz",
+    "order": "lexicographic_shard_then_row",
+    "shuffle": false,
+    "consume_each_sequence_once": true,
+    "expected_shards": 7,
+    "sequences": 26048,
+    "prediction_tokens_available": 3004531,
+    "minimum_prediction_tokens": 3000000,
+    "sequence_batch_multiple": 64,
+    "answer_or_state_metadata_as_model_input": false
+  },
+  "splits": {
+    "checkpoint_selection": "data/language_v1/val_iid.tokens.jsonl",
+    "gate_validation": "data/language_v1/diagnostics/val_*.tokens.jsonl",
+    "final_iid_test": "data/language_v1/test_iid.tokens.jsonl",
+    "final_diagnostic_test": "data/language_v1/diagnostics/test_*.tokens.jsonl",
+    "composition_test": "data/language_v1/composition/test_pattern_*.tokens.jsonl",
+    "length_test_optional": "data/language_v1/test_length.tokens.jsonl",
+    "interpretation_train": "data/language_v1/interpretation/train.*",
+    "interpretation_validation": "data/language_v1/interpretation/val.*",
+    "interpretation_test": "data/language_v1/interpretation/test.*",
+    "causal_validation": "data/language_v1/causal_pairs/val_*.jsonl.gz",
+    "causal_test": "data/language_v1/causal_pairs/test_*.jsonl.gz"
+  },
+  "split_roles": {
+    "train": [
+      "LM fitting",
+      "dictionary fitting",
+      "probe fitting and ANOVA ranking",
+      "preprocessing statistics"
+    ],
+    "validation": [
+      "LM checkpoint and gate decisions",
+      "dictionary checkpoint selection",
+      "probe regularization, feature-count and threshold selection",
+      "causal matching-bin definition and implementation checks"
+    ],
+    "test": [
+      "one-time final behavior, semantic, fidelity and causal reporting"
+    ]
+  },
+  "selection_guards": {
+    "test_used_for_selection": false,
+    "interpretation_sequence_stays_within_one_split": true,
+    "all_read_and_update_positions_from_selected_sequences_are_kept_together": true,
+    "gpu_must_verify_manifest_and_file_checksums_before_training": true
+  }
+}

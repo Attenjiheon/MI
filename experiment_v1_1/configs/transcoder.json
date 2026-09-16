@@ -1,0 +1,111 @@
+{
+  "config_version": "p0-config-v1.1",
+  "spec_version": "experiment-spec-v1.1",
+  "required": true,
+  "execution_order": "after_corresponding_read_sae_evaluation",
+  "required_scope": {
+    "position_type": "read",
+    "layer": 0,
+    "input_hook": "blocks.0.mlp_in",
+    "target_hook": "blocks.0.mlp_out",
+    "mapping": "u_0_to_m_0",
+    "lm_scope": "every_gate_passing_lm",
+    "k_values": [
+      4,
+      16
+    ],
+    "sparse_seeds": {
+      "all_passing_lms": [
+        0
+      ],
+      "lm_seed_0_additional": [
+        1
+      ]
+    }
+  },
+  "model": {
+    "input_width": 128,
+    "output_width": 128,
+    "latent_width": 512,
+    "activation": "relu_then_topk",
+    "topk_tie_break": "smaller_latent_id",
+    "decoder_column_unit_norm": true,
+    "decoder_bias": true,
+    "expected_trainable_parameters": 131712,
+    "linear_skip": false
+  },
+  "preprocessing": {
+    "fit_split": "interpretation_train",
+    "input_formula": "x_u = (u - mu_u) / s_u",
+    "target_formula": "y_m = (m - mu_m) / s_m",
+    "input_and_output_statistics_separate": true,
+    "statistics": "float64_accumulation_then_float32_storage",
+    "scale": "sqrt(mean(||v-mu||^2)/128)",
+    "minimum_scale": 1e-08,
+    "whitening": false,
+    "samplewise_normalization": false,
+    "freeze_for_validation_and_test": true
+  },
+  "initialization": {
+    "decoder_columns": "independent_normal_then_unit_norm",
+    "encoder_rows": "independent_normal_then_unit_norm",
+    "encoder_copied_from_decoder": false,
+    "decoder_bias": 0.0,
+    "encoder_input_decoder_bias_subtraction": false
+  },
+  "training": {
+    "dtype": "float32",
+    "loss": "normalized_mlp_output_batch_and_dimension_mean_mse",
+    "optimizer": {
+      "name": "Adam",
+      "learning_rate": 0.001,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "epsilon": 1e-08,
+      "weight_decay": 0.0
+    },
+    "batch_positions": 512,
+    "position_sampling": "uniform_with_replacement",
+    "share_position_draw_order_with_corresponding_sae": true,
+    "updates": 5000,
+    "validation_interval_updates": 250,
+    "checkpoint_metric": "interpretation_validation_mse",
+    "checkpoint_mode": "minimum",
+    "checkpoint_tie_break": "earlier_update",
+    "decoder_update_order": [
+      "remove_radial_decoder_gradient",
+      "clip_all_gradients_global_norm_1.0",
+      "optimizer_step",
+      "renormalize_decoder_columns"
+    ],
+    "stop_on_zero_decoder_norm_nan_or_inf": true,
+    "forbidden": [
+      "l1_loss",
+      "auxiliary_loss",
+      "label_loss",
+      "dead_latent_reinitialization",
+      "early_stopping",
+      "encoder_or_latent_rescale_during_decoder_norm"
+    ]
+  },
+  "patching": {
+    "formula": "m_patch = m_original + s_m * D_tc[:,J] @ (z_counterfactual[J] - z_original[J])",
+    "residual_formula": "h_patch = r_mid_original + m_patch",
+    "output_scale": "s_m",
+    "input_scale_must_not_be_used_for_output": true,
+    "preserve_original_residual_skip": true
+  },
+  "checkpoint_additions": [
+    "sampler_rng_state",
+    "input_and_output_preprocessing_statistics",
+    "decoder_norms",
+    "actual_positions_and_draws"
+  ],
+  "optional_separate_experiments": [
+    "read_layer_1",
+    "update_layer_0",
+    "update_layer_1"
+  ]
+}

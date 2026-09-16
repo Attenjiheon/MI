@@ -266,3 +266,7 @@ phase / run_id / status(pending|running|passed|failed|paused|skipped)
 ```
 
 자원이 부족하면 영속 checkpoint에서 재개한다. Width/k/token budget을 줄여 완료 처리하지 않는다. 필수 READ 결과가 끝난 뒤에만 선택 분석에 예산을 배정한다.
+
+## 15. v1.1 4-block 실행 분기 (2026-09-16)
+
+사용자 지시로 깊이와 초기화를 변경한 별도 실험이며 [변경 규격](./experiment_v1_1/CHANGELOG.md)을 따른다. P1은 동일 immutable 데이터 재사용·재검산, P2는 새 4-block CPU/GPU smoke를 통과했다. P3은 1M 개선 조건으로 누적 3M까지 연장한 뒤 모든 행동 gate에 미달하여 `failed`로 종료했다. 일반 validation 58.90%, 진단 58.98% / 59.96% / 55.47%; 407 updates / 3,004,531 tokens. P4 및 표현 분석은 진행하지 않는다. [중단 보고](./experiment_v1_1/results/p3_stop_report.md), [증빙 감사](./experiment_v1_1/results/p3_evidence_verification.json). v1.0 결과는 위 원래 기록에 그대로 보존한다.

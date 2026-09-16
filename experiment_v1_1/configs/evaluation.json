@@ -1,0 +1,166 @@
+{
+  "config_version": "p0-config-v1.1",
+  "spec_version": "experiment-spec-v1.1",
+  "scope_priority": {
+    "required": "gate-passing LMs, block 0 READ probe, SAE and transcoder for k=4 and k=16, fidelity, semantic and causal controls",
+    "required_repeat": "LM seed 0 READ SAE and transcoder for k=4 and k=16 with sparse seed 1",
+    "optional_after_required": [
+      "update",
+      "block_1",
+      "length_extrapolation",
+      "m_to_m_sae"
+    ],
+    "excluded": [
+      "crosscoder",
+      "eight_variables",
+      "large_model_sweep",
+      "large_seed_sweep"
+    ]
+  },
+  "model_selection": {
+    "split": "validation",
+    "metric": "answer_cross_entropy",
+    "mode": "minimum",
+    "tie_break": "earlier_checkpoint",
+    "gate_applies_to_selected_checkpoint": true,
+    "test_used_for_selection": false,
+    "interpretability_result_may_reselect_lm": false
+  },
+  "behavior": {
+    "metrics": [
+      "all_valid_position_cross_entropy",
+      "read_full_vocabulary_cross_entropy",
+      "read_full_vocabulary_argmax_accuracy",
+      "read_binary_B0_B1_accuracy",
+      "B0_plus_B1_probability_mass",
+      "strata_counts_macro_and_coverage"
+    ],
+    "baselines": [
+      "split_majority",
+      "bernoulli_0.5_expected_accuracy",
+      "latest_set_or_initialization_value",
+      "previous_read_answer_or_B0"
+    ],
+    "teacher_forcing_is_primary": true
+  },
+  "activation_cache": {
+    "required_hooks": [
+      "blocks.0.resid_post",
+      "blocks.0.mlp_in",
+      "blocks.0.mlp_out"
+    ],
+    "dtype": "float32",
+    "read_position": "query_variable_token_immediately_before_answer",
+    "answer_seen_before_activation": false,
+    "cache_key_fields": [
+      "lm_seed",
+      "checkpoint_sha256",
+      "split",
+      "position_type",
+      "layer",
+      "sequence_id",
+      "token_index",
+      "hook"
+    ],
+    "expected_read_positions": {
+      "train": 50000,
+      "validation": 10000,
+      "test": 20000
+    }
+  },
+  "semantic_metrics": [
+    "balanced_accuracy",
+    "macro_f1",
+    "binary_auroc",
+    "confusion_matrix",
+    "full_probe_gap",
+    "current_not_equal_previous",
+    "applicable_transfer"
+  ],
+  "fidelity": {
+    "metrics": [
+      "mse",
+      "nmse",
+      "r2",
+      "explained_variance",
+      "l0_distribution",
+      "dead_latent_rate"
+    ],
+    "nmse_denominator_mean": "train",
+    "r2_denominator_mean": "evaluation_split",
+    "dead_definition": "zero_positive_activations_after_reencoding_entire_train_pool",
+    "replacement": "one_fixed_read_position_per_test_iid_sequence",
+    "identity_hook_must_reproduce_original_logits": true,
+    "sae_target": "normalized_h",
+    "transcoder_target": "normalized_m"
+  },
+  "causal": {
+    "directions": [
+      "original_to_counterfactual",
+      "counterfactual_to_original"
+    ],
+    "aggregate_unit": "origin_mean_after_both_directions",
+    "feature_sets": [
+      "one",
+      "up_to_four"
+    ],
+    "freeze_features_before_causal_test": true,
+    "conditions": [
+      "changed_memory",
+      "changed_composition",
+      "unchanged_memory",
+      "unchanged_composition"
+    ],
+    "controls": [
+      "no_intervention",
+      "identity",
+      "train_mean",
+      "full_approximation",
+      "selected_feature",
+      "full_donor",
+      "random_latent",
+      "selected_original_coordinate",
+      "random_direction"
+    ],
+    "matching": {
+      "validation_percentiles": [
+        20,
+        40,
+        60,
+        80
+      ],
+      "dimensions": [
+        "patch_l2_norm",
+        "latent_delta_l2_norm"
+      ],
+      "zero_patch_separate_bin": true,
+      "merge_duplicate_boundaries": true,
+      "maximum_test_candidates_per_bin": 20,
+      "random_latent_sets_maximum": 200,
+      "failed_match": "report_na_count_and_rate"
+    },
+    "changed_metrics": [
+      "counterfactual_logit_margin_delta",
+      "full_vocabulary_counterfactual_argmax",
+      "binary_flip"
+    ],
+    "unchanged_metrics": [
+      "correct_vs_opposite_bit_margin_delta",
+      "correct_to_incorrect_rate",
+      "any_prediction_change_rate"
+    ],
+    "report_all_pairs_and_both_originally_correct_subset": true
+  },
+  "uncertainty": {
+    "bootstrap_draws": 1000,
+    "interval": "percentile_95",
+    "percentiles": [
+      2.5,
+      97.5
+    ],
+    "interpretation_cluster": "sequence_id",
+    "causal_cluster": "origin_id",
+    "resample_fixed_quota_within_condition": true,
+    "report_valid_draw_count": true
+  }
+}
