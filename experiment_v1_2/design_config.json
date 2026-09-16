@@ -1,0 +1,86 @@
+{
+  "schema": "experiment-design-v1.2",
+  "status": "design_only",
+  "executable": false,
+  "base_commit": "9960cf8a150748255e58e8b9a8b85a42f72ace20",
+  "base_spec": "experiment-spec-v1.1",
+  "created_date": "2026-09-17",
+  "model": {
+    "blocks": 4,
+    "parameters": 797184,
+    "inherit": "experiment_v1_1/configs/transformer.json"
+  },
+  "training": {
+    "nominal_prediction_tokens": 16000000,
+    "budget_policy": "fixed_no_early_gate_stop",
+    "finish_first_complete_update_at_or_above_budget": true,
+    "fresh_initialization": true,
+    "pilot_seed": 0,
+    "replication_seeds_after_pilot_gate": [
+      1,
+      2
+    ],
+    "effective_batch_sequences": 64,
+    "learning_rate": 0.0003,
+    "warmup_prediction_tokens": 50000,
+    "schedule_after_warmup": "constant",
+    "validation_every_prediction_tokens": 100000,
+    "milestones_prediction_tokens": [
+      1000000,
+      3000000,
+      8000000,
+      16000000
+    ],
+    "automatic_extension": false
+  },
+  "data": {
+    "planned_root": "data/language_v1_2",
+    "grammar_version": "language-v1.0",
+    "base_root": "data/language_v1",
+    "base_manifest_sha256": "bff7bc9bd4d13bc264c604ea9104210d3e3da64ff529f980c4f53589543e5b26",
+    "preserve_all_existing_split_bytes": true,
+    "prefix_sequences": 26048,
+    "prefix_prediction_tokens": 3004531,
+    "prefix_shards": 7,
+    "first_new_shard_index": 7,
+    "new_shard_sequences": 4096,
+    "retain_short_prefix_shard": true,
+    "repeat_train_sequences": false,
+    "shuffle": false,
+    "seed_derivation": "SHA256(20260909|language-v1.0|lm_train|<shard_index>)[:8], unsigned big endian",
+    "rng": "PCG64",
+    "max_attempts_per_target": 100000,
+    "new_manifest_sha256": null
+  },
+  "selection": {
+    "split": "validation",
+    "metric": "general_validation_answer_cross_entropy",
+    "mode": "minimum",
+    "tie_break": "earlier_update",
+    "gate_on_selected_checkpoint_only": true
+  },
+  "gate": {
+    "general_full_vocabulary_accuracy_min": 0.99,
+    "each_diagnostic_accuracy_min": 0.95,
+    "diagnostic_sequences_each": 512,
+    "diagnostic_conditions": [
+      "other_variable",
+      "repeated_update",
+      "first_read_after_set"
+    ]
+  },
+  "retention": {
+    "every_validation_checkpoint_immutable": true,
+    "keep_init": true,
+    "atomic_write_and_checksum": true,
+    "persistent_copy_new_files_only": true
+  },
+  "readiness": {
+    "implementation": "pending",
+    "corpus_generation": "pending",
+    "cpu_audit": "pending",
+    "cpu_gpu_smoke": "pending",
+    "colab_notebook": "pending",
+    "training": "pending"
+  }
+}

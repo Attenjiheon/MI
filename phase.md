@@ -270,3 +270,7 @@ phase / run_id / status(pending|running|passed|failed|paused|skipped)
 ## 15. v1.1 4-block 실행 분기 (2026-09-16)
 
 사용자 지시로 깊이와 초기화를 변경한 별도 실험이며 [변경 규격](./experiment_v1_1/CHANGELOG.md)을 따른다. P1은 동일 immutable 데이터 재사용·재검산, P2는 새 4-block CPU/GPU smoke를 통과했다. P3은 1M 개선 조건으로 누적 3M까지 연장한 뒤 모든 행동 gate에 미달하여 `failed`로 종료했다. 일반 validation 58.90%, 진단 58.98% / 59.96% / 55.47%; 407 updates / 3,004,531 tokens. P4 및 표현 분석은 진행하지 않는다. [중단 보고](./experiment_v1_1/results/p3_stop_report.md), [증빙 감사](./experiment_v1_1/results/p3_evidence_verification.json). v1.0 결과는 위 원래 기록에 그대로 보존한다.
+
+## 16. v1.2 4-block / 16M 계획 (2026-09-17)
+
+[새 설계](./experiment_v1_2/DESIGN.md)는 기존 4-block 구조를 유지하고 fresh seed 0을 고정16M까지 학습한다. 기존3M train prefix와 평가 split을 보존하고 새 train을 추가한다. 설계만 완료되었으며 새 P1/P2/P3는 모두 pending이다. 본 분기의 예산·gate 시점·shard 예외·저장 규칙은 새 설계를 따르며, 실제 CPU 검증과 GPU smoke 증빙 후에만 본학습을 시작한다.
