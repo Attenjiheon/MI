@@ -1,6 +1,8 @@
-# v1.2 P2 — CPU passed / GPU pending
+# v1.2 P2 — passed (CPU + GPU)
 
-2026-09-17: v1.2 전용 실행기와 저장·복구 구현의 CPU 검증 완료. 실제 Colab GPU smoke 증빙이 없으므로 P2 전체는 pending이다.
+2026-09-17 반환 ZIP 감사 완료: 실제 Colab CPU/GPU smoke와 8개 테스트를 확인해 P2를 passed로 기록한다. 실행에는 보존된 v1 입력 번들을 사용했으며 최종 배포 v2와 학습·평가 데이터 및 실행 코드가 동일함을 검증했다. [P3 중단 보고](results/p3_stop_report.md)의 번들 출처 구분을 따른다.
+
+GPU: Tesla T4, 환경 `e74fb1dcf8112ca0`, 9.754초. GPU smoke의 config/data/code/환경 ID가 본학습과 일치한다. 증빙: `evidence/p3_16m_20260917/preflight/20260917T073251285323/cuda/smoke.json`, 환경 lock 및 `results/p3_supplemental_audit.json`. 아래 준비 기록은 당시 이력이다.
 
 - `results/p2_pytest_release.txt`: 테스트 **8 passed**, 14.75초. 고정 16M 선택/gate, validation 전용 입력, short shard 연결과 마지막 완전 batch, 증분 영속 저장/불완전 복사, 실제 optimizer/RNG 재개, v1.1 초기화 동일성, 평가 경계 복원 검증.
 - `smoke/cpu_release/smoke.json`: **passed**, 9.82초, 환경 `d7c07004dd4c1bd4`. 797,184 parameters, causal/PAD/RoPE, token-weighted gradient, 네 block hooks, dictionary/probe/patching, checkpoint 다음 update bitwise 재현.
@@ -19,7 +21,7 @@ PYTHONPATH=/private/tmp/mi_v12_pytest PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 /Library/
 
 초기 `cpu_01`은 config manifest 생성 전 실행되어 실패했다. `cpu_02`는 CPU smoke에 통과했지만 이후 집계/중단 기록 코드 변경이 있어 최종 증빙으로 대체하지 않았다. 초기 pytest의 1 failure는 임시 디렉터리 이름의 `test_`를 평가 split 이름으로 오인한 테스트 오류였으며, root-relative 데이터 경로 검사로 수정한 뒤 전체 8개를 통과했다. 초기 로그도 보존한다.
 
-## 실제 GPU에서 남은 검사
+## 준비 당시 GPU 검사 절차 (실행·감사 완료)
 
 `notebooks/01_colab_lm_16m.ipynb`는 전체 입력 checksum → 의존성/환경 → CPU tests/smoke → 새 CUDA smoke → 16M 학습을 순서대로 실행한다. GPU smoke의 code/config/data hash 및 환경 ID가 학습과 일치해야 runner가 본학습을 허용한다. Debug checkpoint는 본실험에 재사용하지 않는다.
 

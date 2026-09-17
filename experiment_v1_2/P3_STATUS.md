@@ -1,26 +1,20 @@
-# v1.2 P3 — GPU 실행 대기
+# v1.2 P3 — failed (16M 완주, 행동 gate 미달)
 
-사용자의 2026-09-17 P3 요청에 따라 설계 전용 v1.2의 생성기·실행기·Colab 전달물을 구현했다.
-P1은 통과했다. CPU smoke/테스트와 Colab 전달물 검증 결과는 `P2_STATUS.md`에 기록한다. 새 GPU smoke와 seed 0 실제 실행 증빙이 아직 없으므로 P2 전체 및 P3은 완료가 아니다.
+2026-09-17 반환 증빙 감사 완료. P1 및 실제 P2 CPU/GPU smoke는 통과했다. Seed 0은 **16,001,083 prediction tokens / 2,160 updates / 138,240 sequences**를 소비했다. 명목16M overshoot는 1,083이다.
 
-## 실행 계약
+160회 validation 중 일반 READ 답 CE 최소 checkpoint는 마지막 update 2,160이다. 일반 정확도 **80.72%**(기준99%), 세 진단 **81.25% / 76.37% / 86.13%**(각95%)로 모두 미달했다. 선택 checkpoint SHA-256은 `3254c12495f996da79f47978fefb01456701b316a0e765704de3739944fa1317`이다.
 
-`interp_v1_2`만 실행한다. 4 blocks / 797,184 parameters, fresh seed 0, 기존 AdamW·warmup·FP32·effective batch 64를 유지한다. 16M 고정 예산, 실제 2,160 updates / 16,001,083 tokens로 종료한다. 기존 1M 조건부 3M CLI를 재사용하지 않는다.
+- [x] 실제 Colab CPU/GPU smoke·환경·입력 및 실행 code hashes 대조.
+- [x] 2,160 updates의 토큰·cursor·LR·validation 경계 검증.
+- [x] Init 및 160개 validation checkpoint, optimizer/RNG, current/best milestone와 완료 index 보존·검증.
+- [x] 일반 CE 최소 선택 및 해당 checkpoint에서만 gate 판정.
+- [x] CPU 재평가, 전체 corpus 독립 replay 재검산, 구현 tests 8 passed.
+- [x] v1.1 초기 모델 및 3M 모델과 bitwise 동일성 확인.
+- [x] 실패·실제 자원·학습 곡선·strata·baseline 및 실행 번들 차이 기록.
+- [ ] 행동 gate 통과. **실패이므로 체크하지 않는다.**
 
-모든 100k validation과 마지막 update를 중복 없이 평가하고, 전체 일반 validation 답 CE 최소(동률 이른 update) checkpoint를 선택한다. 해당 checkpoint의 일반 정확도 ≥99%, 세 진단 각각 ≥95%만 행동 gate로 사용한다. Test로 선택하지 않는다.
+체크 항목은 감사 완료를 뜻하며 행동 성공이 아니다. **P4 및 SAE/TC·인과 분석으로 진행하지 않는다.** 고정16M 정책에 따라 자동 예산 연장 없이 이 버전을 종료한다. Test 점수는 보지 않았다.
 
-매 validation의 immutable checkpoint, init, optimizer/RNG/cursor/다음 평가 경계를 보존한다. `LATEST.json`이 last 참조, checkpoint의 `best`와 최종 `result.json`의 `selected`가 best 참조다. 1M/3M/8M/16M milestone에서 current/best와 각 파일 SHA-256을 별도 기록한다. 새 파일만 Drive에 복사하고 checksum 검증 후 완료 index를 갱신한다.
+반환 실행은 `p3_16m_bundle_v1.zip` 기반이다. v2와 데이터/실행 코드는 같지만 packaging manifest/config hash가 다르다. 실행 hash `8503418e…` / corpus `5decfd2a…`를 그대로 보존하고 v2의 `84f36f4c…` / `87ec2e77…`로 치환하지 않았다.
 
-## Colab 전달
-
-- `notebooks/01_colab_lm_16m.ipynb`
-- `bundles/p3_16m_bundle_v2.zip` 및 `.sha256`
-- `results/colab_delivery.json`: 전체 파일 수·ZIP/노트북 checksum과 빌드 검증.
-
-새 Colab GPU 런타임에서 노트북을 업로드하고 위부터 실행한다. 입력 ZIP은 파일명 대신 SHA-256으로 판별한다. Drive 경로는 `MyDrive/boolean_interp_p3_16m_v1_2`다. 중단하면 새 런타임에서 `RESUME=True`로 마지막 완료 index를 복구한다. 오류/중단은 성공으로 집계하지 않는다.
-
-마지막 결과 ZIP을 반환하면 `scripts/verify_p3_16m_evidence.py`로 모든 checkpoint·경계·선택·gate·milestone를 검증하고, GPU smoke/환경을 감사하며 선택 checkpoint를 CPU에서 재평가한다. 그 전까지 gate, 선택 checkpoint 및 P4 진입 여부는 미정이다. 실패하면 16M에서 중단 보고하고 자동 예산 연장이나 표현 분석을 하지 않는다.
-
-## 비교 해석
-
-기존 3M 입력 prefix·update 407을 보존했고 v1.1/v1.2 seed 0 초기화의 동일성을 테스트한다. 환경/microbatch가 달라질 수 있으므로 과거 GPU 결과와 bitwise 동일성을 주장하지 않는다. 30회 대 약160회 선택 후보 수 차이를 고려하도록 current 및 best-so-far 곡선과 milestone 지표를 모두 저장한다. 같은 seed의 예산 비교를 독립 seed 재현으로 세지 않는다.
+상세 결과·비교·한계: [중단 보고](results/p3_stop_report.md). 증빙: [실행 감사](results/p3_run_audit.json), [보충 감사](results/p3_supplemental_audit.json), [학습 곡선](results/figures/p3_learning_curve.png), `evidence/p3_16m_verified_contents_20260917.zip`.
