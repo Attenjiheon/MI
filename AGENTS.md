@@ -94,3 +94,9 @@
 
 - 신규 16M 작업은 `experiment_v1_2/DESIGN.md`와 `design_config.json`을 먼저 읽는다. 설계 문서는 당시 계획의 불변 기록이다. 현재 실행 상태는 `experiment_v1_2/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`를 확인한다. 신규 실행은 `interp_v1_2`와 `tests_v1_2`를 사용하며 기존 v1.1 CLI를 16M 실행기로 사용하지 않는다.
 - 위 §8은 v1.1 재현·감사 경로다. v1.2의 예산·데이터 확장·선택·저장 변경은 새 설계를 따르며, 기존 데이터·실패 결과를 덮어쓰지 않는다.
+
+## 10. v1.3 상태 전이 진단 설계 (2026-09-17)
+
+- 신규 v1.3 작업은 `experiment_v1_3/DESIGN.md`와 `design_config.json`을 먼저 읽는다. v1.2는 감사된 행동 gate 실패로 보존하고, v1.0–v1.2 validation은 v1.3 선택·gate에 재사용하지 않는다.
+- v1.3은 설계만 완료된 상태다. `interp_v1_3/`, `tests_v1_3/`, 새 corpus와 Colab notebook이 구현되고 CPU/GPU smoke가 통과하기 전에는 pilot이나 본학습을 시작하지 않는다.
+- 여섯 pilot cell을 임의로 줄이거나 추가하지 않고, 새 select/gate/test 분리와 first/repeat 42-cell quota를 지킨다. Pilot winner 하나만 사전 규칙으로 승격하며 gate나 test를 보고 checkpoint·설정·threshold를 다시 고르지 않는다.

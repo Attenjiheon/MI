@@ -16,7 +16,7 @@
 - Config·버전 분리 완료. config hash: `039c0fad2d268f8321d481b645498005ed672711762592b29d3f4ee068ddf2e8`.
 - CPU smoke 통과: `smoke/cpu_01/smoke.json`, 797,184 parameters, 환경 `d7c07004dd4c1bd4`.
 - 테스트 25개 통과. 원래 23개 계약 검사에 네 block gradient·2-block state 거부·깊이 기반 초기화 검사를 추가했다.
-- GPU smoke passed. P3은 누적 3M에서 행동 gate 미달로 failed 종료했다. `results/p3_stop_report.md` 참조. 이 노트북으로 추가 학습하지 않는다.
+- GPU smoke 및 P3 본실험은 pending. CPU 결과로 GPU 통과나 행동 gate 통과를 주장하지 않는다.
 - 배포 번들 전체 checksum·격리 테스트 증빙: `smoke/bundle_validation.json`.
 
 ## 재현

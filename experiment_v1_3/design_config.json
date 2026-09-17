@@ -1,0 +1,276 @@
+{
+  "schema": "experiment-design-v1.3",
+  "status": "design_only",
+  "executable": false,
+  "created_date": "2026-09-17",
+  "base_spec": "experiment-spec-v1.2-with-explicit-v1.3-overrides",
+  "predecessor": {
+    "version": "v1.2",
+    "status": "failed_behavior_gate",
+    "selected_checkpoint_sha256": "3254c12495f996da79f47978fefb01456701b316a0e765704de3739944fa1317",
+    "actual_prediction_tokens": 16001083,
+    "general_accuracy": 0.8072451352343655,
+    "test_scores_observed": false
+  },
+  "questions": [
+    "Does depth-width allocation improve first logical-update READ behavior at fixed data?",
+    "Does token-only READ-answer weighting improve that behavior without state-label leakage?",
+    "Does one preselected configuration reproduce the frozen gate across LM seeds?"
+  ],
+  "data": {
+    "root": "data/language_v1_3",
+    "seed_namespace": "20260917|language-v1.3|<purpose>|<index>",
+    "rng": "PCG64",
+    "base_root": "data/language_v1_2",
+    "preserve_base_train_prefix_bytes": true,
+    "base_prefix_prediction_tokens": 16001083,
+    "base_prefix_sequences": 138240,
+    "base_prefix_shards": 35,
+    "nominal_prediction_tokens": 32000000,
+    "finish_first_complete_update_at_or_above_budget": true,
+    "effective_batch_sequences": 64,
+    "repeat_train_sequences": false,
+    "shuffle": false,
+    "reject_against_all_v1_0_through_v1_3_reserved_hashes": true,
+    "generation_order": [
+      "select_validation",
+      "gate_validation",
+      "test",
+      "interpretation",
+      "causal",
+      "train_extension"
+    ]
+  },
+  "evaluation_splits": {
+    "select": {
+      "general_sequences": 512,
+      "first_repeat_pairs_per_cell": 16,
+      "may_select_checkpoint": true,
+      "may_select_pilot_winner": true
+    },
+    "gate": {
+      "general_sequences": 1024,
+      "legacy_diagnostic_targets_each": 1024,
+      "first_repeat_pairs_per_cell": 64,
+      "may_select_checkpoint": false,
+      "evaluations_per_selected_checkpoint": 1
+    },
+    "test": {
+      "general_sequences": 2048,
+      "legacy_diagnostic_targets_each": 2048,
+      "first_repeat_pairs_per_cell": 128,
+      "may_select_or_change_anything": false
+    },
+    "first_repeat_cells": {
+      "first_definition": "first READ of queried variable after its last logical update",
+      "repeat_definition": "same origin semantics with one correct same-variable READ inserted after the update and before the target",
+      "depth_bins": [
+        "1",
+        "2-3",
+        "4+"
+      ],
+      "not_input_bits": [
+        "0",
+        "1"
+      ],
+      "binary_operators": [
+        "AND",
+        "OR",
+        "XOR"
+      ],
+      "binary_truth_patterns": [
+        "00",
+        "01",
+        "10",
+        "11"
+      ],
+      "cell_count": 42,
+      "one_target_per_independent_origin": true
+    }
+  },
+  "architectures": [
+    {
+      "id": "base4",
+      "blocks": 4,
+      "residual_width": 128,
+      "attention_heads": 4,
+      "head_width": 32,
+      "mlp_width": 512,
+      "rope_dimensions": 32,
+      "expected_trainable_parameters": 797184,
+      "output_weight_multiplier": 0.35355339059327373
+    },
+    {
+      "id": "wide4",
+      "blocks": 4,
+      "residual_width": 184,
+      "attention_heads": 4,
+      "head_width": 46,
+      "mlp_width": 736,
+      "rope_dimensions": 46,
+      "expected_trainable_parameters": 1640544,
+      "output_weight_multiplier": 0.35355339059327373
+    },
+    {
+      "id": "deep8",
+      "blocks": 8,
+      "residual_width": 128,
+      "attention_heads": 4,
+      "head_width": 32,
+      "mlp_width": 512,
+      "rope_dimensions": 32,
+      "expected_trainable_parameters": 1590272,
+      "output_weight_multiplier": 0.25
+    }
+  ],
+  "losses": [
+    {
+      "id": "uniform",
+      "nonpad_weight": 1.0,
+      "read_answer_weight": 1.0,
+      "normalization": "sum_weighted_ce_divided_by_sum_weights"
+    },
+    {
+      "id": "read4",
+      "nonpad_weight": 1.0,
+      "read_answer_weight": 4.0,
+      "answer_position_detection": "token_ids_only_READ_then_VAR_predicting_B0_or_B1",
+      "metadata_or_state_labels_used": false,
+      "normalization": "sum_weighted_ce_divided_by_sum_weights"
+    }
+  ],
+  "pilot": {
+    "cells": [
+      "base4_uniform",
+      "base4_read4",
+      "wide4_uniform",
+      "wide4_read4",
+      "deep8_uniform",
+      "deep8_read4"
+    ],
+    "lm_seeds": [
+      0
+    ],
+    "nominal_prediction_tokens": 8000000,
+    "milestones_prediction_tokens": [
+      1000000,
+      3000000,
+      8000000
+    ],
+    "compare_current_checkpoint_at_final_milestone_only": true,
+    "anchor_cell": "base4_uniform",
+    "anchor_requires_v1_2_bitwise_milestone_reproduction": true,
+    "anchor_environment_id": "e74fb1dcf8112ca0",
+    "anchor_microbatch_sequences": 16,
+    "primary_metric": "select_first_member_42_cell_macro_answer_ce",
+    "eligibility": {
+      "general_accuracy_max_regression_absolute": 0.02,
+      "first_macro_ce_min_improvement_nats": 0.05,
+      "or_first_macro_accuracy_min_improvement_absolute": 0.05
+    },
+    "tie_break": [
+      "lower_first_macro_answer_ce",
+      "lower_general_answer_ce",
+      "uniform_loss",
+      "fewer_parameters",
+      "candidate_id_lexical"
+    ],
+    "no_eligible_cell_action": "stop_v1_3_before_confirmatory_training"
+  },
+  "training": {
+    "dtype": "float32",
+    "dropout": 0.0,
+    "effective_batch_sequences": 64,
+    "optimizer": {
+      "name": "AdamW",
+      "learning_rate": 0.0003,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "epsilon": 1e-08,
+      "weight_decay": 0.01
+    },
+    "global_gradient_clip_norm": 1.0,
+    "warmup_prediction_tokens": 50000,
+    "stable_learning_rate": 0.0003,
+    "decay_start_prediction_tokens": 28800000,
+    "final_learning_rate": 0.00003,
+    "confirmatory_nominal_prediction_tokens": 32000000,
+    "automatic_extension": false
+  },
+  "checkpoint_selection": {
+    "split": "select",
+    "candidate_milestones_prediction_tokens": [
+      1000000,
+      3000000,
+      8000000,
+      16000000,
+      24000000,
+      28800000,
+      30400000,
+      32000000
+    ],
+    "primary_metric": "first_member_42_cell_macro_answer_ce",
+    "mode": "minimum",
+    "near_tie_nats": 0.0001,
+    "tie_break": [
+      "lower_select_general_answer_ce",
+      "earlier_update"
+    ],
+    "gate_may_reselect_checkpoint": false
+  },
+  "gate": {
+    "general_full_vocabulary_accuracy_min": 0.99,
+    "each_legacy_diagnostic_accuracy_min": 0.95,
+    "first_member_42_cell_macro_accuracy_min": 0.95,
+    "each_first_member_operator_macro_accuracy_min": 0.95,
+    "each_first_member_depth_macro_accuracy_min": 0.95,
+    "each_first_member_answer_accuracy_min": 0.95,
+    "repeat_member_42_cell_macro_accuracy_min": 0.95,
+    "coverage_required": 1.0,
+    "seed0_must_pass_before_replication": true,
+    "minimum_passing_seeds_for_interpretation": 2,
+    "failed_seeds_are_preserved": true
+  },
+  "replication": {
+    "winner_lm_seeds": [
+      0,
+      1,
+      2
+    ],
+    "same_data_order": true,
+    "fresh_initialization_per_seed": true
+  },
+  "test_policy": {
+    "evaluate_after_all_training_and_validation_decisions_are_frozen": true,
+    "evaluate_all_trained_winner_seeds": true,
+    "may_change_model_checkpoint_threshold_or_gate": false
+  },
+  "interpretation": {
+    "requires_at_least_two_passing_lm_seeds": true,
+    "mandatory_sparse_layer": 0,
+    "all_layer_full_probe_diagnostic": true,
+    "mandatory_tools": [
+      "sae",
+      "transcoder"
+    ],
+    "k_values": [
+      4,
+      16
+    ],
+    "sparse_seed_repeat_for_lm_seed0": 1
+  },
+  "readiness": {
+    "design": "complete",
+    "implementation": "pending",
+    "corpus_generation": "pending",
+    "cpu_audit": "pending",
+    "cpu_gpu_smoke": "pending",
+    "colab_notebook": "pending",
+    "pilot": "pending",
+    "confirmatory_training": "pending",
+    "test_evaluation": "pending",
+    "interpretation": "pending"
+  }
+}

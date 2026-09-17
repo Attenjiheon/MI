@@ -274,3 +274,9 @@ phase / run_id / status(pending|running|passed|failed|paused|skipped)
 ## 16. v1.2 4-block / 16M 실행 결과 (2026-09-17)
 
 [새 설계](./experiment_v1_2/DESIGN.md)는 기존 4-block 구조를 유지하고 fresh seed 0을 고정16M까지 학습한다. 기존3M train prefix와 평가 split을 보존하고 새 train을 추가한다. P1은 새 16M corpus 전체 CPU 감사로 passed: 35 shards / 138,240 sequences / 16,001,083 prediction tokens / 2,160 updates / overshoot 1,083. P2는 실제 Colab CPU/GPU smoke 및 hash/환경 감사로 passed다. P3은 16M 완주 후 일반 80.72%, 세 진단 81.25% / 76.37% / 86.13%로 gate 미달하여 failed로 종료했다. 160회 validation의 최소 일반 답 CE는 마지막 update 2,160의 0.349920이며 CPU 재평가·전체 데이터 재검산을 통과했다. [P2_STATUS](./experiment_v1_2/P2_STATUS.md), [P3_STATUS](./experiment_v1_2/P3_STATUS.md), [중단 보고](./experiment_v1_2/results/p3_stop_report.md)를 따른다. 실행은 보존된 v1 입력 번들 기반이고 v2와 실제 데이터·코드는 동일하다. P4 및 표현 분석은 진행하지 않는다. 본 분기의 예산·gate 시점·shard 예외·저장 규칙은 새 설계를 따른다.
+
+## 17. v1.3 상태 전이 shortcut 진단 설계 (2026-09-17)
+
+[v1.3 설계](./experiment_v1_3/DESIGN.md)는 v1.2의 첫 READ·구조 깊이별 실패와 같은 상태 재READ의 높은 정확도를 바탕으로 깊이·용량과 loss 배분 가설을 분리한다. 새 select/gate/test를 예약하고, `base4`/`wide4`/`deep8` × `uniform`/`read4` 여섯 pilot cell을 seed 0·8M에서 비교한다. 사전 eligibility와 tie-break로 winner 하나만 32M 확인 단계에 승격한다. Seed 0 gate 통과 뒤 seed 1·2를 실행하며 최소 2개 seed가 새 gate를 통과해야 표현 분석으로 진행한다.
+
+현재 상태는 **design only**다. 구현, corpus 생성, CPU 감사, CPU/GPU smoke, Colab notebook, pilot 및 확인 학습은 모두 pending이다. 설계 파일 작성만으로 P1–P3 또는 행동 gate를 통과한 것으로 표시하지 않는다.
