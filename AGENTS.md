@@ -92,5 +92,5 @@
 
 ## 9. v1.2 16M 설계 진입 (2026-09-17)
 
-- 신규 16M 작업은 `experiment_v1_2/DESIGN.md`와 `design_config.json`을 먼저 읽는다. 현재 설계만 완료되었고 생성기·runner·Colab 노트북은 구현/검증 대기다. 기존 v1.1 CLI를 16M 실행기로 사용하지 않는다.
+- 신규 16M 작업은 `experiment_v1_2/DESIGN.md`와 `design_config.json`을 먼저 읽는다. 설계 문서는 당시 계획의 불변 기록이다. 현재 실행 상태는 `experiment_v1_2/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`를 확인한다. 신규 실행은 `interp_v1_2`와 `tests_v1_2`를 사용하며 기존 v1.1 CLI를 16M 실행기로 사용하지 않는다.
 - 위 §8은 v1.1 재현·감사 경로다. v1.2의 예산·데이터 확장·선택·저장 변경은 새 설계를 따르며, 기존 데이터·실패 결과를 덮어쓰지 않는다.

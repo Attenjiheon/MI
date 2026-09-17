@@ -1,0 +1,21 @@
+.F.....                                                                  [100%]
+=================================== FAILURES ===================================
+_____________________________ test_validation_only _____________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10face780>
+tmp_path = PosixPath('/private/var/folders/m4/tbjv0v953236k3zhqsds9m840000gn/T/pytest-of-jangjiheon/pytest-23/test_validation_only0')
+
+    def test_validation_only(monkeypatch,tmp_path):
+        paths=[]
+        monkeypatch.setattr(cli,'metadata',lambda p:paths.append(str(p)) or [])
+        monkeypatch.setattr(cli,'evaluate',lambda *args,**kwargs:dict(correct=1.,answer_ce=0.,rows=[dict(sequence_id=str(i)) for i in range(512)]))
+        cli.evaluate_gate_suite(object(),tmp_path,16)
+>       assert len(paths)==4 and all('val_' in p and 'test_' not in p for p in paths)
+E       AssertionError: assert (4 == 4 and False)
+E        +  where 4 = len(['/private/var/folders/m4/tbjv0v953236k3zhqsds9m840000gn/T/pytest-of-jangjiheon/pytest-23/test_validation_only0/data/l...pytest-of-jangjiheon/pytest-23/test_validation_only0/data/language_v1_2/diagnostics/val_first_read_after_set.jsonl.gz'])
+E        +  and   False = all(<generator object test_validation_only.<locals>.<genexpr> at 0x10fb39cb0>)
+
+tests_v1_2/test_runner.py:37: AssertionError
+=========================== short test summary info ============================
+FAILED tests_v1_2/test_runner.py::test_validation_only - AssertionError: asse...
+1 failed, 6 passed in 515.67s (0:08:35)

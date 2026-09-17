@@ -1,0 +1,55 @@
+{
+  "budget": 16000000,
+  "data_hashes": {
+    "corpus_statistics.json": "b5505a8126ad5b244f155e9467f387a2a48ea389d11e327b764b95c2d1408b8e",
+    "cpu_validation.json": "6298791ddcf6eba2706d7c3656523c99a2aaa6ca4607fdf903e12f068be7e356",
+    "manifest.json": "87ec2e772f6f239c55b53a485ec861fe257ce15145727fb0b1f4bd9d3bc1af1c",
+    "postwrite_audit.json": "fa84cdecfcdf1e03edec54818adb71e9f8615fc3dfa3ef4f9bb7dfe6989ea1e6"
+  },
+  "data_root": "data/language_v1_2",
+  "design_sha256": "858302e9d983c614082616c11a7dab6ce84c436f12ea385e4324dd2db8098ebd",
+  "effective_batch": 64,
+  "frozen_training": {
+    "actual_prediction_tokens": 16001083,
+    "final_cursor": 138240,
+    "final_update": 2160,
+    "milestones": {
+      "1000000": {
+        "cursor": 8704,
+        "prediction_tokens": 1002099,
+        "update": 136
+      },
+      "16000000": {
+        "cursor": 138240,
+        "prediction_tokens": 16001083,
+        "update": 2160
+      },
+      "3000000": {
+        "cursor": 26048,
+        "prediction_tokens": 3004531,
+        "update": 407
+      },
+      "8000000": {
+        "cursor": 69248,
+        "prediction_tokens": 8001583,
+        "update": 1082
+      }
+    },
+    "nominal_prediction_tokens": 16000000,
+    "overshoot": 1083,
+    "prefix_prediction_tokens": 3004531,
+    "prefix_sequences": 26048,
+    "shards": 35
+  },
+  "milestones": [
+    1000000,
+    3000000,
+    8000000,
+    16000000
+  ],
+  "persistent_policy": "immutable_files_incremental_copy_atomic_completion_index",
+  "schema": "p3-run-v1.2",
+  "seed": 0,
+  "selection": "minimum_general_validation_answer_ce_earlier_update_tie",
+  "validation_interval": 100000
+}

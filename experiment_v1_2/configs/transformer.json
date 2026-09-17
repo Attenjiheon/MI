@@ -1,0 +1,150 @@
+{
+  "checkpoint": {
+    "atomic_temp_then_rename": true,
+    "required_payload": [
+      "model",
+      "optimizer",
+      "rng_states",
+      "update",
+      "prediction_tokens",
+      "next_data_cursor",
+      "next_validation_boundary",
+      "best_validation",
+      "config_and_hashes"
+    ],
+    "save_after_elapsed_minutes_at_next_update": 15,
+    "save_at_each_validation": true,
+    "select_metric": "general_validation_answer_cross_entropy",
+    "select_mode": "minimum",
+    "tie_break": "earlier_update",
+    "verify_persistent_copy_checksum": true
+  },
+  "config_version": "p3-config-v1.2",
+  "determinism": {
+    "amp": false,
+    "cross_environment_bitwise_identity_claimed": false,
+    "cudnn_benchmark": false,
+    "python_numpy_torch_cuda_rng_seeded": true,
+    "tf32": false,
+    "torch_compile": false,
+    "torch_deterministic_algorithms": true
+  },
+  "gate": {
+    "diagnostic_conditions": [
+      "other_variable",
+      "repeated_update",
+      "first_read_after_set"
+    ],
+    "diagnostic_full_vocabulary_target_accuracy_min_each": 0.95,
+    "diagnostic_sequences_each": 512,
+    "general_validation_full_vocabulary_answer_accuracy_min": 0.99,
+    "test_may_select_checkpoint": false
+  },
+  "hooks": {
+    "blocks.{layer}.mlp_in": "u_l = LN_mlp(r_mid_l)",
+    "blocks.{layer}.mlp_out": "m_l after output projection and bias, before residual addition",
+    "blocks.{layer}.resid_post": "h_l = r_mid_l + m_l"
+  },
+  "initialization": {
+    "attention_and_mlp_output_weight_multiplier": 0.35355339059327373,
+    "embedding_and_linear_weight": "independent_normal_mean_0_std_0.02",
+    "layer_norm_bias": 0.0,
+    "layer_norm_weight": 1.0,
+    "linear_bias": 0.0,
+    "lm_seeds": [
+      0,
+      1,
+      2
+    ],
+    "save_init_checkpoint": true
+  },
+  "masking": {
+    "causal_mask": true,
+    "key_padding_mask": true,
+    "pad_query_outputs_are_not_evaluated": true,
+    "right_padding": true
+  },
+  "model": {
+    "attention_heads": 4,
+    "attention_output_bias": true,
+    "blocks": 4,
+    "context_length": 768,
+    "dropout": 0.0,
+    "embedding_scale": null,
+    "excluded": [
+      "learned_position_embedding",
+      "gqa",
+      "gated_mlp",
+      "kv_cache",
+      "packing"
+    ],
+    "expected_trainable_parameters": 797184,
+    "final_layer_norm": true,
+    "head_width": 32,
+    "layer_norm_affine": true,
+    "layer_norm_epsilon": 1e-05,
+    "maximum_observed_train_sequence_length": 302,
+    "mlp_activation": "gelu_exact",
+    "mlp_bias": true,
+    "mlp_width": 512,
+    "pre_layer_norm": true,
+    "qkv_bias": true,
+    "residual_width": 128,
+    "rope": {
+      "apply_to": [
+        "q",
+        "k"
+      ],
+      "apply_to_v": false,
+      "base": 10000,
+      "dimensions": 32,
+      "enabled": true,
+      "pairing": "adjacent",
+      "position_scaling": null
+    },
+    "tie_embedding_unembedding": false,
+    "type": "causal_decoder_only",
+    "unembedding_bias": false,
+    "vocab_size": 15
+  },
+  "spec_version": "experiment-spec-v1.2",
+  "training": {
+    "budget_policy": "fixed_no_early_gate_stop",
+    "dtype": "float32",
+    "effective_batch_sequences": 64,
+    "finish_first_complete_update_after_budget": true,
+    "global_gradient_clip_norm": 1.0,
+    "gradient_accumulation": "sum_microbatch_ce_divided_by_effective_batch_valid_target_count",
+    "ignore_pad_targets_only": true,
+    "initial_accumulation_steps": 4,
+    "initial_microbatch_sequences": 16,
+    "keep_pad_and_bos_logits": true,
+    "label_smoothing": 0.0,
+    "learning_rate_after_warmup": 0.0003,
+    "loss": "full_vocabulary_next_token_cross_entropy",
+    "nominal_prediction_tokens": 16000000,
+    "oom_microbatch_fallback": [
+      16,
+      8,
+      4,
+      2,
+      1
+    ],
+    "optimizer": {
+      "amsgrad": false,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "epsilon": 1e-08,
+      "learning_rate": 0.0003,
+      "name": "AdamW",
+      "weight_decay": 0.01,
+      "weight_decay_scope": "embedding_and_matrix_weights_only"
+    },
+    "train_shard_order_from_language_config": true,
+    "validation_every_prediction_tokens": 100000,
+    "warmup_formula": "3e-4 * min(1, (T_before + N) / 50000)",
+    "warmup_prediction_tokens": 50000
+  }
+}

@@ -273,4 +273,4 @@ phase / run_id / status(pending|running|passed|failed|paused|skipped)
 
 ## 16. v1.2 4-block / 16M 계획 (2026-09-17)
 
-[새 설계](./experiment_v1_2/DESIGN.md)는 기존 4-block 구조를 유지하고 fresh seed 0을 고정16M까지 학습한다. 기존3M train prefix와 평가 split을 보존하고 새 train을 추가한다. 설계만 완료되었으며 새 P1/P2/P3는 모두 pending이다. 본 분기의 예산·gate 시점·shard 예외·저장 규칙은 새 설계를 따르며, 실제 CPU 검증과 GPU smoke 증빙 후에만 본학습을 시작한다.
+[새 설계](./experiment_v1_2/DESIGN.md)는 기존 4-block 구조를 유지하고 fresh seed 0을 고정16M까지 학습한다. 기존3M train prefix와 평가 split을 보존하고 새 train을 추가한다. P1은 새 16M corpus 전체 CPU 감사로 passed: 35 shards / 138,240 sequences / 16,001,083 prediction tokens / 2,160 updates / overshoot 1,083. P2의 CPU 검증·Colab 준비 상태는 [P2_STATUS](./experiment_v1_2/P2_STATUS.md), GPU 실행 대기 상태는 [P3_STATUS](./experiment_v1_2/P3_STATUS.md)를 따른다. 새 GPU smoke와 seed 0 실제 실행 증빙이 없으므로 P2 전체와 P3은 완료가 아니다. 본 분기의 예산·gate 시점·shard 예외·저장 규칙은 새 설계를 따른다.
