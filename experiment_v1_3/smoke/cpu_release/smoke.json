@@ -1,0 +1,428 @@
+{
+  "phase": "v1.3-smoke",
+  "status": "passed",
+  "scope": "cpu",
+  "debug_only": true,
+  "reuse_in_experiment": false,
+  "input_hashes": {
+    "corpus_manifest": "7021b5f9fb6d79a77d1e8a2b371351729b149e2bdee77d4f388c81a737ac9f02",
+    "configs": "acd927517ccc8513b2dc9a022963167bdc4c27fd7d63376777d295d3d379cc34",
+    "verified_files": 200,
+    "debug": "815194b8b5795ba1238484e20531052c30cbfeecf6e1f13074d3e3f12d356e50",
+    "code": {
+      "interp_v1_3/__init__.py": "f453771d251217adee01f4860844957bd6c8c30a745b547635ffbf1672b84d3b",
+      "interp_v1_3/behavior.py": "91cae44be2bc9e930e0eaa5af3c6a82991cd6a229e34c5bbf6bbf523645b4cbc",
+      "interp_v1_3/cli.py": "c9953ac2519300327af8bb63eefe77be754e1e8fe4cdd5e050a209b607b57447",
+      "interp_v1_3/data.py": "38f1b5729b06061588b2172ca6bd0c8975d58a5fb70114fbc8ea6c3babf5ad16",
+      "interp_v1_3/dictionary.py": "7b8641069113de55746c9957e1132de909300189bb5e8aea65ea2741d68e5b30",
+      "interp_v1_3/model.py": "eae94a1e3cecb34f6b94239160b3efb9f5557f82afddc58b4b82ede3eff78e4b",
+      "interp_v1_3/patching.py": "999b8037ac1e86773848f33ad3251a99d901e9cffaa30f96bc8a5f1d225f24c5",
+      "interp_v1_3/persistence.py": "460e41f8429cfb3bceb8a041e6644e7f33c273b0ef68d47c5e94650b2cfa8219",
+      "interp_v1_3/probe.py": "7248fe0f46ae94419748d2f954101def4b73f1033dda1003c89555c0c38a9486",
+      "interp_v1_3/runtime.py": "67ab3834a15f0d128f6d0d4c27cbf035989c183f2f7e6ff416958d0efcf4b6ce",
+      "interp_v1_3/smoke.py": "cb6b244b082ad1b3dfa80db2d3178bf14eeb23dec69f82940a6b9d75d8258817",
+      "interp_v1_3/training.py": "da2f8d595fdf7493ae248da9f4066ec8c616036844405b95a0c246c939fc89ab"
+    }
+  },
+  "environment": {
+    "python": "3.11.15 (main, Mar  3 2026, 09:26:23) [GCC 13.3.0]",
+    "executable": "/usr/bin/python3",
+    "platform": "Linux-6.18.44-fc-v33-x86_64-with-glibc2.39",
+    "torch": "2.14.0+cu130",
+    "numpy": "2.4.4",
+    "cuda": "13.0",
+    "cudnn": 92400,
+    "disk_free_bytes": 20728598528,
+    "ram_bytes": 8422506496,
+    "gpu": null,
+    "vram_bytes": 0,
+    "lock_sha256": "6f9f7e71c84e40fba3566bf6bb0a38bd626c5ebd347b0534f79b1de139356d5b",
+    "environment_id": "f27a8fafc6f8eeaa"
+  },
+  "cells": {
+    "base4_uniform": {
+      "parameters": 797184,
+      "blocks": 4,
+      "width": 128,
+      "padding_max_abs_error": 0.0,
+      "causal_and_pad_mask": "passed",
+      "rope_head_width": 32,
+      "loss_weights": {
+        "read_answer_targets": 145,
+        "prediction_tokens": 1037,
+        "loss_weight_sum": 1037.0,
+        "rejects_non_bit_answer_target": true
+      },
+      "gradient_accumulation_max_abs_error": 5.960464477539063e-08,
+      "training": [
+        {
+          "loss": 2.7015506307797943,
+          "prediction_tokens": 7191,
+          "loss_weight_sum": 7191.0,
+          "read_answer_targets": 993,
+          "lr": 4.3145999999999997e-05,
+          "gradient_norm": 7.569482803344727
+        },
+        {
+          "loss": 2.5828814346311333,
+          "prediction_tokens": 7113,
+          "loss_weight_sum": 7113.0,
+          "read_answer_targets": 973,
+          "lr": 8.5824e-05,
+          "gradient_norm": 5.648534774780273
+        }
+      ],
+      "resume": {
+        "status": "passed",
+        "checkpoint_sha256": "68edb1c83678984d241887a5716fc922d1c4369bd4882e483ddc671a0f11eb81",
+        "next_cursor": 192,
+        "next_update": 3,
+        "prediction_tokens": 21755,
+        "model_tensor_sha256": "188765053d7164dcc644b5a32e8c1128e7a8cc0711fabf20a324149d7589db95"
+      },
+      "select_metric_path": {
+        "general": {
+          "answer_count": 394,
+          "sequence_count": 24,
+          "answer_ce": 2.221837933293454,
+          "accuracy": 0.07614213197969544,
+          "binary_accuracy": 0.4796954314720812,
+          "bit_mass": 0.2181515134303703
+        },
+        "first_macro_answer_ce": 2.2171854632241383,
+        "first_macro_accuracy": 0.07142857142857142,
+        "repeat_macro_answer_ce": 2.2201795748301913,
+        "paired_gap": {
+          "answer_ce_first_minus_repeat": -0.0029941116060529438,
+          "accuracy_first_minus_repeat": 0.0
+        },
+        "pair_cells": 42
+      }
+    },
+    "base4_read4": {
+      "parameters": 797184,
+      "blocks": 4,
+      "width": 128,
+      "padding_max_abs_error": 0.0,
+      "causal_and_pad_mask": "passed",
+      "rope_head_width": 32,
+      "loss_weights": {
+        "read_answer_targets": 145,
+        "prediction_tokens": 1037,
+        "loss_weight_sum": 1472.0,
+        "rejects_non_bit_answer_target": true
+      },
+      "gradient_accumulation_max_abs_error": 1.7881393432617188e-07,
+      "training": [
+        {
+          "loss": 2.7163493078601277,
+          "prediction_tokens": 7191,
+          "loss_weight_sum": 10170.0,
+          "read_answer_targets": 993,
+          "lr": 4.3145999999999997e-05,
+          "gradient_norm": 12.071887016296387
+        },
+        {
+          "loss": 2.5420932800195626,
+          "prediction_tokens": 7113,
+          "loss_weight_sum": 10032.0,
+          "read_answer_targets": 973,
+          "lr": 8.5824e-05,
+          "gradient_norm": 8.629240036010742
+        }
+      ],
+      "resume": {
+        "status": "passed",
+        "checkpoint_sha256": "7e250eea03f93867574bce7b7f714c247342423a70cf83510de044bb55dd0c83",
+        "next_cursor": 192,
+        "next_update": 3,
+        "prediction_tokens": 21755,
+        "model_tensor_sha256": "115fe04c1f4f4d5ce2725f253f8ad36e6bee5fa573284dc3ce92cda922ad4593"
+      },
+      "select_metric_path": {
+        "general": {
+          "answer_count": 394,
+          "sequence_count": 24,
+          "answer_ce": 1.7215277337785906,
+          "accuracy": 0.4949238578680203,
+          "binary_accuracy": 0.4949238578680203,
+          "bit_mass": 0.35934711183388224
+        },
+        "first_macro_answer_ce": 1.720903413636344,
+        "first_macro_accuracy": 0.5,
+        "repeat_macro_answer_ce": 1.7212668345088051,
+        "paired_gap": {
+          "answer_ce_first_minus_repeat": -0.00036342087246122814,
+          "accuracy_first_minus_repeat": 0.0
+        },
+        "pair_cells": 42
+      }
+    },
+    "wide4_uniform": {
+      "parameters": 1640544,
+      "blocks": 4,
+      "width": 184,
+      "padding_max_abs_error": 0.0,
+      "causal_and_pad_mask": "passed",
+      "rope_head_width": 46,
+      "loss_weights": {
+        "read_answer_targets": 145,
+        "prediction_tokens": 1037,
+        "loss_weight_sum": 1037.0,
+        "rejects_non_bit_answer_target": true
+      },
+      "gradient_accumulation_max_abs_error": 5.960464477539063e-08,
+      "training": [
+        {
+          "loss": 2.7257725314194827,
+          "prediction_tokens": 7191,
+          "loss_weight_sum": 7191.0,
+          "read_answer_targets": 993,
+          "lr": 4.3145999999999997e-05,
+          "gradient_norm": 9.708578109741211
+        },
+        {
+          "loss": 2.514528512384894,
+          "prediction_tokens": 7113,
+          "loss_weight_sum": 7113.0,
+          "read_answer_targets": 973,
+          "lr": 8.5824e-05,
+          "gradient_norm": 6.264074325561523
+        }
+      ],
+      "resume": {
+        "status": "passed",
+        "checkpoint_sha256": "8c9876cb56c839c6a22370c6e4c06469ff3978d14a3234811bd48c1b87ef9b9a",
+        "next_cursor": 192,
+        "next_update": 3,
+        "prediction_tokens": 21755,
+        "model_tensor_sha256": "7e60817a08e70dd37775624886bd0a15b2973f35fc97493d12bfdf40d2a2b184"
+      },
+      "select_metric_path": {
+        "general": {
+          "answer_count": 394,
+          "sequence_count": 24,
+          "answer_ce": 2.0538601394232154,
+          "accuracy": 0.012690355329949238,
+          "binary_accuracy": 0.4517766497461929,
+          "bit_mass": 0.25910835565649315
+        },
+        "first_macro_answer_ce": 2.0337675384112766,
+        "first_macro_accuracy": 0.0,
+        "repeat_macro_answer_ce": 2.038475209758395,
+        "paired_gap": {
+          "answer_ce_first_minus_repeat": -0.00470767134711856,
+          "accuracy_first_minus_repeat": 0.0
+        },
+        "pair_cells": 42
+      }
+    },
+    "wide4_read4": {
+      "parameters": 1640544,
+      "blocks": 4,
+      "width": 184,
+      "padding_max_abs_error": 0.0,
+      "causal_and_pad_mask": "passed",
+      "rope_head_width": 46,
+      "loss_weights": {
+        "read_answer_targets": 145,
+        "prediction_tokens": 1037,
+        "loss_weight_sum": 1472.0,
+        "rejects_non_bit_answer_target": true
+      },
+      "gradient_accumulation_max_abs_error": 1.1920928955078125e-07,
+      "training": [
+        {
+          "loss": 2.7750043210730087,
+          "prediction_tokens": 7191,
+          "loss_weight_sum": 10170.0,
+          "read_answer_targets": 993,
+          "lr": 4.3145999999999997e-05,
+          "gradient_norm": 13.245037078857422
+        },
+        {
+          "loss": 2.498502497087445,
+          "prediction_tokens": 7113,
+          "loss_weight_sum": 10032.0,
+          "read_answer_targets": 973,
+          "lr": 8.5824e-05,
+          "gradient_norm": 8.912684440612793
+        }
+      ],
+      "resume": {
+        "status": "passed",
+        "checkpoint_sha256": "c5ab0b1d3194411a8fe14f1bf3e3451407e817afb6ece3ab26ae9a5961894a4d",
+        "next_cursor": 192,
+        "next_update": 3,
+        "prediction_tokens": 21755,
+        "model_tensor_sha256": "6248442c850f37065eec7ef2f425968565aa73c4c6714fe62d5e76099a2cb266"
+      },
+      "select_metric_path": {
+        "general": {
+          "answer_count": 394,
+          "sequence_count": 24,
+          "answer_ce": 1.5179346687902653,
+          "accuracy": 0.4796954314720812,
+          "binary_accuracy": 0.4796954314720812,
+          "bit_mass": 0.44334857725552496
+        },
+        "first_macro_answer_ce": 1.4935149522054763,
+        "first_macro_accuracy": 0.4523809523809524,
+        "repeat_macro_answer_ce": 1.494306328750792,
+        "paired_gap": {
+          "answer_ce_first_minus_repeat": -0.0007913765453156971,
+          "accuracy_first_minus_repeat": 0.0
+        },
+        "pair_cells": 42
+      }
+    },
+    "deep8_uniform": {
+      "parameters": 1590272,
+      "blocks": 8,
+      "width": 128,
+      "padding_max_abs_error": 0.0,
+      "causal_and_pad_mask": "passed",
+      "rope_head_width": 32,
+      "loss_weights": {
+        "read_answer_targets": 145,
+        "prediction_tokens": 1037,
+        "loss_weight_sum": 1037.0,
+        "rejects_non_bit_answer_target": true
+      },
+      "gradient_accumulation_max_abs_error": 8.940696716308594e-08,
+      "training": [
+        {
+          "loss": 2.7297657635195036,
+          "prediction_tokens": 7191,
+          "loss_weight_sum": 7191.0,
+          "read_answer_targets": 993,
+          "lr": 4.3145999999999997e-05,
+          "gradient_norm": 11.031822204589844
+        },
+        {
+          "loss": 2.5313584611802336,
+          "prediction_tokens": 7113,
+          "loss_weight_sum": 7113.0,
+          "read_answer_targets": 973,
+          "lr": 8.5824e-05,
+          "gradient_norm": 5.952391147613525
+        }
+      ],
+      "resume": {
+        "status": "passed",
+        "checkpoint_sha256": "c105121b6dcbbd022cee2ceb53179070c18029d8f8288512b906a77d7f57b946",
+        "next_cursor": 192,
+        "next_update": 3,
+        "prediction_tokens": 21755,
+        "model_tensor_sha256": "960d3e25146a260d59f836dd51397e9d773ffc3ddae7d48f2a55d61e531820ba"
+      },
+      "select_metric_path": {
+        "general": {
+          "answer_count": 394,
+          "sequence_count": 24,
+          "answer_ce": 2.161869021236594,
+          "accuracy": 0.10152284263959391,
+          "binary_accuracy": 0.4873096446700508,
+          "bit_mass": 0.23443476515372996
+        },
+        "first_macro_answer_ce": 2.1526797101611184,
+        "first_macro_accuracy": 0.16666666666666666,
+        "repeat_macro_answer_ce": 2.151415532543546,
+        "paired_gap": {
+          "answer_ce_first_minus_repeat": 0.0012641776175726029,
+          "accuracy_first_minus_repeat": 0.0
+        },
+        "pair_cells": 42
+      }
+    },
+    "deep8_read4": {
+      "parameters": 1590272,
+      "blocks": 8,
+      "width": 128,
+      "padding_max_abs_error": 0.0,
+      "causal_and_pad_mask": "passed",
+      "rope_head_width": 32,
+      "loss_weights": {
+        "read_answer_targets": 145,
+        "prediction_tokens": 1037,
+        "loss_weight_sum": 1472.0,
+        "rejects_non_bit_answer_target": true
+      },
+      "gradient_accumulation_max_abs_error": 1.1920928955078125e-07,
+      "training": [
+        {
+          "loss": 2.712958753917773,
+          "prediction_tokens": 7191,
+          "loss_weight_sum": 10170.0,
+          "read_answer_targets": 993,
+          "lr": 4.3145999999999997e-05,
+          "gradient_norm": 14.78782844543457
+        },
+        {
+          "loss": 2.4709343187736743,
+          "prediction_tokens": 7113,
+          "loss_weight_sum": 10032.0,
+          "read_answer_targets": 973,
+          "lr": 8.5824e-05,
+          "gradient_norm": 7.533535957336426
+        }
+      ],
+      "resume": {
+        "status": "passed",
+        "checkpoint_sha256": "41accc1450e10e0b09ac898d09c616141a7d02ce5a7cb55e6ab0a0476dde6386",
+        "next_cursor": 192,
+        "next_update": 3,
+        "prediction_tokens": 21755,
+        "model_tensor_sha256": "5ddbf25c5d2a42c9c4f919906675a835a70b940683ad0feaf1a1c55562bff0cf"
+      },
+      "select_metric_path": {
+        "general": {
+          "answer_count": 394,
+          "sequence_count": 24,
+          "answer_ce": 1.6912801229409156,
+          "accuracy": 0.5076142131979695,
+          "binary_accuracy": 0.5076142131979695,
+          "bit_mass": 0.3695721656537903
+        },
+        "first_macro_answer_ce": 1.6909132940428597,
+        "first_macro_accuracy": 0.40476190476190477,
+        "repeat_macro_answer_ce": 1.6892224181266058,
+        "paired_gap": {
+          "answer_ce_first_minus_repeat": 0.0016908759162539528,
+          "accuracy_first_minus_repeat": 0.0
+        },
+        "pair_cells": 42
+      }
+    }
+  },
+  "anchor_v1_2_equivalence": {
+    "status": "passed",
+    "initialization": "bitwise_equal",
+    "first_update": "bitwise_equal",
+    "loss": 2.7015506307797943,
+    "model_tensor_sha256": "65e9c8ac7b5a281b1a86f88674214ac4e46e164a026a02afaa633ca1daef844e"
+  },
+  "selection_code_path": {
+    "decision": "promote",
+    "winner": "wide4_read4",
+    "debug_only": true
+  },
+  "gate_code_path": {
+    "passed": false,
+    "checks": {
+      "general": false,
+      "legacy": false,
+      "first_cell_macro": false,
+      "first_operator": false,
+      "first_depth": false,
+      "first_answer": false,
+      "repeat_cell_macro": false,
+      "coverage": true
+    },
+    "debug_only": true
+  },
+  "smoke_select_pairs_one_per_cell": 42,
+  "smoke_select_sequences": 24,
+  "elapsed_seconds": 39.56564736366272,
+  "peak_memory_bytes": 1134346240
+}

@@ -121,3 +121,136 @@ def test_pilot_selection_and_gate_follow_frozen_rules():
     assert gate(general, diagnostics, value["select_pairs"], design["gate"])["passed"]
     value["select_pairs"]["first"]["depth"]["cells"]["4+"]["accuracy"] = 0.94
     assert not gate(general, diagnostics, value["select_pairs"], design["gate"])["passed"]
+
+
+def milestone(ce, general_ce, update, prediction_tokens):
+    value = metric(ce, 0.5)
+    return {
+        "current": {
+            "checkpoint": f"checkpoints/update_{update:06d}.pt",
+            "update": update,
+            "prediction_tokens": prediction_tokens,
+            "validation": {
+                "general": {"answer_ce": general_ce, "accuracy": 0.5},
+                "pairs": value["select_pairs"],
+            },
+        }
+    }
+
+
+def test_stage_contract_matches_the_frozen_budget_and_cursor():
+    from interp_v1_3.cli import stage_contract
+
+    pilot = stage_contract(Path("."), "pilot", "base4_uniform")
+    assert pilot["budget"] == 8_000_000 and pilot["milestones"] == [1_000_000, 3_000_000, 8_000_000]
+    assert pilot["expected"] == {"cursor": 69_248, "prediction_tokens": 8_001_583, "update": 1_082}
+    assert (pilot["architecture"], pilot["loss"], pilot["expected_parameters"]) == ("base4", "uniform", 797_184)
+    confirm = stage_contract(Path("."), "confirm", "wide4_read4")
+    assert confirm["budget"] == 32_000_000 and confirm["milestones"][-1] == 32_000_000
+    assert confirm["expected"] == {"cursor": 271_936, "prediction_tokens": 32_004_917, "update": 4_249}
+    assert (confirm["architecture"], confirm["loss"], confirm["expected_parameters"]) == ("wide4", "read4", 1_640_544)
+    with pytest.raises(ValueError, match="six frozen pilot cells"):
+        stage_contract(Path("."), "pilot", "deep8_read8")
+
+
+def test_checkpoint_selection_uses_first_member_macro_ce_then_general_then_earlier():
+    from interp_v1_3.cli import select_checkpoint
+
+    milestones = {
+        "1000000": milestone(0.90, 0.40, 136, 1_002_099),
+        "3000000": milestone(0.50, 0.50, 407, 3_004_531),
+        "8000000": milestone(0.60, 0.30, 1082, 8_001_583),
+    }
+    assert select_checkpoint(milestones, "pilot", 8_000_000, 1e-4)["update"] == 1082
+    assert select_checkpoint(milestones, "confirm", 8_000_000, 1e-4)["update"] == 407
+    milestones["8000000"] = milestone(0.50 + 5e-5, 0.10, 1082, 8_001_583)
+    assert select_checkpoint(milestones, "confirm", 8_000_000, 1e-4)["update"] == 1082
+    milestones["8000000"] = milestone(0.50, 0.50, 1082, 8_001_583)
+    assert select_checkpoint(milestones, "confirm", 8_000_000, 1e-4)["update"] == 407
+
+
+def test_progress_cursor_and_token_accounting_is_validated_on_resume():
+    from interp_v1_3.cli import validate_progress
+
+    rows = sequences()[:256]
+    state = Progress(update=2, prediction_tokens=sum(len(r) - 1 for r in rows[:128]), next_data_cursor=128)
+    validate_progress(state, rows)
+    with pytest.raises(ValueError, match="cursor/update"):
+        validate_progress(Progress(update=2, prediction_tokens=0, next_data_cursor=64), rows)
+    with pytest.raises(ValueError, match="token cursor"):
+        validate_progress(Progress(update=2, prediction_tokens=1, next_data_cursor=128), rows)
+
+
+def test_learning_rate_is_warmup_stable_decay_without_extension():
+    from interp_v1_3.training import learning_rate
+
+    assert learning_rate(25_000) == pytest.approx(1.5e-4)
+    assert learning_rate(50_000) == pytest.approx(3e-4)
+    assert learning_rate(8_000_000) == pytest.approx(3e-4)
+    assert learning_rate(28_800_000) == pytest.approx(3e-4)
+    assert learning_rate(30_400_000) == pytest.approx(1.65e-4)
+    assert learning_rate(32_000_000) == pytest.approx(3e-5)
+    assert learning_rate(40_000_000) == pytest.approx(3e-5)
+
+
+def test_runner_and_smoke_never_reference_the_test_split():
+    """No executable string in the v1.3 runner may name a test/ data path."""
+    import ast
+
+    for name in ("cli.py", "smoke.py", "behavior.py"):
+        source = Path("interp_v1_3") / name
+        tree = ast.parse(source.read_text())
+        docstrings = {
+            id(ast.get_docstring(node, clean=False))
+            for node in ast.walk(tree)
+            if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        literals = [
+            node.value
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node.value) not in docstrings
+        ]
+        assert literals, name
+        assert not [text for text in literals if "test" in text and "/" in text], name
+
+
+def test_production_runs_refuse_cpu_and_an_absent_gpu_smoke(tmp_path):
+    import argparse
+
+    from interp_v1_3.cli import run as cli_run
+
+    args = argparse.Namespace(
+        root=Path("."), output=tmp_path / "run", cell="base4_uniform", stage="pilot", lm_seed=0,
+        device="cpu", microbatch=16, persistent_dir=None, resume=None, smoke_report=None,
+        debug=False, pause_after_updates=None,
+    )
+    with pytest.raises(ValueError, match="CUDA"):
+        cli_run(args)
+    assert not (tmp_path / "run").exists()
+
+
+def test_pilot_tie_break_prefers_uniform_then_fewer_parameters():
+    design = json.loads(Path("experiment_v1_3/design_config.json").read_text())
+    candidates = {candidate: metric(0.5, 0.8) for candidate in design["pilot"]["cells"]}
+    for candidate in ("wide4_read4", "deep8_read4", "deep8_uniform"):
+        candidates[candidate] = metric(0.44, 0.8)
+    # Equal first-member macro CE and equal general CE: uniform wins over both read4 cells.
+    assert select_pilot(candidates, design)["winner"] == "deep8_uniform"
+    candidates["wide4_read4"] = metric(0.44 - 2e-4, 0.8)
+    assert select_pilot(candidates, design)["winner"] == "wide4_read4"
+    unvalidated = dict(candidates)
+    unvalidated["wide4_read4"] = metric(0.44 - 2e-4, 0.8, validated=False)
+    assert select_pilot(unvalidated, design)["winner"] == "deep8_uniform"
+
+
+def test_pilot_winner_report_rejects_debug_runs(tmp_path):
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("winner", Path("scripts/select_v1_3_pilot_winner.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    (tmp_path / "result.json").write_text(
+        json.dumps({"stage": "pilot", "debug_only": True, "lm_seed": 0, "cell": "base4_uniform"})
+    )
+    with pytest.raises(ValueError, match="production pilot"):
+        module.candidate(tmp_path, None)
