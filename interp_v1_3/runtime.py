@@ -5,6 +5,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import torch
+
 from interp_v1_2.runtime import (
     deterministic,
     environment,
@@ -20,6 +22,23 @@ from interp_v1_2.runtime import (
 def seed(purpose, key):
     payload = f"20260917|experiment-spec-v1.3|{purpose}|{key}".encode()
     return int.from_bytes(hashlib.sha256(payload).digest()[:8], "big")
+
+
+def tensor_digest(state_dict):
+    """Order-independent byte digest of model tensors for bitwise anchor comparison."""
+    value = hashlib.sha256()
+    for name in sorted(state_dict):
+        tensor = state_dict[name].detach().cpu().contiguous()
+        value.update(name.encode())
+        value.update(str(tensor.dtype).encode())
+        value.update(str(tuple(tensor.shape)).encode())
+        value.update(tensor.numpy().tobytes())
+    return value.hexdigest()
+
+
+def checkpoint_tensor_digest(path):
+    payload = torch.load(path, map_location="cpu", weights_only=False)
+    return tensor_digest(payload["model"] if "model" in payload else payload)
 
 
 def verify_inputs(root):
@@ -65,6 +84,7 @@ def verify_inputs(root):
 
 
 __all__ = [
+    "checkpoint_tensor_digest",
     "deterministic",
     "environment",
     "restore",
@@ -73,6 +93,7 @@ __all__ = [
     "save",
     "seed",
     "sha",
+    "tensor_digest",
     "verified_copy",
     "verify_inputs",
 ]
