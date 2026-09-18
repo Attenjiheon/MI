@@ -1,0 +1,135 @@
+{
+  "architectures": [
+    {
+      "attention_heads": 4,
+      "blocks": 4,
+      "expected_trainable_parameters": 797184,
+      "head_width": 32,
+      "id": "base4",
+      "mlp_width": 512,
+      "output_weight_multiplier": 0.35355339059327373,
+      "residual_width": 128,
+      "rope_dimensions": 32
+    },
+    {
+      "attention_heads": 4,
+      "blocks": 4,
+      "expected_trainable_parameters": 1640544,
+      "head_width": 46,
+      "id": "wide4",
+      "mlp_width": 736,
+      "output_weight_multiplier": 0.35355339059327373,
+      "residual_width": 184,
+      "rope_dimensions": 46
+    },
+    {
+      "attention_heads": 4,
+      "blocks": 8,
+      "expected_trainable_parameters": 1590272,
+      "head_width": 32,
+      "id": "deep8",
+      "mlp_width": 512,
+      "output_weight_multiplier": 0.25,
+      "residual_width": 128,
+      "rope_dimensions": 32
+    }
+  ],
+  "checkpoint_selection": {
+    "candidate_milestones_prediction_tokens": [
+      1000000,
+      3000000,
+      8000000,
+      16000000,
+      24000000,
+      28800000,
+      30400000,
+      32000000
+    ],
+    "gate_may_reselect_checkpoint": false,
+    "mode": "minimum",
+    "near_tie_nats": 0.0001,
+    "primary_metric": "first_member_42_cell_macro_answer_ce",
+    "split": "select",
+    "tie_break": [
+      "lower_select_general_answer_ce",
+      "earlier_update"
+    ]
+  },
+  "losses": [
+    {
+      "id": "uniform",
+      "nonpad_weight": 1.0,
+      "normalization": "sum_weighted_ce_divided_by_sum_weights",
+      "read_answer_weight": 1.0
+    },
+    {
+      "answer_position_detection": "token_ids_only_READ_then_VAR_predicting_B0_or_B1",
+      "id": "read4",
+      "metadata_or_state_labels_used": false,
+      "nonpad_weight": 1.0,
+      "normalization": "sum_weighted_ce_divided_by_sum_weights",
+      "read_answer_weight": 4.0
+    }
+  ],
+  "pilot": {
+    "anchor_cell": "base4_uniform",
+    "anchor_environment_id": "e74fb1dcf8112ca0",
+    "anchor_microbatch_sequences": 16,
+    "anchor_requires_v1_2_bitwise_milestone_reproduction": true,
+    "cells": [
+      "base4_uniform",
+      "base4_read4",
+      "wide4_uniform",
+      "wide4_read4",
+      "deep8_uniform",
+      "deep8_read4"
+    ],
+    "compare_current_checkpoint_at_final_milestone_only": true,
+    "eligibility": {
+      "first_macro_ce_min_improvement_nats": 0.05,
+      "general_accuracy_max_regression_absolute": 0.02,
+      "or_first_macro_accuracy_min_improvement_absolute": 0.05
+    },
+    "lm_seeds": [
+      0
+    ],
+    "milestones_prediction_tokens": [
+      1000000,
+      3000000,
+      8000000
+    ],
+    "no_eligible_cell_action": "stop_v1_3_before_confirmatory_training",
+    "nominal_prediction_tokens": 8000000,
+    "primary_metric": "select_first_member_42_cell_macro_answer_ce",
+    "tie_break": [
+      "lower_first_macro_answer_ce",
+      "lower_general_answer_ce",
+      "uniform_loss",
+      "fewer_parameters",
+      "candidate_id_lexical"
+    ]
+  },
+  "schema": "transformer-contract-v1.3",
+  "training": {
+    "automatic_extension": false,
+    "confirmatory_nominal_prediction_tokens": 32000000,
+    "decay_start_prediction_tokens": 28800000,
+    "dropout": 0.0,
+    "dtype": "float32",
+    "effective_batch_sequences": 64,
+    "final_learning_rate": 3e-05,
+    "global_gradient_clip_norm": 1.0,
+    "optimizer": {
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "epsilon": 1e-08,
+      "learning_rate": 0.0003,
+      "name": "AdamW",
+      "weight_decay": 0.01
+    },
+    "stable_learning_rate": 0.0003,
+    "warmup_prediction_tokens": 50000
+  }
+}
