@@ -37,7 +37,8 @@ MI/
 ├── experiment_v1/    interp/        tests/        ← v1.0  (2-block, 보존)
 ├── experiment_v1_1/  interp_v1_1/   tests_v1_1/   ← v1.1  (4-block, 보존)
 ├── experiment_v1_2/  interp_v1_2/   tests_v1_2/   ← v1.2  (16M, 보존)
-└── experiment_v1_3/  interp_v1_3/   tests_v1_3/   ← v1.3  (활성)
+├── experiment_v1_3/  interp_v1_3/   tests_v1_3/   ← v1.3  (보존)
+└── experiment_v1_4/  interp_v1_4/   tests_v1_4/   ← v1.4  (활성)
 ```
 
 추적하지 않는 로컬 항목: `.venv-p2/`(로컬 파이썬 환경), `__pycache__/`, `.pytest_cache/`,
@@ -75,7 +76,8 @@ MI/
 | v1.0 | 2-block, 400,640 params, 3M | **보존** — P3 행동 gate 실패 | `experiment_v1/results/p3_stop_report.md` |
 | v1.1 | 4-block, 797,184 params, 3M | **보존** — P3 행동 gate 실패 | `experiment_v1_1/CHANGELOG.md`, `results/p3_stop_report.md` |
 | v1.2 | 4-block 고정, 16M | **보존** — 감사된 행동 gate 실패 | `experiment_v1_2/DESIGN.md`, `results/p3_stop_report.md` |
-| v1.3 | 3 architecture × 2 loss pilot, 32M | **활성** — 6-cell pilot 완료, `wide4_read4` seed 0 confirm 대기 | `experiment_v1_3/P3_STATUS.md` |
+| v1.3 | 3 architecture × 2 loss pilot, 32M | **보존** — 32M confirm 행동 gate 실패 | `experiment_v1_3/P3_STATUS.md` |
+| v1.4 | 12 blocks × 256, read4, 64M | **활성** — 수정 corpus 감사·CPU smoke 통과, GPU 미실행 | `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md` |
 
 실패한 버전은 재현과 감사를 위해 원본 그대로 남깁니다. 과거 결과를 감사할 때는 그 버전의
 코드(`interp_vX/`)와 config를 사용하며, 신규 버전의 구현으로 대체하지 않습니다.
@@ -94,19 +96,19 @@ MI/
 정리가 필요하면 구조를 바꾸는 대신 이 문서의 지도를 갱신하고, 새 산출물은 해당 버전
 디렉터리 안에 둡니다.
 
-## 5. 현재 활성 버전 (v1.3) 빠른 확인
+## 5. 현재 활성 버전 (v1.4) 빠른 확인
 
 ```bash
-.venv-p2/bin/python -m pytest tests_v1_3 -q
-.venv-p2/bin/python -m interp_v1_3.cli --help
-.venv-p2/bin/python -m interp_v1_3.smoke --device cpu --output experiment_v1_3/smoke/<새_경로>
+.venv-p2/bin/python -m pytest tests_v1_4 -q
+.venv-p2/bin/python -m interp_v1_4.cli --help
+.venv-p2/bin/python -m interp_v1_4.smoke --device cpu --output experiment_v1_4/smoke/<새_경로>
 ```
 
 출력 디렉터리는 항상 새로 만들고 기존 결과를 덮어쓰지 않습니다. 과거 버전을 감사할 때는
 `tests`/`interp`(v1.0), `tests_v1_1`/`interp_v1_1`(v1.1), `tests_v1_2`/`interp_v1_2`(v1.2)를
 같은 방식으로 사용합니다.
 
-진행 상태와 다음 작업은 `experiment_v1_3/README.md`와 `P3_STATUS.md`에서 확인합니다.
+진행 상태와 다음 작업은 `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`에서 확인합니다. 설계 당시 README는 원본 hash 보존을 위해 유지합니다.
 
 ## 6. 작업 위생
 

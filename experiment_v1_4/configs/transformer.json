@@ -1,0 +1,84 @@
+{
+  "architecture": {
+    "attention_heads": 4,
+    "blocks": 12,
+    "candidate_id": "deepwide12_read4",
+    "context_length": 768,
+    "dropout": 0.0,
+    "expected_trainable_parameters": 9485312,
+    "head_width": 64,
+    "id": "deepwide12",
+    "mlp_width": 1024,
+    "output_weight_multiplier": 0.20412414523193154,
+    "residual_width": 256,
+    "rope_dimensions": 64,
+    "tied_embedding_unembedding": false,
+    "vocabulary_size": 15
+  },
+  "checkpoint_selection": {
+    "candidate_milestones_prediction_tokens": [
+      1000000,
+      3000000,
+      8000000,
+      16000000,
+      24000000,
+      32000000,
+      48000000,
+      57600000,
+      60800000,
+      64000000
+    ],
+    "gate_may_reselect_checkpoint": false,
+    "mode": "minimum",
+    "near_tie_nats": 0.0001,
+    "near_tie_reference": "global_minimum_primary_metric",
+    "primary_metric": "first_member_42_cell_macro_answer_ce",
+    "split": "select",
+    "tie_break": [
+      "lower_select_general_answer_ce",
+      "earlier_update"
+    ]
+  },
+  "loss": {
+    "answer_position_detection": "token_ids_only_READ_then_VAR_predicting_B0_or_B1",
+    "id": "read4",
+    "metadata_or_state_labels_used": false,
+    "nonpad_weight": 1.0,
+    "normalization": "sum_weighted_ce_divided_by_sum_weights",
+    "read_answer_weight": 4.0
+  },
+  "schema": "transformer-contract-v1.4",
+  "training": {
+    "amp": false,
+    "automatic_extension": false,
+    "decay_start_prediction_tokens": 57600000,
+    "dtype": "float32",
+    "effective_batch_sequences": 64,
+    "final_learning_rate": 3e-05,
+    "fresh_initialization": true,
+    "global_gradient_clip_norm": 1.0,
+    "nominal_prediction_tokens": 64000000,
+    "optimizer": {
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "bias_and_norm_weight_decay": 0.0,
+      "epsilon": 1e-08,
+      "learning_rate": 0.0003,
+      "matrix_and_embedding_weight_decay": 0.01,
+      "name": "AdamW"
+    },
+    "smoke_microbatch_candidates_in_order": [
+      16,
+      8,
+      4,
+      2,
+      1
+    ],
+    "stable_learning_rate": 0.0003,
+    "tf32": false,
+    "torch_compile": false,
+    "warmup_prediction_tokens": 50000
+  }
+}

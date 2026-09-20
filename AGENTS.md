@@ -108,3 +108,9 @@
 - 최초 `data/language_v1_4/`의 64M 생성물은 historical READ-prefix 누락으로 거부됐다. 삭제·이동·학습하지 않는다. 수정본의 활성 경로는 `corpus_rebuild.json`의 `active_data_root`이며, 수정본 audit 통과 전에는 config 동결이나 GPU 학습을 허용하지 않는다.
 - 진행 중인 로컬 준비는 `experiment_v1_4/results/local_preparation/state.json`과 단계별 로그를 확인한다. DRAFT notebook은 실행용이 아니다. Local preparation, 실제 GPU smoke, P3 학습·gate 반환 증빙의 검증을 구분한다.
 - v1.3 confirm은 v1.4 설계에 인용된 반환 증빙상 행동 gate 실패다. v1.3 test를 열거나 seed 1·2를 추가하지 않는다. v1.4도 seed 0 gate 검증 통과 전에는 replication/test/표현 분석을 시작하지 않는다.
+
+## 12. v1.4 CPU 감사 완료 (2026-09-21)
+
+- §11의 생성 중 상태는 과거 기록이다. `rebuild_01`의 전체 독립 감사, 27 tests, frozen-input CPU smoke와 실제 CLI persistent-index resume가 통과했다. 현재 증빙은 `experiment_v1_4/results/audit_20260921_01/REPORT.md`와 `completion.json`이다.
+- 원본 생성 코드 snapshot/hash와 감사 보완 코드를 구분한다. 시도 상한 결함은 수정했고 기존 10,752 targets의 stream 재현으로 최대 58,433회임을 확인했다. Corpus와 동결 manifest/config는 수정하지 않았다.
+- P2 GPU smoke 및 P3는 미실행이다. CPU 통과를 전체 P2/P3 완료로 표시하지 않는다. P3의 cell CI 및 확장 행동 보고 항목도 최종 승인 전 보완한다.

@@ -115,10 +115,15 @@ class V14Builder(Builder):
         with gzip.open(path, "wt", encoding="utf-8", compresslevel=3) as handle:
             for cell in cells():
                 generator = v14_rng(f"{split}_first_repeat", cell.index)
-                accepted = attempts = 0
+                accepted = attempts = target_attempts = 0
+                attempts_per_target = []
                 rejects = Counter()
                 while accepted < quota:
-                    pair, used, local_rejects = sample_pair(generator, split, cell, MAX_ATTEMPTS)
+                    remaining = MAX_ATTEMPTS - target_attempts
+                    if remaining <= 0:
+                        raise RuntimeError(f"{split}/{cell.cell_id}: target MAX_ATTEMPTS exceeded: {rejects}")
+                    pair, used, local_rejects = sample_pair(generator, split, cell, remaining)
+                    target_attempts += used
                     attempts += used
                     rejects.update(local_rejects)
                     reason = self.reserve_pair(pair)
@@ -127,6 +132,8 @@ class V14Builder(Builder):
                         continue
                     handle.write(dump(pair) + "\n")
                     accepted += 1
+                    attempts_per_target.append(target_attempts)
+                    target_attempts = 0
                     answer_support[pair["answer"]] += 1
                 total_attempts += attempts
                 summary[cell.cell_id] = {
@@ -138,6 +145,7 @@ class V14Builder(Builder):
                     "accepted_pairs": accepted,
                     "independent_origins": accepted,
                     "attempts": attempts,
+                    "attempts_per_target": attempts_per_target,
                     "rejections": dict(rejects),
                     "rng_seed": v14_seed(f"{split}_first_repeat", cell.index),
                     "rng_final_state": generator.bit_generator.state,
@@ -384,13 +392,79 @@ def run():
     print(json.dumps(frozen, indent=2), flush=True)
 
 
-def audit_v1_4(root: Path):
+def validate_stored_pair(pair, split):
+    """Recompute cell membership and the single-READ insertion from stored programs."""
+    origin, repeated = pair['origin'], pair['repeat']
+    validate(origin)
+    validate(repeated)
+    first = origin['read_events'][pair['origin_target_read_id']]
+    second = repeated['read_events'][pair['repeat_target_read_id']]
+    update = origin['update_events'][first['last_update_id_for_query_var_or_null']]
+    # Derive the target's latest operation and structural depth from token IDs;
+    # replay.validate checks state/index metadata but does not recompute depth.
+    tokens = origin['token_ids']
+    states = [tokens[3 + 3 * d] - 13 for d in range(4)]
+    depths, latest = [0] * 4, [None] * 4
+    pos = 13
+    while pos < first['query_token_index'] - 1:
+        op = tokens[pos]
+        if op == 8:
+            pos += 3
+            continue
+        d = tokens[pos + 1] - 9
+        raw_pattern = str(states[d])
+        if op == 3:
+            states[d], depths[d] = tokens[pos + 2] - 13, 0
+        elif op == 4:
+            states[d], depths[d] = 1 - states[d], depths[d] + 1
+        else:
+            source = tokens[pos + 2] - 9
+            raw_pattern += str(states[source])
+            depths[d] = 1 + max(depths[d], depths[source])
+            a, b = states[d], states[source]
+            states[d] = a & b if op == 5 else a | b if op == 6 else a ^ b
+        latest[d] = (('SET', 'NOT', 'AND', 'OR', 'XOR')[op - 3], raw_pattern)
+        pos += 2 if op == 4 else 3
+    query = tokens[first['query_token_index']] - 9
+    assert depths[query] == first['structural_depth']
+    assert latest[query] == (pair['operator'], pair['input_pattern'])
+    assert update['op'] in ('NOT', 'AND', 'OR', 'XOR')
+    pattern = str(update['dst_before']) if update['op'] == 'NOT' else update['input_truth_pattern_or_null']
+    depth = first['structural_depth']
+    assert depth >= 1
+    depth_bin = '1' if depth == 1 else '2-3' if depth <= 3 else '4+'
+    cell = next(c for c in cells() if (c.operator, c.input_pattern, c.depth) == (update['op'], pattern, depth_bin))
+    assert (pair['cell_id'], pair['cell_index'], pair['operator'], pair['input_pattern'], pair['depth_bin']) == (cell.cell_id, cell.index, cell.operator, cell.input_pattern, cell.depth)
+    assert pair['split'] == origin['split'] == repeated['split'] == split
+    assert origin['target_read_ids'] == [pair['origin_target_read_id']]
+    assert repeated['target_read_ids'] == [pair['repeat_target_read_id']]
+    assert pair['repeat_target_read_id'] == pair['origin_target_read_id'] + 1
+    assert first['reads_of_query_var_since_last_update'] == 0
+    assert second['reads_of_query_var_since_last_update'] == 1
+    for key in ('query_var', 'state_at_read', 'answer', 'structural_depth'):
+        assert first[key] == second[key]
+    assert pair['answer'] == first['answer']
+    assert pair['origin_hash'] == digest(origin['token_ids'])
+    assert pair['repeat_hash'] == digest(repeated['token_ids'])
+    assert pair['pair_id'] == f"{cell.cell_id}:{pair['origin_hash']}"
+    inserted = repeated['read_events'][pair['inserted_read_id']]
+    pos = inserted['query_token_index'] - 1
+    assert inserted['query_var'] == first['query_var']
+    assert update['end_token_index'] < pos < first['query_token_index']
+    assert repeated['token_ids'][:pos] + repeated['token_ids'][pos + 3:] == origin['token_ids']
+    assert origin['rng_seed'] == repeated['rng_seed'] == v14_seed(f'{split}_first_repeat', cell.index)
+
+
+def audit_v1_4(root: Path, *, output=None, history_loader=None):
+    output = Path(output) if output is not None else root / 'postwrite_audit.json'
+    if output.exists():
+        raise FileExistsError('Preserve previous audit evidence: ' + str(output))
     manifest = json.loads((root / "manifest.json").read_text())
     for name, info in manifest["files"].items():
         path = root / name
         assert path.stat().st_size == info["bytes"] and file_hash(path) == info["sha256"], name
     base = ROOT / "data/language_v1_3"
-    prior_hashes, prior_prefixes = load_prior_registry(base)
+    prior_hashes, prior_prefixes = (history_loader or load_prior_registry)(base)
     seen_hashes = set(prior_hashes)
     seen_prefixes = set(prior_prefixes)
     new_hashes = set()
@@ -436,6 +510,7 @@ def audit_v1_4(root: Path):
         with gzip.open(root / f"first_repeat/{split}.jsonl.gz", "rt") as handle:
             for line in handle:
                 pair = json.loads(line)
+                validate_stored_pair(pair, split)
                 origin, repeat = pair["origin"], pair["repeat"]
                 cell = next(c for c in cells() if c.cell_id == pair["cell_id"])
                 assert origin["rng_seed"] == repeat["rng_seed"] == v14_seed(f"{split}_first_repeat", cell.index)
@@ -554,7 +629,8 @@ def audit_v1_4(root: Path):
         "train_sequences": train_sequences,
         "train_prediction_tokens": train_tokens,
     }
-    write_json(root / "postwrite_audit.json", result)
+    result['first_repeat_cell_and_single_insertion_semantics'] = 'passed'
+    write_json(output, result)
     print(json.dumps(result, indent=2), flush=True)
 
 

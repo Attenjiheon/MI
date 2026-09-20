@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="18" time="26.750" timestamp="2026-09-20T23:45:50.898720" hostname="JacBook-Air.local"><testcase classname="tests_v1_4.test_contract" name="test_architecture_parameter_count_shape_and_initialization_contract" time="1.040" /><testcase classname="tests_v1_4.test_contract" name="test_read4_uses_only_token_pattern_and_expected_denominator" time="0.039" /><testcase classname="tests_v1_4.test_contract" name="test_first_repeat_all_42_cells_are_valid_and_semantically_paired" time="1.170" /><testcase classname="tests_v1_4.test_contract" name="test_gate_follows_all_frozen_thresholds" time="0.006" /><testcase classname="tests_v1_4.test_contract" name="test_stage_contract_matches_frozen_64m_budget_and_cursor" time="0.009"><failure message="FileNotFoundError: [Errno 2] No such file or directory: 'experiment_v1_4/configs/run.json'">def test_stage_contract_matches_frozen_64m_budget_and_cursor():
+        from interp_v1_4.cli import stage_contract
+    
+&gt;       contract = stage_contract(Path("."), "p3", "deepwide12_read4")
+
+tests_v1_4/test_contract.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+interp_v1_4/cli.py:59: in stage_contract
+    config = json.loads((root / "experiment_v1_4/configs/run.json").read_text())
+/opt/anaconda3/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('experiment_v1_4/configs/run.json'), mode = 'r', buffering = -1
+encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: 'experiment_v1_4/configs/run.json'
+
+/opt/anaconda3/lib/python3.12/pathlib.py:1013: FileNotFoundError</failure></testcase><testcase classname="tests_v1_4.test_contract" name="test_checkpoint_selection_uses_global_near_tie_then_general_then_earlier" time="0.002" /><testcase classname="tests_v1_4.test_contract" name="test_progress_cursor_and_token_accounting_is_validated_on_resume" time="0.034" /><testcase classname="tests_v1_4.test_contract" name="test_learning_rate_is_warmup_stable_decay_without_extension" time="0.001" /><testcase classname="tests_v1_4.test_contract" name="test_runner_and_smoke_never_reference_the_test_split" time="0.020" /><testcase classname="tests_v1_4.test_contract" name="test_production_run_refuses_cpu_and_absent_gpu_smoke" time="0.002" /><testcase classname="tests_v1_4.test_contract" name="test_design_is_exactly_the_promoted_proposal_contract" time="0.001" /><testcase classname="tests_v1_4.test_contract" name="test_frozen_corpus_preserves_v13_prefix_bytes_and_quotas" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: 'data/language_v1_4/rebuild_01/manifest.json'">def test_frozen_corpus_preserves_v13_prefix_bytes_and_quotas():
+        data = Path(json.loads(Path("experiment_v1_4/corpus_rebuild.json").read_text())["active_data_root"])
+&gt;       manifest = json.loads((data / "manifest.json").read_text())
+
+tests_v1_4/test_contract.py:250: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/anaconda3/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('data/language_v1_4/rebuild_01/manifest.json'), mode = 'r'
+buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: 'data/language_v1_4/rebuild_01/manifest.json'
+
+/opt/anaconda3/lib/python3.12/pathlib.py:1013: FileNotFoundError</failure></testcase><testcase classname="tests_v1_4.test_contract" name="test_verify_inputs_binds_every_config_and_corpus_file" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: 'experiment_v1_4/configs/config_set_manifest.json'">def test_verify_inputs_binds_every_config_and_corpus_file():
+        from interp_v1_4.runtime import verify_inputs
+    
+&gt;       checked = verify_inputs(Path("."))
+
+tests_v1_4/test_contract.py:267: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+interp_v1_4/runtime.py:47: in verify_inputs
+    manifest = json.loads((config_dir / "config_set_manifest.json").read_text())
+/opt/anaconda3/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('experiment_v1_4/configs/config_set_manifest.json'), mode = 'r'
+buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: 'experiment_v1_4/configs/config_set_manifest.json'
+
+/opt/anaconda3/lib/python3.12/pathlib.py:1013: FileNotFoundError</failure></testcase><testcase classname="tests_v1_4.test_contract" name="test_history_loader_keeps_prefixes_without_surviving_rows" time="0.004" /><testcase classname="tests_v1_4.test_contract" name="test_v14_builder_seed_metadata_and_repeatability" time="0.006" /><testcase classname="tests_v1_4.test_contract" name="test_pair_coverage_rejects_empty_groups_and_wrong_ids" time="0.001" /><testcase classname="tests_v1_4.test_contract" name="test_debug_lm_resume_is_bitwise_and_keeps_cursor" time="10.274" /><testcase classname="tests_v1_4.test_contract" name="test_interpretation_smoke_width256" time="12.239" /></testsuite></testsuites>
