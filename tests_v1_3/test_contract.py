@@ -123,6 +123,51 @@ def test_pilot_selection_and_gate_follow_frozen_rules():
     assert not gate(general, diagnostics, value["select_pairs"], design["gate"])["passed"]
 
 
+def test_recorded_confirm_gate_is_bound_to_selected_checkpoint_and_quotas():
+    from scripts.verify_v1_3_evidence import verify_recorded_gate
+
+    evaluation = json.loads(Path("experiment_v1_3/configs/evaluation.json").read_text())
+    pairs = metric(0.1, 0.96)["select_pairs"]
+    expected_cells = {
+        f"{operator}:{pattern}:depth_{depth}": {"count": 64, "answer_ce": 0.1, "accuracy": 0.96}
+        for operator in ("NOT", "AND", "OR", "XOR")
+        for pattern in (("0", "1") if operator == "NOT" else ("00", "01", "10", "11"))
+        for depth in ("1", "2-3", "4+")
+    }
+    for member in ("first", "repeat"):
+        pairs[member]["cell"]["cells"] = copy.deepcopy(expected_cells)
+    for name, count in {"NOT": 384, "AND": 768, "OR": 768, "XOR": 768}.items():
+        pairs["first"]["operator"]["cells"][name]["count"] = count
+    for name in ("1", "2-3", "4+"):
+        pairs["first"]["depth"]["cells"][name]["count"] = 896
+    for name in ("0", "1"):
+        pairs["first"]["answer"]["cells"][name]["count"] = 1344
+    general = {"sequence_count": 1024, "accuracy": 0.99}
+    diagnostics = {
+        name: {"sequence_count": 1024, "answer_count": 1024, "accuracy": 0.95}
+        for name in ("other_variable", "repeated_update", "first_read_after_set")
+    }
+    decision = gate(general, diagnostics, pairs, evaluation["gate"])
+    result = {
+        "stage": "confirm",
+        "status": "passed",
+        "selected": {"checkpoint": "checkpoints/update_004249.pt", "sha256": "abc"},
+        "gate": {
+            "checkpoint": "checkpoints/update_004249.pt",
+            "checkpoint_sha256": "abc",
+            "decision": decision,
+            "general": general,
+            "diagnostics": diagnostics,
+            "pairs": {"pair_count": 2688, **pairs},
+        },
+    }
+    checked = verify_recorded_gate(result, evaluation["gate"])
+    assert checked["decision"]["passed"]
+    result["gate"]["checkpoint_sha256"] = "changed"
+    with pytest.raises(ValueError, match="checkpoint hash"):
+        verify_recorded_gate(result, evaluation["gate"])
+
+
 def milestone(ce, general_ce, update, prediction_tokens):
     value = metric(ce, 0.5)
     return {

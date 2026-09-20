@@ -1,7 +1,8 @@
 """Verify one recovered immutable v1.3 run; optionally re-evaluate the selected checkpoint.
 
-The re-evaluation repeats `select/` only. `gate/` is re-read exclusively for confirmatory runs
-that already recorded a gate decision, and `test/` is never opened.
+The optional re-evaluation repeats `select/` only. A confirmatory `gate/` result is checked
+against its recorded quotas, selected checkpoint, and frozen thresholds without opening the
+gate split a second time. `test/` is never opened.
 """
 import argparse
 import json
@@ -13,6 +14,7 @@ sys.path.insert(0, str(ROOT))
 
 import torch
 
+from interp_v1_3.behavior import LEGACY_DIAGNOSTICS, gate as gate_decision
 from interp_v1_3.cli import evaluate_select, select_checkpoint, stage_contract, validate_progress
 from interp_v1_3.data import token_rows
 from interp_v1_3.model import Transformer, parameter_count
@@ -21,6 +23,73 @@ from interp_v1_3.runtime import deterministic, sha, tensor_digest, verify_inputs
 from interp_v1_3.training import Progress
 
 EFFECTIVE_BATCH = 64
+
+
+def verify_recorded_gate(result, thresholds):
+    """Validate a recorded confirmatory gate without reading the gate split again."""
+    if result["stage"] == "pilot":
+        if result["gate"] is not None:
+            raise ValueError("Pilot run must not contain a gate result")
+        return None
+    if result["stage"] != "confirm":
+        raise ValueError("Unsupported stage: " + result["stage"])
+    recorded = result["gate"]
+    if not recorded:
+        raise ValueError("Confirmatory run is missing its one-time gate result")
+    if recorded["checkpoint"] != result["selected"]["checkpoint"]:
+        raise ValueError("Gate checkpoint differs from the frozen selected checkpoint")
+    if recorded["checkpoint_sha256"] != result["selected"]["sha256"]:
+        raise ValueError("Gate checkpoint hash differs from the frozen selected checkpoint")
+    general = recorded["general"]
+    if general["sequence_count"] != 1024:
+        raise ValueError("gate/general quota changed")
+    diagnostics = recorded["diagnostics"]
+    if set(diagnostics) != set(LEGACY_DIAGNOSTICS):
+        raise ValueError("Gate diagnostic set changed")
+    for name, value in diagnostics.items():
+        if value["sequence_count"] != 1024 or value["answer_count"] != 1024:
+            raise ValueError("Gate diagnostic quota changed: " + name)
+    pairs = recorded["pairs"]
+    if pairs["pair_count"] != 2688:
+        raise ValueError("gate/first_repeat pair quota changed")
+    expected_cells = {
+        f"{operator}:{pattern}:depth_{depth}"
+        for operator in ("NOT", "AND", "OR", "XOR")
+        for pattern in (("0", "1") if operator == "NOT" else ("00", "01", "10", "11"))
+        for depth in ("1", "2-3", "4+")
+    }
+    for member in ("first", "repeat"):
+        cells = pairs[member]["cell"]["cells"]
+        if set(cells) != expected_cells or any(value["count"] != 64 for value in cells.values()):
+            raise ValueError("Gate 42-cell coverage or quota changed: " + member)
+    first = pairs["first"]
+    expected_groups = {
+        "operator": {"NOT": 384, "AND": 768, "OR": 768, "XOR": 768},
+        "depth": {"1": 896, "2-3": 896, "4+": 896},
+        "answer": {"0": 1344, "1": 1344},
+    }
+    for group, counts in expected_groups.items():
+        values = first[group]["cells"]
+        if set(values) != set(counts) or any(values[name]["count"] != count for name, count in counts.items()):
+            raise ValueError("Gate first-member group quota changed: " + group)
+    recomputed = gate_decision(general, diagnostics, pairs, thresholds)
+    if recorded["decision"] != recomputed:
+        raise ValueError("Recorded gate decision does not follow the frozen thresholds")
+    expected_status = "passed" if recomputed["passed"] else "failed"
+    if result["status"] != expected_status:
+        raise ValueError("Run status disagrees with the gate decision")
+    return dict(
+        checkpoint=recorded["checkpoint"],
+        checkpoint_sha256=recorded["checkpoint_sha256"],
+        decision=recomputed,
+        general_accuracy=general["accuracy"],
+        diagnostic_accuracy={name: value["accuracy"] for name, value in diagnostics.items()},
+        first_macro_accuracy=pairs["first"]["cell"]["macro_accuracy"],
+        repeat_macro_accuracy=pairs["repeat"]["cell"]["macro_accuracy"],
+        operator_accuracy={name: value["accuracy"] for name, value in pairs["first"]["operator"]["cells"].items()},
+        depth_accuracy={name: value["accuracy"] for name, value in pairs["first"]["depth"]["cells"].items()},
+        answer_accuracy={name: value["accuracy"] for name, value in pairs["first"]["answer"]["cells"].items()},
+    )
 
 
 def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False):
@@ -132,6 +201,8 @@ def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False):
         anchor=None,
         reevaluation=None,
     )
+    thresholds = json.loads((ROOT / "experiment_v1_3/configs/evaluation.json").read_text())["gate"]
+    checked["gate"] = verify_recorded_gate(result, thresholds)
     if anchor:
         reference = torch.load(anchor, map_location="cpu", weights_only=False)
         reference_digest = tensor_digest(reference["model"] if "model" in reference else reference)
