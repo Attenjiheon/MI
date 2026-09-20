@@ -160,15 +160,18 @@ EXPECTED_PILOT_CHECKPOINT_SHA256='__CHECKPOINT_SHA__'
 drive.mount('/content/drive')
 DRIVE_ROOT=Path('/content/drive/MyDrive/boolean_interp_v1_3_confirm')
 INPUT_ROOT=DRIVE_ROOT/'inputs'
-WORK=Path('/content/boolean_interp')
+# Use a confirm-specific scratch path so a pilot notebook's stale
+# /content/boolean_interp file or symlink cannot collide with this run.
+WORK=Path('/content/boolean_interp_v1_3_confirm')
 SUPPORT_ROOT=Path('/content/v1_3_confirm_support')
 RUN=WORK/'experiment_v1_3/runs/confirm_wide4_read4_seed0'
 PERSISTENT=DRIVE_ROOT/'confirm_wide4_read4_seed0'
 HANDOFF_RECORD=DRIVE_ROOT/'handoff_verification.json'
 SESSION=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%f')
 INPUT_ROOT.mkdir(parents=True,exist_ok=True)
-if WORK.exists() or SUPPORT_ROOT.exists():
-    raise RuntimeError('작업 경로가 이미 있습니다. 결과를 보존하고 새 런타임에서 실행하세요.')
+occupied=[str(path) for path in (WORK,SUPPORT_ROOT) if os.path.lexists(str(path))]
+if occupied:
+    raise RuntimeError('작업 경로가 이미 있습니다(끊어진 symlink 포함): '+', '.join(occupied)+'. 결과를 보존하고 새 런타임에서 실행하세요.')
 if not RESUME and (PERSISTENT/'LATEST.json').exists():
     raise RuntimeError('기존 confirm run이 있습니다. RESUME=True로 복구하세요.')
 if not RESUME and HANDOFF_RECORD.exists():
