@@ -27,6 +27,7 @@ PILOT_RESULT = "pilot_wide4_read4_seed0/result.json"
 PILOT_AUDIT = "verification/pilot_wide4_read4_audit_20260918T183532331449.json"
 PILOT_VERSIONS = "preflight/20260918T183532331449/direct_versions.json"
 PILOT_ENVIRONMENT = "preflight/20260918T183532331449/environment.json"
+SUPPORT_ARCHIVE_ROOT = "confirm_support"
 
 
 def sha_bytes(value):
@@ -55,7 +56,7 @@ def build_support():
         if sha(SUPPORT_BUNDLE) != recorded:
             raise ValueError("Existing support bundle checksum mismatch")
         with zipfile.ZipFile(SUPPORT_BUNDLE) as archive:
-            manifest = json.loads(archive.read("confirm_support/manifest.json"))
+            manifest = json.loads(archive.read(f"{SUPPORT_ARCHIVE_ROOT}/manifest.json"))
         expected_base = BASE_CHECKSUM.read_text().split()[0]
         if manifest["base_bundle"] != {"name": BASE_BUNDLE.name, "sha256": expected_base}:
             raise ValueError("Existing support bundle refers to a different base bundle")
@@ -163,7 +164,7 @@ INPUT_ROOT=DRIVE_ROOT/'inputs'
 # Use a confirm-specific scratch path so a pilot notebook's stale
 # /content/boolean_interp file or symlink cannot collide with this run.
 WORK=Path('/content/boolean_interp_v1_3_confirm')
-SUPPORT_ROOT=Path('/content/v1_3_confirm_support')
+SUPPORT_ROOT=Path('/content')/'__SUPPORT_ARCHIVE_ROOT__'
 RUN=WORK/'experiment_v1_3/runs/confirm_wide4_read4_seed0'
 PERSISTENT=DRIVE_ROOT/'confirm_wide4_read4_seed0'
 HANDOFF_RECORD=DRIVE_ROOT/'handoff_verification.json'
@@ -185,6 +186,7 @@ print('resume:',RESUME,'session:',SESSION)
         "__BASE_SHA__": base_sha,
         "__SUPPORT_NAME__": SUPPORT_BUNDLE.name,
         "__SUPPORT_SHA__": support_sha,
+        "__SUPPORT_ARCHIVE_ROOT__": SUPPORT_ARCHIVE_ROOT,
         "__ENV_ID__": manifest["pilot"]["environment_id"],
         "__MODEL_DIGEST__": manifest["pilot"]["model_tensor_sha256"],
         "__CHECKPOINT_SHA__": manifest["pilot"]["checkpoint_sha256"],
@@ -216,6 +218,9 @@ with zipfile.ZipFile(base) as archive:
 base_manifest=json.loads((WORK/'v1_3_bundle_manifest.json').read_text())
 for name,expected in base_manifest.items(): assert sha(WORK/name)==expected,name
 with zipfile.ZipFile(support) as archive:
+    manifest_member=str((SUPPORT_ROOT/'manifest.json').relative_to('/content'))
+    if manifest_member not in archive.namelist():
+        raise RuntimeError('support ZIP에 '+manifest_member+'가 없습니다.')
     for info in archive.infolist():
         target=Path('/content')/info.filename
         if not target.resolve().is_relative_to(Path('/content').resolve()): raise RuntimeError('잘못된 support ZIP 경로')
