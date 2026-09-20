@@ -1,13 +1,14 @@
 # experiment_v1_3
 
-상태: **P1 완료 + 구현·CPU 검증 완료, GPU 실행 전**. config는 동결되었고 실행기·unit test·6-cell CPU smoke·Colab 전달물이 준비되었다. GPU smoke와 6-cell pilot은 아직 실행하지 않았다.
+상태: **6-cell pilot 선택 완료, winner seed 0 confirm 대기**. `wide4_read4`가 사전 규칙에 따라 승격되었고, confirm용 notebook과 최소 지원 번들을 검증했다. Colab 초기화 오류 두 건은 학습 전에 수정했으며, 32M 학습과 gate는 아직 시작하지 않았다.
 
 - [설계](./DESIGN.md)
 - [기계 판독 계약](./design_config.json)
 - [설계 hash manifest](./design_manifest.json)
 - [동결 config set](./configs/config_set_manifest.json)
 - [P1 생성 결과](./results/p1_generation.json) · [동결 train stream](./results/p1_frozen_training.json)
-- [P2 구현·CPU 검증 상태](./P2_STATUS.md) · [실행 기록](./results/run_registry.csv)
+- [P2 구현·CPU 검증 상태](./P2_STATUS.md) · [P3 pilot·confirm 상태](./P3_STATUS.md) · [실행 기록](./results/run_registry.csv)
+- [pilot 선택 결과](./evidence/pilot_selection.json) · [증빙 경량화 기록](./evidence/COMPACTION.md)
 
 v1.2는 16M 행동 gate 실패 실험으로 불변 보존한다. v1.3은 새 validation/test를 예약하고 제한된 3 architecture × 2 loss pilot으로 상태 전이 shortcut의 원인을 분리한 뒤, 사전 규칙으로 winner 하나만 32M 확인 단계에 올리는 별도 실험이다.
 
@@ -23,10 +24,12 @@ v1.2는 16M 행동 gate 실패 실험으로 불변 보존한다. v1.3은 새 val
 | unit test | 13 passed | `results/p2_pytest.txt` |
 | CPU smoke (6 cell 전부) | 통과 | `smoke/cpu_release/smoke.json` (환경 `f27a8fafc6f8eeaa`) |
 | Colab 입력 번들·노트북 | 준비 완료 | `results/colab_delivery.json`, `notebooks/01_colab_pilot_8m.ipynb` |
-| GPU smoke | **미실행** | — |
-| 6-cell pilot | **미실행** | — |
-| anchor bitwise 대조 (update 136/407/1082) | **미실행** | — |
-| winner seed 0 confirm → seed 1·2 → frozen test | **미실행** | — |
+| GPU smoke | 통과 | cell별 pilot audit JSON |
+| 6-cell pilot | 완료·선택 완료 | `evidence/pilot_selection.json` |
+| pilot winner | `wide4_read4` | 8M update 1,082, checkpoint `cef275da…` |
+| seed 0 confirm 전달물 | 준비·로컬 검증 완료 | `results/confirm_colab_delivery.json`, `notebooks/02_colab_confirm_wide4_read4_seed0.ipynb` |
+| winner seed 0 32M 학습·gate | **미실행** | `P3_STATUS.md` |
+| seed 1·2 → frozen test | seed 0 gate 통과 전까지 대기 | — |
 | P5–P9 표현 분석 | 미실행 (gate 통과 LM 2개 이상일 때만) | — |
 
 ## P1 확정 수치
@@ -41,12 +44,10 @@ v1.2는 16M 행동 gate 실패 실험으로 불변 보존한다. v1.3은 새 val
 
 ## 다음 작업
 
-1. `notebooks/01_colab_pilot_8m.ipynb`를 Colab GPU 런타임에서 실행한다. 한 런타임에 `CELL` 하나씩,
-   여섯 cell을 각각 돌리고 결과 ZIP과 SHA-256을 반환한다. GPU smoke가 통과해야 본학습이 시작된다.
-2. 반환된 ZIP마다 `scripts/verify_v1_3_evidence.py`로 계약·보존·선택 규칙을 다시 대조한다.
-3. `base4_uniform`의 update 136/407/1082 checkpoint가 v1.2 보존본과 bitwise 동일한지
-   `--anchor-checkpoint`로 확인한다. 불일치 시 탐색을 중단하고 구현·환경을 감사한다.
-4. 여섯 cell이 모두 끝난 뒤에만 `scripts/select_v1_3_pilot_winner.py`로 사전 규칙(§4.3)에 따라
-   winner를 하나만 승격한다. Eligible cell이 없으면 pilot failure로 종료한다.
+1. `notebooks/02_colab_confirm_wide4_read4_seed0.ipynb`를 Colab GPU 런타임에서 실행한다.
+2. 입력은 `bundles/v1_3_pilot_bundle_v1.zip`과
+   `bundles/v1_3_confirm_wide4_read4_seed0_support_v2.zip`이다.
+3. 새 Tesla T4 런타임에서 `RESUME=False`로 시작한다. 입력 ZIP이 Drive에 있으면 다시 업로드하지 않는다.
+4. seed 0을 동결된 32M 경계까지 실행하고 반환 증빙을 검증한 뒤에만 seed 1·2와 frozen test로 진행한다.
 
 gate·test 결과는 선택이 모두 끝난 뒤에만 열람한다. 어느 단계든 quota·hash·재현·수치 검사가 실패하면 뒤 단계를 시작하지 않는다.

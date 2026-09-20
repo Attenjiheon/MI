@@ -1,0 +1,2504 @@
+{
+  "phase": "v1.3-pilot",
+  "version": "v1.3",
+  "stage": "pilot",
+  "cell": "base4_read4",
+  "architecture": "base4",
+  "loss": "read4",
+  "lm_seed": 0,
+  "status": "completed",
+  "debug_only": false,
+  "hashes": {
+    "corpus_manifest": "7021b5f9fb6d79a77d1e8a2b371351729b149e2bdee77d4f388c81a737ac9f02",
+    "configs": "acd927517ccc8513b2dc9a022963167bdc4c27fd7d63376777d295d3d379cc34",
+    "verified_files": 200,
+    "code": {
+      "interp_v1_3/__init__.py": "f453771d251217adee01f4860844957bd6c8c30a745b547635ffbf1672b84d3b",
+      "interp_v1_3/behavior.py": "91cae44be2bc9e930e0eaa5af3c6a82991cd6a229e34c5bbf6bbf523645b4cbc",
+      "interp_v1_3/cli.py": "c9953ac2519300327af8bb63eefe77be754e1e8fe4cdd5e050a209b607b57447",
+      "interp_v1_3/data.py": "38f1b5729b06061588b2172ca6bd0c8975d58a5fb70114fbc8ea6c3babf5ad16",
+      "interp_v1_3/dictionary.py": "7b8641069113de55746c9957e1132de909300189bb5e8aea65ea2741d68e5b30",
+      "interp_v1_3/model.py": "eae94a1e3cecb34f6b94239160b3efb9f5557f82afddc58b4b82ede3eff78e4b",
+      "interp_v1_3/patching.py": "999b8037ac1e86773848f33ad3251a99d901e9cffaa30f96bc8a5f1d225f24c5",
+      "interp_v1_3/persistence.py": "460e41f8429cfb3bceb8a041e6644e7f33c273b0ef68d47c5e94650b2cfa8219",
+      "interp_v1_3/probe.py": "7248fe0f46ae94419748d2f954101def4b73f1033dda1003c89555c0c38a9486",
+      "interp_v1_3/runtime.py": "67ab3834a15f0d128f6d0d4c27cbf035989c183f2f7e6ff416958d0efcf4b6ce",
+      "interp_v1_3/smoke.py": "cb6b244b082ad1b3dfa80db2d3178bf14eeb23dec69f82940a6b9d75d8258817",
+      "interp_v1_3/training.py": "da2f8d595fdf7493ae248da9f4066ec8c616036844405b95a0c246c939fc89ab",
+      "interp_v1_2/__init__.py": "ebdd8e28f2d87d6f564bc3b8898f424f38565fe60dac66f46105e77b5371a5da",
+      "interp_v1_2/behavior.py": "0fa52ba2b3561bc81c892ea31a1f8aba19ed74d70a6b59854bb33c9fc2ffeac9",
+      "interp_v1_2/cli.py": "7cd545ff6f3be34c8e85572f28cbc58668c55f99d50a6dd5dce1111ff3bc01a3",
+      "interp_v1_2/data.py": "dd21ad13cde95bf3c11d5ca08b6c66e5aead13a31c7150b28ab5d5268adb267c",
+      "interp_v1_2/dictionary.py": "ece4d1beca294b0d3b819af16bba1a98261247fc9036a903ce7bf5bfdbdfd54c",
+      "interp_v1_2/model.py": "061ef32e12219b4daa1294584d2ce674c02ef615426f216cf38734b24a9e7e26",
+      "interp_v1_2/patching.py": "190dd3f2b7f846c8bac7422a1b2d03602e6a4cac600599dd8552bdda22206ff5",
+      "interp_v1_2/persistence.py": "b4af6ccd7c0c3aa55f5b72085181d6e6f83c8e7cf6d62d6c0b0c23df28955c80",
+      "interp_v1_2/probe.py": "7b60477d1a4fe00442141f0dce34b4454343be606c8f7d1eba8bc0296830343e",
+      "interp_v1_2/runtime.py": "5e2e567e28058a100b09907b427032054a5bc121087247382cad32896470cf9b",
+      "interp_v1_2/smoke.py": "78093f4a019ee499b62392f998d7fd594712cefaa5f8cd158e3bead20ca1e34a",
+      "interp_v1_2/training.py": "75f5d340dd0ddb0e268e26a62fbe0c32387a8e872a2f6abbe531abcc2c1abed8",
+      "corpus/__init__.py": "8c5214860062d4fa21cfdbd9cb19f5701037b4f4537b057611b7f5076710c9e6",
+      "corpus/audit.py": "7b1fca975636ff107f62739c98d869f5b9461a98be781b2b9648bc8d130eb3e7",
+      "corpus/generate.py": "bc5bcfd8938edb5197f54e1328c55c39ef4d2d7056db77d7d571567779651c00",
+      "corpus/language.py": "4c90c9d1a66f15d6062ac292a24c5c6f47ec65e4a6c1423713e4332ca942312c",
+      "corpus/replay.py": "4d4861be3ca04b1a0a7212ed3f39aa16d939b4cb31ae40ccf423d07d48f73a01",
+      "corpus/v1_3.py": "75640df81a754a0e0dd7f42768693e2484d724a470493dd96d9e4aba3f49871c"
+    },
+    "run_settings": {
+      "schema": "lm-run-v1.3",
+      "stage": "pilot",
+      "cell": "base4_read4",
+      "lm_seed": 0,
+      "debug": false
+    }
+  },
+  "environment": {
+    "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+    "executable": "/usr/bin/python3",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.1.3",
+    "cuda": "12.8",
+    "cudnn": 91900,
+    "disk_free_bytes": 199472562176,
+    "ram_bytes": 13605830656,
+    "gpu": "Tesla T4",
+    "vram_bytes": 15637086208,
+    "lock_sha256": "855ad8dea8f742c42f146cb8fa928ed6fbd3f1cb2dc70de8ff0dcfd7a250ffc7",
+    "environment_id": "e74fb1dcf8112ca0"
+  },
+  "parameter_count": 797184,
+  "nominal_budget": 8000000,
+  "actual_prediction_tokens": 8001583,
+  "overshoot": 1583,
+  "final_state": {
+    "update": 1082,
+    "prediction_tokens": 8001583,
+    "next_data_cursor": 69248
+  },
+  "milestones": {
+    "1000000": {
+      "current": {
+        "checkpoint": "checkpoints/update_000136.pt",
+        "update": 136,
+        "prediction_tokens": 1002099,
+        "model_tensor_sha256": "3cdab14a64507020cec151b909a7abab86d6077190741e531395daa73d003c05",
+        "validation": {
+          "general": {
+            "answer_count": 8202,
+            "sequence_count": 512,
+            "answer_ce": 0.7015419389323123,
+            "accuracy": 0.5858327237259205,
+            "binary_accuracy": 0.5858327237259205,
+            "bit_mass": 0.9722312000053042
+          },
+          "pairs": {
+            "pair_count": 672,
+            "first": {
+              "cell": {
+                "cells": {
+                  "AND:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6498431991785765,
+                    "accuracy": 0.6875
+                  },
+                  "AND:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6757426522672176,
+                    "accuracy": 0.625
+                  },
+                  "AND:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6740441285073757,
+                    "accuracy": 0.8125
+                  },
+                  "AND:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7068547271192074,
+                    "accuracy": 0.5
+                  },
+                  "AND:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7358212135732174,
+                    "accuracy": 0.4375
+                  },
+                  "AND:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.8012148514389992,
+                    "accuracy": 0.3125
+                  },
+                  "AND:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6824443154036999,
+                    "accuracy": 0.6875
+                  },
+                  "AND:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7272278927266598,
+                    "accuracy": 0.5
+                  },
+                  "AND:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7141308709979057,
+                    "accuracy": 0.5
+                  },
+                  "AND:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.722773365676403,
+                    "accuracy": 0.5625
+                  },
+                  "AND:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7114719711244106,
+                    "accuracy": 0.5625
+                  },
+                  "AND:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6744777150452137,
+                    "accuracy": 0.6875
+                  },
+                  "NOT:0:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6757058463990688,
+                    "accuracy": 0.625
+                  },
+                  "NOT:0:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6915812119841576,
+                    "accuracy": 0.6875
+                  },
+                  "NOT:0:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7382249869406223,
+                    "accuracy": 0.5
+                  },
+                  "NOT:1:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7614652216434479,
+                    "accuracy": 0.4375
+                  },
+                  "NOT:1:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7535135596990585,
+                    "accuracy": 0.4375
+                  },
+                  "NOT:1:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.8017421700060368,
+                    "accuracy": 0.125
+                  },
+                  "OR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6339803524315357,
+                    "accuracy": 0.8125
+                  },
+                  "OR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7306991927325726,
+                    "accuracy": 0.5
+                  },
+                  "OR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6833234466612339,
+                    "accuracy": 0.625
+                  },
+                  "OR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6955093145370483,
+                    "accuracy": 0.625
+                  },
+                  "OR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7344862371683121,
+                    "accuracy": 0.5
+                  },
+                  "OR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7156633324921131,
+                    "accuracy": 0.4375
+                  },
+                  "OR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6718722693622112,
+                    "accuracy": 0.6875
+                  },
+                  "OR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6604338269680738,
+                    "accuracy": 0.75
+                  },
+                  "OR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.74253099411726,
+                    "accuracy": 0.375
+                  },
+                  "OR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7235356159508228,
+                    "accuracy": 0.4375
+                  },
+                  "OR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6740057803690434,
+                    "accuracy": 0.75
+                  },
+                  "OR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6846175938844681,
+                    "accuracy": 0.6875
+                  },
+                  "XOR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6813365928828716,
+                    "accuracy": 0.625
+                  },
+                  "XOR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6787978373467922,
+                    "accuracy": 0.625
+                  },
+                  "XOR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6859854832291603,
+                    "accuracy": 0.75
+                  },
+                  "XOR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7121309153735638,
+                    "accuracy": 0.625
+                  },
+                  "XOR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.775802630931139,
+                    "accuracy": 0.375
+                  },
+                  "XOR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7446347922086716,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7427414432168007,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6705757677555084,
+                    "accuracy": 0.6875
+                  },
+                  "XOR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7089180797338486,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7823158800601959,
+                    "accuracy": 0.125
+                  },
+                  "XOR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7457255683839321,
+                    "accuracy": 0.3125
+                  },
+                  "XOR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.8214749619364738,
+                    "accuracy": 0.25
+                  }
+                },
+                "macro_answer_ce": 0.7142709002253556,
+                "macro_accuracy": 0.5431547619047619
+              },
+              "operator": {
+                "cells": {
+                  "AND": {
+                    "count": 192,
+                    "answer_ce": 0.7063372419215739,
+                    "accuracy": 0.5729166666666666
+                  },
+                  "NOT": {
+                    "count": 96,
+                    "answer_ce": 0.737038832778732,
+                    "accuracy": 0.46875
+                  },
+                  "OR": {
+                    "count": 192,
+                    "answer_ce": 0.6958881630562246,
+                    "accuracy": 0.5989583333333334
+                  },
+                  "XOR": {
+                    "count": 192,
+                    "answer_ce": 0.7292033294215798,
+                    "accuracy": 0.4947916666666667
+                  }
+                },
+                "macro_answer_ce": 0.7171168917945275,
+                "macro_accuracy": 0.5338541666666666
+              },
+              "depth": {
+                "cells": {
+                  "1": {
+                    "count": 224,
+                    "answer_ce": 0.703036361373961,
+                    "accuracy": 0.5625
+                  },
+                  "2-3": {
+                    "count": 224,
+                    "answer_ce": 0.7118489530735782,
+                    "accuracy": 0.5535714285714286
+                  },
+                  "4+": {
+                    "count": 224,
+                    "answer_ce": 0.7279273862285274,
+                    "accuracy": 0.5133928571428571
+                  }
+                },
+                "macro_answer_ce": 0.7142709002253556,
+                "macro_accuracy": 0.5431547619047619
+              },
+              "answer": {
+                "cells": {
+                  "0": {
+                    "count": 336,
+                    "answer_ce": 0.7203659103917224,
+                    "accuracy": 0.5089285714285714
+                  },
+                  "1": {
+                    "count": 336,
+                    "answer_ce": 0.7081758900589886,
+                    "accuracy": 0.5773809523809523
+                  }
+                },
+                "macro_answer_ce": 0.7142709002253556,
+                "macro_accuracy": 0.5431547619047619
+              },
+              "micro": {
+                "answer_count": 672,
+                "sequence_count": 672,
+                "answer_ce": 0.7142709002253556,
+                "accuracy": 0.5431547619047619,
+                "binary_accuracy": 0.5431547619047619,
+                "bit_mass": 0.972334445498529
+              }
+            },
+            "repeat": {
+              "cell": {
+                "cells": {
+                  "AND:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6246428396552801,
+                    "accuracy": 0.75
+                  },
+                  "AND:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6481127142906189,
+                    "accuracy": 0.75
+                  },
+                  "AND:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6548078693449497,
+                    "accuracy": 0.8125
+                  },
+                  "AND:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6843188926577568,
+                    "accuracy": 0.75
+                  },
+                  "AND:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6973960176110268,
+                    "accuracy": 0.5625
+                  },
+                  "AND:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7584244906902313,
+                    "accuracy": 0.4375
+                  },
+                  "AND:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6669129990041256,
+                    "accuracy": 0.6875
+                  },
+                  "AND:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6973242089152336,
+                    "accuracy": 0.6875
+                  },
+                  "AND:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.684504434466362,
+                    "accuracy": 0.8125
+                  },
+                  "AND:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6945258229970932,
+                    "accuracy": 0.5625
+                  },
+                  "AND:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6739727295935154,
+                    "accuracy": 0.75
+                  },
+                  "AND:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6593782678246498,
+                    "accuracy": 0.6875
+                  },
+                  "NOT:0:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6461292840540409,
+                    "accuracy": 0.8125
+                  },
+                  "NOT:0:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6607550457119942,
+                    "accuracy": 0.75
+                  },
+                  "NOT:0:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7106759548187256,
+                    "accuracy": 0.5625
+                  },
+                  "NOT:1:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7216867208480835,
+                    "accuracy": 0.5
+                  },
+                  "NOT:1:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7242940254509449,
+                    "accuracy": 0.5
+                  },
+                  "NOT:1:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7744454815983772,
+                    "accuracy": 0.1875
+                  },
+                  "OR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6123140212148428,
+                    "accuracy": 0.875
+                  },
+                  "OR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.710793424397707,
+                    "accuracy": 0.5625
+                  },
+                  "OR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6563298851251602,
+                    "accuracy": 0.75
+                  },
+                  "OR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6736174523830414,
+                    "accuracy": 0.75
+                  },
+                  "OR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7102474309504032,
+                    "accuracy": 0.5625
+                  },
+                  "OR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6920162551105022,
+                    "accuracy": 0.625
+                  },
+                  "OR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6326440833508968,
+                    "accuracy": 0.75
+                  },
+                  "OR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6333085168153048,
+                    "accuracy": 0.75
+                  },
+                  "OR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7175290901213884,
+                    "accuracy": 0.5625
+                  },
+                  "OR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6956628747284412,
+                    "accuracy": 0.625
+                  },
+                  "OR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.651253204792738,
+                    "accuracy": 0.75
+                  },
+                  "OR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6608154810965061,
+                    "accuracy": 0.8125
+                  },
+                  "XOR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.656867478042841,
+                    "accuracy": 0.75
+                  },
+                  "XOR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.64915681630373,
+                    "accuracy": 0.6875
+                  },
+                  "XOR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6659047156572342,
+                    "accuracy": 0.75
+                  },
+                  "XOR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6779628582298756,
+                    "accuracy": 0.625
+                  },
+                  "XOR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7244006916880608,
+                    "accuracy": 0.5
+                  },
+                  "XOR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7162038199603558,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7050904110074043,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6428009495139122,
+                    "accuracy": 0.875
+                  },
+                  "XOR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6766691245138645,
+                    "accuracy": 0.625
+                  },
+                  "XOR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7493942566215992,
+                    "accuracy": 0.375
+                  },
+                  "XOR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7204167768359184,
+                    "accuracy": 0.5
+                  },
+                  "XOR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7943142950534821,
+                    "accuracy": 0.1875
+                  }
+                },
+                "macro_answer_ce": 0.6859052788821005,
+                "macro_accuracy": 0.6413690476190477
+              },
+              "operator": {
+                "cells": {
+                  "AND": {
+                    "count": 192,
+                    "answer_ce": 0.6786934405875703,
+                    "accuracy": 0.6875
+                  },
+                  "NOT": {
+                    "count": 96,
+                    "answer_ce": 0.7063310854136944,
+                    "accuracy": 0.5520833333333334
+                  },
+                  "OR": {
+                    "count": 192,
+                    "answer_ce": 0.6705443100072443,
+                    "accuracy": 0.6979166666666666
+                  },
+                  "XOR": {
+                    "count": 192,
+                    "answer_ce": 0.6982651827856898,
+                    "accuracy": 0.5833333333333334
+                  }
+                },
+                "macro_answer_ce": 0.6884585046985497,
+                "macro_accuracy": 0.6302083333333334
+              },
+              "depth": {
+                "cells": {
+                  "1": {
+                    "count": 224,
+                    "answer_ce": 0.6744121424853802,
+                    "accuracy": 0.6696428571428571
+                  },
+                  "2-3": {
+                    "count": 224,
+                    "answer_ce": 0.6817308966336506,
+                    "accuracy": 0.65625
+                  },
+                  "4+": {
+                    "count": 224,
+                    "answer_ce": 0.7015727975272706,
+                    "accuracy": 0.5982142857142857
+                  }
+                },
+                "macro_answer_ce": 0.6859052788821005,
+                "macro_accuracy": 0.6413690476190476
+              },
+              "answer": {
+                "cells": {
+                  "0": {
+                    "count": 336,
+                    "answer_ce": 0.6929696363707384,
+                    "accuracy": 0.6130952380952381
+                  },
+                  "1": {
+                    "count": 336,
+                    "answer_ce": 0.6788409213934626,
+                    "accuracy": 0.6696428571428571
+                  }
+                },
+                "macro_answer_ce": 0.6859052788821005,
+                "macro_accuracy": 0.6413690476190477
+              },
+              "micro": {
+                "answer_count": 672,
+                "sequence_count": 672,
+                "answer_ce": 0.6859052788821005,
+                "accuracy": 0.6413690476190477,
+                "binary_accuracy": 0.6413690476190477,
+                "bit_mass": 0.9715744058291117
+              }
+            },
+            "paired_gap": {
+              "answer_ce_first_minus_repeat": 0.028365621343255043,
+              "accuracy_first_minus_repeat": -0.09821428571428571
+            }
+          }
+        }
+      }
+    },
+    "3000000": {
+      "current": {
+        "checkpoint": "checkpoints/update_000407.pt",
+        "update": 407,
+        "prediction_tokens": 3004531,
+        "model_tensor_sha256": "ce7ffe5ad63874eb0c7b3707ca68fc5a1b7843dbb628fa396f6979c06c936c36",
+        "validation": {
+          "general": {
+            "answer_count": 8202,
+            "sequence_count": 512,
+            "answer_ce": 0.6202519478272284,
+            "accuracy": 0.6415508412582297,
+            "binary_accuracy": 0.6415508412582297,
+            "bit_mass": 0.9981227163656896
+          },
+          "pairs": {
+            "pair_count": 672,
+            "first": {
+              "cell": {
+                "cells": {
+                  "AND:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.5772970803081989,
+                    "accuracy": 0.625
+                  },
+                  "AND:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.669827273581177,
+                    "accuracy": 0.375
+                  },
+                  "AND:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.575572069734335,
+                    "accuracy": 0.8125
+                  },
+                  "AND:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7228566342964768,
+                    "accuracy": 0.5
+                  },
+                  "AND:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7420807662419975,
+                    "accuracy": 0.4375
+                  },
+                  "AND:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.9042924717068672,
+                    "accuracy": 0.375
+                  },
+                  "AND:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8521526362746954,
+                    "accuracy": 0.25
+                  },
+                  "AND:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7461850512772799,
+                    "accuracy": 0.5625
+                  },
+                  "AND:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7979631731286645,
+                    "accuracy": 0.375
+                  },
+                  "AND:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7634244756773114,
+                    "accuracy": 0.4375
+                  },
+                  "AND:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 1.0069922432303429,
+                    "accuracy": 0.4375
+                  },
+                  "AND:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.8650025567039847,
+                    "accuracy": 0.5
+                  },
+                  "NOT:0:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6765168365091085,
+                    "accuracy": 0.5
+                  },
+                  "NOT:0:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6989710442721844,
+                    "accuracy": 0.625
+                  },
+                  "NOT:0:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.779892060905695,
+                    "accuracy": 0.5
+                  },
+                  "NOT:1:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8181246314197779,
+                    "accuracy": 0.375
+                  },
+                  "NOT:1:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6715176776051521,
+                    "accuracy": 0.5
+                  },
+                  "NOT:1:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 1.0692599341273308,
+                    "accuracy": 0.25
+                  },
+                  "OR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.5879003386944532,
+                    "accuracy": 0.6875
+                  },
+                  "OR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6800440195947886,
+                    "accuracy": 0.5625
+                  },
+                  "OR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6484987763687968,
+                    "accuracy": 0.625
+                  },
+                  "OR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.9623724790289998,
+                    "accuracy": 0.375
+                  },
+                  "OR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.9885326866060495,
+                    "accuracy": 0.3125
+                  },
+                  "OR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7944948049262166,
+                    "accuracy": 0.5
+                  },
+                  "OR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7585682263597846,
+                    "accuracy": 0.375
+                  },
+                  "OR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6894452339038253,
+                    "accuracy": 0.5625
+                  },
+                  "OR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.9362659947946668,
+                    "accuracy": 0.5
+                  },
+                  "OR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.9726261701434851,
+                    "accuracy": 0.4375
+                  },
+                  "OR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7873727902770042,
+                    "accuracy": 0.5625
+                  },
+                  "OR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6252613868564367,
+                    "accuracy": 0.625
+                  },
+                  "XOR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7518374845385551,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6870870925486088,
+                    "accuracy": 0.375
+                  },
+                  "XOR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.634228777140379,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8218639744445682,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7850522138178349,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.9405314605683088,
+                    "accuracy": 0.375
+                  },
+                  "XOR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8929355489090085,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.8064357088878751,
+                    "accuracy": 0.5
+                  },
+                  "XOR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7941150460392237,
+                    "accuracy": 0.375
+                  },
+                  "XOR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8555270861834288,
+                    "accuracy": 0.5
+                  },
+                  "XOR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.8468878958374262,
+                    "accuracy": 0.5
+                  },
+                  "XOR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6921569406986237,
+                    "accuracy": 0.5625
+                  }
+                },
+                "macro_answer_ce": 0.7828088274802125,
+                "macro_accuracy": 0.47767857142857145
+              },
+              "operator": {
+                "cells": {
+                  "AND": {
+                    "count": 192,
+                    "answer_ce": 0.7686372026801109,
+                    "accuracy": 0.4739583333333333
+                  },
+                  "NOT": {
+                    "count": 96,
+                    "answer_ce": 0.7857136974732081,
+                    "accuracy": 0.4583333333333333
+                  },
+                  "OR": {
+                    "count": 192,
+                    "answer_ce": 0.7859485756295422,
+                    "accuracy": 0.5104166666666666
+                  },
+                  "XOR": {
+                    "count": 192,
+                    "answer_ce": 0.7923882691344867,
+                    "accuracy": 0.4583333333333333
+                  }
+                },
+                "macro_answer_ce": 0.783171936229337,
+                "macro_accuracy": 0.47526041666666663
+              },
+              "depth": {
+                "cells": {
+                  "1": {
+                    "count": 224,
+                    "answer_ce": 0.7867145430562752,
+                    "accuracy": 0.45535714285714285
+                  },
+                  "2-3": {
+                    "count": 224,
+                    "answer_ce": 0.7718879784058247,
+                    "accuracy": 0.48214285714285715
+                  },
+                  "4+": {
+                    "count": 224,
+                    "answer_ce": 0.7898239609785378,
+                    "accuracy": 0.4955357142857143
+                  }
+                },
+                "macro_answer_ce": 0.7828088274802125,
+                "macro_accuracy": 0.47767857142857145
+              },
+              "answer": {
+                "cells": {
+                  "0": {
+                    "count": 336,
+                    "answer_ce": 0.7395856100622387,
+                    "accuracy": 0.4880952380952381
+                  },
+                  "1": {
+                    "count": 336,
+                    "answer_ce": 0.8260320448981864,
+                    "accuracy": 0.46726190476190477
+                  }
+                },
+                "macro_answer_ce": 0.7828088274802125,
+                "macro_accuracy": 0.4776785714285714
+              },
+              "micro": {
+                "answer_count": 672,
+                "sequence_count": 672,
+                "answer_ce": 0.7828088274802125,
+                "accuracy": 0.47767857142857145,
+                "binary_accuracy": 0.47767857142857145,
+                "bit_mass": 0.9981898915554795
+              }
+            },
+            "repeat": {
+              "cell": {
+                "cells": {
+                  "AND:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.5587002732791007,
+                    "accuracy": 0.75
+                  },
+                  "AND:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6451759627088904,
+                    "accuracy": 0.5
+                  },
+                  "AND:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.5439738407731056,
+                    "accuracy": 0.8125
+                  },
+                  "AND:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.69598254468292,
+                    "accuracy": 0.5625
+                  },
+                  "AND:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6974296537227929,
+                    "accuracy": 0.5
+                  },
+                  "AND:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.8906224397942424,
+                    "accuracy": 0.375
+                  },
+                  "AND:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8193063857033849,
+                    "accuracy": 0.25
+                  },
+                  "AND:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6661165398545563,
+                    "accuracy": 0.6875
+                  },
+                  "AND:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7435477273538709,
+                    "accuracy": 0.5
+                  },
+                  "AND:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7272356608882546,
+                    "accuracy": 0.375
+                  },
+                  "AND:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.9216441567987204,
+                    "accuracy": 0.4375
+                  },
+                  "AND:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.8351418096572161,
+                    "accuracy": 0.5
+                  },
+                  "NOT:0:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.6135827302932739,
+                    "accuracy": 0.625
+                  },
+                  "NOT:0:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6295074271038175,
+                    "accuracy": 0.6875
+                  },
+                  "NOT:0:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7142722103744745,
+                    "accuracy": 0.5625
+                  },
+                  "NOT:1:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7522732932120562,
+                    "accuracy": 0.4375
+                  },
+                  "NOT:1:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6249217456206679,
+                    "accuracy": 0.625
+                  },
+                  "NOT:1:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.9895839896053076,
+                    "accuracy": 0.25
+                  },
+                  "OR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.5538727594539523,
+                    "accuracy": 0.75
+                  },
+                  "OR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6438189279288054,
+                    "accuracy": 0.5625
+                  },
+                  "OR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.614291894249618,
+                    "accuracy": 0.6875
+                  },
+                  "OR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.9039592249318957,
+                    "accuracy": 0.4375
+                  },
+                  "OR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.9280632799491286,
+                    "accuracy": 0.375
+                  },
+                  "OR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7147685512900352,
+                    "accuracy": 0.5625
+                  },
+                  "OR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.709753911010921,
+                    "accuracy": 0.375
+                  },
+                  "OR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.638249397277832,
+                    "accuracy": 0.4375
+                  },
+                  "OR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.8945750063285232,
+                    "accuracy": 0.5625
+                  },
+                  "OR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.9350378327071667,
+                    "accuracy": 0.4375
+                  },
+                  "OR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7596753453835845,
+                    "accuracy": 0.5625
+                  },
+                  "OR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.5891881268471479,
+                    "accuracy": 0.625
+                  },
+                  "XOR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7575152181088924,
+                    "accuracy": 0.5
+                  },
+                  "XOR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6312153656035662,
+                    "accuracy": 0.5
+                  },
+                  "XOR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.5835411213338375,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7545026857405901,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7399275153875351,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.8533890433609486,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8121148888021708,
+                    "accuracy": 0.5
+                  },
+                  "XOR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7017770484089851,
+                    "accuracy": 0.5
+                  },
+                  "XOR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.7188087413087487,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8393391780555248,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.7839011605829,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6346896728500724,
+                    "accuracy": 0.8125
+                  }
+                },
+                "macro_answer_ce": 0.7324998640078342,
+                "macro_accuracy": 0.5252976190476191
+              },
+              "operator": {
+                "cells": {
+                  "AND": {
+                    "count": 192,
+                    "answer_ce": 0.7287397496014213,
+                    "accuracy": 0.5208333333333334
+                  },
+                  "NOT": {
+                    "count": 96,
+                    "answer_ce": 0.7206902327015996,
+                    "accuracy": 0.53125
+                  },
+                  "OR": {
+                    "count": 192,
+                    "answer_ce": 0.7404378547798842,
+                    "accuracy": 0.53125
+                  },
+                  "XOR": {
+                    "count": 192,
+                    "answer_ce": 0.7342268032953143,
+                    "accuracy": 0.5208333333333334
+                  }
+                },
+                "macro_answer_ce": 0.7310236600945549,
+                "macro_accuracy": 0.5260416666666667
+              },
+              "depth": {
+                "cells": {
+                  "1": {
+                    "count": 224,
+                    "answer_ce": 0.7452268990621503,
+                    "accuracy": 0.5
+                  },
+                  "2-3": {
+                    "count": 224,
+                    "answer_ce": 0.7151016804522702,
+                    "accuracy": 0.5267857142857143
+                  },
+                  "4+": {
+                    "count": 224,
+                    "answer_ce": 0.737171012509082,
+                    "accuracy": 0.5491071428571429
+                  }
+                },
+                "macro_answer_ce": 0.7324998640078343,
+                "macro_accuracy": 0.5252976190476191
+              },
+              "answer": {
+                "cells": {
+                  "0": {
+                    "count": 336,
+                    "answer_ce": 0.6985628425941935,
+                    "accuracy": 0.5595238095238095
+                  },
+                  "1": {
+                    "count": 336,
+                    "answer_ce": 0.7664368854214748,
+                    "accuracy": 0.49107142857142855
+                  }
+                },
+                "macro_answer_ce": 0.7324998640078342,
+                "macro_accuracy": 0.5252976190476191
+              },
+              "micro": {
+                "answer_count": 672,
+                "sequence_count": 672,
+                "answer_ce": 0.7324998640078342,
+                "accuracy": 0.5252976190476191,
+                "binary_accuracy": 0.5252976190476191,
+                "bit_mass": 0.9981669825279996
+              }
+            },
+            "paired_gap": {
+              "answer_ce_first_minus_repeat": 0.0503089634723784,
+              "accuracy_first_minus_repeat": -0.047619047619047616
+            }
+          }
+        }
+      }
+    },
+    "8000000": {
+      "current": {
+        "checkpoint": "checkpoints/update_001082.pt",
+        "update": 1082,
+        "prediction_tokens": 8001583,
+        "model_tensor_sha256": "8a9a0edf27ca7bfeec5a7b9be57528dbeeda6b9764660da879f9f677755f3a6a",
+        "validation": {
+          "general": {
+            "answer_count": 8202,
+            "sequence_count": 512,
+            "answer_ce": 0.20575620308290177,
+            "accuracy": 0.9002682272616435,
+            "binary_accuracy": 0.9009997561570349,
+            "bit_mass": 0.998140531398812
+          },
+          "pairs": {
+            "pair_count": 672,
+            "first": {
+              "cell": {
+                "cells": {
+                  "AND:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.07441275476594456,
+                    "accuracy": 0.9375
+                  },
+                  "AND:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.11245852387219202,
+                    "accuracy": 1.0
+                  },
+                  "AND:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.1448397639906034,
+                    "accuracy": 0.9375
+                  },
+                  "AND:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.08235856621467974,
+                    "accuracy": 0.9375
+                  },
+                  "AND:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.09961791914247442,
+                    "accuracy": 0.9375
+                  },
+                  "AND:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.25448913728178013,
+                    "accuracy": 0.875
+                  },
+                  "AND:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.5285084741190076,
+                    "accuracy": 0.75
+                  },
+                  "AND:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.45976473891641945,
+                    "accuracy": 0.75
+                  },
+                  "AND:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.4306401931680739,
+                    "accuracy": 0.75
+                  },
+                  "AND:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 1.1283961674198508,
+                    "accuracy": 0.4375
+                  },
+                  "AND:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 1.4889213107526302,
+                    "accuracy": 0.1875
+                  },
+                  "AND:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 1.0501249758526683,
+                    "accuracy": 0.5
+                  },
+                  "NOT:0:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.5735082135652192,
+                    "accuracy": 0.8125
+                  },
+                  "NOT:0:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.24192659289110452,
+                    "accuracy": 0.9375
+                  },
+                  "NOT:0:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.417451580055058,
+                    "accuracy": 0.8125
+                  },
+                  "NOT:1:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.255596080532996,
+                    "accuracy": 0.9375
+                  },
+                  "NOT:1:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.4573040985269472,
+                    "accuracy": 0.8125
+                  },
+                  "NOT:1:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.786777674453333,
+                    "accuracy": 0.5
+                  },
+                  "OR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.43872327165445313,
+                    "accuracy": 0.8125
+                  },
+                  "OR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.5737836107437033,
+                    "accuracy": 0.625
+                  },
+                  "OR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.5174185615032911,
+                    "accuracy": 0.625
+                  },
+                  "OR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8709037356311455,
+                    "accuracy": 0.6875
+                  },
+                  "OR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 1.7632537621539086,
+                    "accuracy": 0.375
+                  },
+                  "OR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 1.5070630684494972,
+                    "accuracy": 0.375
+                  },
+                  "OR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.10194448380207177,
+                    "accuracy": 1.0
+                  },
+                  "OR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.21951108751818538,
+                    "accuracy": 0.875
+                  },
+                  "OR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.4251310520339757,
+                    "accuracy": 0.8125
+                  },
+                  "OR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.10262979980325326,
+                    "accuracy": 1.0
+                  },
+                  "OR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.23714414692949504,
+                    "accuracy": 0.9375
+                  },
+                  "OR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.15136326380888931,
+                    "accuracy": 1.0
+                  },
+                  "XOR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.5076535083353519,
+                    "accuracy": 0.8125
+                  },
+                  "XOR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.43588512897258624,
+                    "accuracy": 0.8125
+                  },
+                  "XOR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.4559187634731643,
+                    "accuracy": 0.875
+                  },
+                  "XOR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.8773863231763244,
+                    "accuracy": 0.4375
+                  },
+                  "XOR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 1.207750759087503,
+                    "accuracy": 0.25
+                  },
+                  "XOR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 1.068820022046566,
+                    "accuracy": 0.1875
+                  },
+                  "XOR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.7966215424239635,
+                    "accuracy": 0.375
+                  },
+                  "XOR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.6695853334385902,
+                    "accuracy": 0.5625
+                  },
+                  "XOR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.6775596188381314,
+                    "accuracy": 0.5
+                  },
+                  "XOR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.9951131455600262,
+                    "accuracy": 0.3125
+                  },
+                  "XOR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.8374521154910326,
+                    "accuracy": 0.3125
+                  },
+                  "XOR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.879748422652483,
+                    "accuracy": 0.25
+                  }
+                },
+                "macro_answer_ce": 0.5929871736440137,
+                "macro_accuracy": 0.6815476190476191
+              },
+              "operator": {
+                "cells": {
+                  "AND": {
+                    "count": 192,
+                    "answer_ce": 0.487877710458027,
+                    "accuracy": 0.75
+                  },
+                  "NOT": {
+                    "count": 96,
+                    "answer_ce": 0.455427373337443,
+                    "accuracy": 0.8020833333333334
+                  },
+                  "OR": {
+                    "count": 192,
+                    "answer_ce": 0.5757391536693225,
+                    "accuracy": 0.7604166666666666
+                  },
+                  "XOR": {
+                    "count": 192,
+                    "answer_ce": 0.7841245569579769,
+                    "accuracy": 0.4739583333333333
+                  }
+                },
+                "macro_answer_ce": 0.5757921986056923,
+                "macro_accuracy": 0.6966145833333334
+              },
+              "depth": {
+                "cells": {
+                  "1": {
+                    "count": 224,
+                    "answer_ce": 0.5238397190717349,
+                    "accuracy": 0.7321428571428571
+                  },
+                  "2-3": {
+                    "count": 224,
+                    "answer_ce": 0.6288827948883409,
+                    "accuracy": 0.6696428571428571
+                  },
+                  "4+": {
+                    "count": 224,
+                    "answer_ce": 0.6262390069719653,
+                    "accuracy": 0.6428571428571429
+                  }
+                },
+                "macro_answer_ce": 0.5929871736440137,
+                "macro_accuracy": 0.6815476190476191
+              },
+              "answer": {
+                "cells": {
+                  "0": {
+                    "count": 336,
+                    "answer_ce": 0.44421259301764493,
+                    "accuracy": 0.7410714285714286
+                  },
+                  "1": {
+                    "count": 336,
+                    "answer_ce": 0.7417617542703825,
+                    "accuracy": 0.6220238095238095
+                  }
+                },
+                "macro_answer_ce": 0.5929871736440138,
+                "macro_accuracy": 0.6815476190476191
+              },
+              "micro": {
+                "answer_count": 672,
+                "sequence_count": 672,
+                "answer_ce": 0.5929871736440137,
+                "accuracy": 0.6815476190476191,
+                "binary_accuracy": 0.6815476190476191,
+                "bit_mass": 0.999679696524427
+              }
+            },
+            "repeat": {
+              "cell": {
+                "cells": {
+                  "AND:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.07744162788731046,
+                    "accuracy": 0.9375
+                  },
+                  "AND:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.003471202668151818,
+                    "accuracy": 1.0
+                  },
+                  "AND:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.0038766650031902827,
+                    "accuracy": 1.0
+                  },
+                  "AND:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.005148878102772869,
+                    "accuracy": 1.0
+                  },
+                  "AND:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.0033593379775993526,
+                    "accuracy": 1.0
+                  },
+                  "AND:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.00617781541950535,
+                    "accuracy": 1.0
+                  },
+                  "AND:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.05565495291375555,
+                    "accuracy": 0.9375
+                  },
+                  "AND:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.004437336428964045,
+                    "accuracy": 1.0
+                  },
+                  "AND:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.015335366035287734,
+                    "accuracy": 1.0
+                  },
+                  "AND:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.03489112567331176,
+                    "accuracy": 1.0
+                  },
+                  "AND:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.15885658290062565,
+                    "accuracy": 0.9375
+                  },
+                  "AND:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.050169317779364064,
+                    "accuracy": 1.0
+                  },
+                  "NOT:0:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.09547002099861857,
+                    "accuracy": 0.9375
+                  },
+                  "NOT:0:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.025631739423261024,
+                    "accuracy": 1.0
+                  },
+                  "NOT:0:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.01357789082248928,
+                    "accuracy": 1.0
+                  },
+                  "NOT:1:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.0022813557807239704,
+                    "accuracy": 1.0
+                  },
+                  "NOT:1:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.003844316292088479,
+                    "accuracy": 1.0
+                  },
+                  "NOT:1:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.06644724353827769,
+                    "accuracy": 0.9375
+                  },
+                  "OR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.09065491639194079,
+                    "accuracy": 0.9375
+                  },
+                  "OR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.009122919538640417,
+                    "accuracy": 1.0
+                  },
+                  "OR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.013681385709787719,
+                    "accuracy": 1.0
+                  },
+                  "OR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.0052980501495767385,
+                    "accuracy": 1.0
+                  },
+                  "OR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.030953302019042894,
+                    "accuracy": 1.0
+                  },
+                  "OR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.009800886604352854,
+                    "accuracy": 1.0
+                  },
+                  "OR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.007124526935513131,
+                    "accuracy": 1.0
+                  },
+                  "OR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.006844669216661714,
+                    "accuracy": 1.0
+                  },
+                  "OR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.1255136441468494,
+                    "accuracy": 0.9375
+                  },
+                  "OR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.011199243825103622,
+                    "accuracy": 1.0
+                  },
+                  "OR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.019646159402327612,
+                    "accuracy": 1.0
+                  },
+                  "OR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.004990323919628281,
+                    "accuracy": 1.0
+                  },
+                  "XOR:00:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.021029251962318085,
+                    "accuracy": 1.0
+                  },
+                  "XOR:00:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.08207275030872552,
+                    "accuracy": 0.9375
+                  },
+                  "XOR:00:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.008572422586439643,
+                    "accuracy": 1.0
+                  },
+                  "XOR:01:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.0382116696855519,
+                    "accuracy": 1.0
+                  },
+                  "XOR:01:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.028143839801487047,
+                    "accuracy": 1.0
+                  },
+                  "XOR:01:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.12958430669095833,
+                    "accuracy": 1.0
+                  },
+                  "XOR:10:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.07562650540785398,
+                    "accuracy": 1.0
+                  },
+                  "XOR:10:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.07462085090810433,
+                    "accuracy": 1.0
+                  },
+                  "XOR:10:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.13971702926210128,
+                    "accuracy": 0.9375
+                  },
+                  "XOR:11:depth_1": {
+                    "count": 16,
+                    "answer_ce": 0.045177766180131584,
+                    "accuracy": 1.0
+                  },
+                  "XOR:11:depth_2-3": {
+                    "count": 16,
+                    "answer_ce": 0.061673361517023295,
+                    "accuracy": 1.0
+                  },
+                  "XOR:11:depth_4+": {
+                    "count": 16,
+                    "answer_ce": 0.031176798336673528,
+                    "accuracy": 1.0
+                  }
+                },
+                "macro_answer_ce": 0.04039307990838313,
+                "macro_accuracy": 0.9866071428571429
+              },
+              "operator": {
+                "cells": {
+                  "AND": {
+                    "count": 192,
+                    "answer_ce": 0.034901684065819914,
+                    "accuracy": 0.984375
+                  },
+                  "NOT": {
+                    "count": 96,
+                    "answer_ce": 0.034542094475909835,
+                    "accuracy": 0.9791666666666666
+                  },
+                  "OR": {
+                    "count": 192,
+                    "answer_ce": 0.027902502321618766,
+                    "accuracy": 0.9895833333333334
+                  },
+                  "XOR": {
+                    "count": 192,
+                    "answer_ce": 0.06130054605394738,
+                    "accuracy": 0.9895833333333334
+                  }
+                },
+                "macro_answer_ce": 0.039661706729323974,
+                "macro_accuracy": 0.9856770833333334
+              },
+              "depth": {
+                "cells": {
+                  "1": {
+                    "count": 224,
+                    "answer_ce": 0.04037213513532022,
+                    "accuracy": 0.9821428571428571
+                  },
+                  "2-3": {
+                    "count": 224,
+                    "answer_ce": 0.036619883457335946,
+                    "accuracy": 0.9910714285714286
+                  },
+                  "4+": {
+                    "count": 224,
+                    "answer_ce": 0.044187221132493244,
+                    "accuracy": 0.9866071428571429
+                  }
+                },
+                "macro_answer_ce": 0.04039307990838314,
+                "macro_accuracy": 0.9866071428571429
+              },
+              "answer": {
+                "cells": {
+                  "0": {
+                    "count": 336,
+                    "answer_ce": 0.02907798431330039,
+                    "accuracy": 0.9851190476190477
+                  },
+                  "1": {
+                    "count": 336,
+                    "answer_ce": 0.05170817550346588,
+                    "accuracy": 0.9880952380952381
+                  }
+                },
+                "macro_answer_ce": 0.04039307990838314,
+                "macro_accuracy": 0.9866071428571429
+              },
+              "micro": {
+                "answer_count": 672,
+                "sequence_count": 672,
+                "answer_ce": 0.04039307990838313,
+                "accuracy": 0.9866071428571429,
+                "binary_accuracy": 0.9866071428571429,
+                "bit_mass": 0.9988868453850349
+              }
+            },
+            "paired_gap": {
+              "answer_ce_first_minus_repeat": 0.5525940937356305,
+              "accuracy_first_minus_repeat": -0.30505952380952384
+            }
+          }
+        }
+      }
+    }
+  },
+  "selected": {
+    "rule": "final_milestone_only",
+    "checkpoint": "checkpoints/update_001082.pt",
+    "update": 1082,
+    "prediction_tokens": 8001583,
+    "model_tensor_sha256": "8a9a0edf27ca7bfeec5a7b9be57528dbeeda6b9764660da879f9f677755f3a6a",
+    "validation": {
+      "general": {
+        "answer_count": 8202,
+        "sequence_count": 512,
+        "answer_ce": 0.20575620308290177,
+        "accuracy": 0.9002682272616435,
+        "binary_accuracy": 0.9009997561570349,
+        "bit_mass": 0.998140531398812
+      },
+      "pairs": {
+        "pair_count": 672,
+        "first": {
+          "cell": {
+            "cells": {
+              "AND:00:depth_1": {
+                "count": 16,
+                "answer_ce": 0.07441275476594456,
+                "accuracy": 0.9375
+              },
+              "AND:00:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.11245852387219202,
+                "accuracy": 1.0
+              },
+              "AND:00:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.1448397639906034,
+                "accuracy": 0.9375
+              },
+              "AND:01:depth_1": {
+                "count": 16,
+                "answer_ce": 0.08235856621467974,
+                "accuracy": 0.9375
+              },
+              "AND:01:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.09961791914247442,
+                "accuracy": 0.9375
+              },
+              "AND:01:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.25448913728178013,
+                "accuracy": 0.875
+              },
+              "AND:10:depth_1": {
+                "count": 16,
+                "answer_ce": 0.5285084741190076,
+                "accuracy": 0.75
+              },
+              "AND:10:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.45976473891641945,
+                "accuracy": 0.75
+              },
+              "AND:10:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.4306401931680739,
+                "accuracy": 0.75
+              },
+              "AND:11:depth_1": {
+                "count": 16,
+                "answer_ce": 1.1283961674198508,
+                "accuracy": 0.4375
+              },
+              "AND:11:depth_2-3": {
+                "count": 16,
+                "answer_ce": 1.4889213107526302,
+                "accuracy": 0.1875
+              },
+              "AND:11:depth_4+": {
+                "count": 16,
+                "answer_ce": 1.0501249758526683,
+                "accuracy": 0.5
+              },
+              "NOT:0:depth_1": {
+                "count": 16,
+                "answer_ce": 0.5735082135652192,
+                "accuracy": 0.8125
+              },
+              "NOT:0:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.24192659289110452,
+                "accuracy": 0.9375
+              },
+              "NOT:0:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.417451580055058,
+                "accuracy": 0.8125
+              },
+              "NOT:1:depth_1": {
+                "count": 16,
+                "answer_ce": 0.255596080532996,
+                "accuracy": 0.9375
+              },
+              "NOT:1:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.4573040985269472,
+                "accuracy": 0.8125
+              },
+              "NOT:1:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.786777674453333,
+                "accuracy": 0.5
+              },
+              "OR:00:depth_1": {
+                "count": 16,
+                "answer_ce": 0.43872327165445313,
+                "accuracy": 0.8125
+              },
+              "OR:00:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.5737836107437033,
+                "accuracy": 0.625
+              },
+              "OR:00:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.5174185615032911,
+                "accuracy": 0.625
+              },
+              "OR:01:depth_1": {
+                "count": 16,
+                "answer_ce": 0.8709037356311455,
+                "accuracy": 0.6875
+              },
+              "OR:01:depth_2-3": {
+                "count": 16,
+                "answer_ce": 1.7632537621539086,
+                "accuracy": 0.375
+              },
+              "OR:01:depth_4+": {
+                "count": 16,
+                "answer_ce": 1.5070630684494972,
+                "accuracy": 0.375
+              },
+              "OR:10:depth_1": {
+                "count": 16,
+                "answer_ce": 0.10194448380207177,
+                "accuracy": 1.0
+              },
+              "OR:10:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.21951108751818538,
+                "accuracy": 0.875
+              },
+              "OR:10:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.4251310520339757,
+                "accuracy": 0.8125
+              },
+              "OR:11:depth_1": {
+                "count": 16,
+                "answer_ce": 0.10262979980325326,
+                "accuracy": 1.0
+              },
+              "OR:11:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.23714414692949504,
+                "accuracy": 0.9375
+              },
+              "OR:11:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.15136326380888931,
+                "accuracy": 1.0
+              },
+              "XOR:00:depth_1": {
+                "count": 16,
+                "answer_ce": 0.5076535083353519,
+                "accuracy": 0.8125
+              },
+              "XOR:00:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.43588512897258624,
+                "accuracy": 0.8125
+              },
+              "XOR:00:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.4559187634731643,
+                "accuracy": 0.875
+              },
+              "XOR:01:depth_1": {
+                "count": 16,
+                "answer_ce": 0.8773863231763244,
+                "accuracy": 0.4375
+              },
+              "XOR:01:depth_2-3": {
+                "count": 16,
+                "answer_ce": 1.207750759087503,
+                "accuracy": 0.25
+              },
+              "XOR:01:depth_4+": {
+                "count": 16,
+                "answer_ce": 1.068820022046566,
+                "accuracy": 0.1875
+              },
+              "XOR:10:depth_1": {
+                "count": 16,
+                "answer_ce": 0.7966215424239635,
+                "accuracy": 0.375
+              },
+              "XOR:10:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.6695853334385902,
+                "accuracy": 0.5625
+              },
+              "XOR:10:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.6775596188381314,
+                "accuracy": 0.5
+              },
+              "XOR:11:depth_1": {
+                "count": 16,
+                "answer_ce": 0.9951131455600262,
+                "accuracy": 0.3125
+              },
+              "XOR:11:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.8374521154910326,
+                "accuracy": 0.3125
+              },
+              "XOR:11:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.879748422652483,
+                "accuracy": 0.25
+              }
+            },
+            "macro_answer_ce": 0.5929871736440137,
+            "macro_accuracy": 0.6815476190476191
+          },
+          "operator": {
+            "cells": {
+              "AND": {
+                "count": 192,
+                "answer_ce": 0.487877710458027,
+                "accuracy": 0.75
+              },
+              "NOT": {
+                "count": 96,
+                "answer_ce": 0.455427373337443,
+                "accuracy": 0.8020833333333334
+              },
+              "OR": {
+                "count": 192,
+                "answer_ce": 0.5757391536693225,
+                "accuracy": 0.7604166666666666
+              },
+              "XOR": {
+                "count": 192,
+                "answer_ce": 0.7841245569579769,
+                "accuracy": 0.4739583333333333
+              }
+            },
+            "macro_answer_ce": 0.5757921986056923,
+            "macro_accuracy": 0.6966145833333334
+          },
+          "depth": {
+            "cells": {
+              "1": {
+                "count": 224,
+                "answer_ce": 0.5238397190717349,
+                "accuracy": 0.7321428571428571
+              },
+              "2-3": {
+                "count": 224,
+                "answer_ce": 0.6288827948883409,
+                "accuracy": 0.6696428571428571
+              },
+              "4+": {
+                "count": 224,
+                "answer_ce": 0.6262390069719653,
+                "accuracy": 0.6428571428571429
+              }
+            },
+            "macro_answer_ce": 0.5929871736440137,
+            "macro_accuracy": 0.6815476190476191
+          },
+          "answer": {
+            "cells": {
+              "0": {
+                "count": 336,
+                "answer_ce": 0.44421259301764493,
+                "accuracy": 0.7410714285714286
+              },
+              "1": {
+                "count": 336,
+                "answer_ce": 0.7417617542703825,
+                "accuracy": 0.6220238095238095
+              }
+            },
+            "macro_answer_ce": 0.5929871736440138,
+            "macro_accuracy": 0.6815476190476191
+          },
+          "micro": {
+            "answer_count": 672,
+            "sequence_count": 672,
+            "answer_ce": 0.5929871736440137,
+            "accuracy": 0.6815476190476191,
+            "binary_accuracy": 0.6815476190476191,
+            "bit_mass": 0.999679696524427
+          }
+        },
+        "repeat": {
+          "cell": {
+            "cells": {
+              "AND:00:depth_1": {
+                "count": 16,
+                "answer_ce": 0.07744162788731046,
+                "accuracy": 0.9375
+              },
+              "AND:00:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.003471202668151818,
+                "accuracy": 1.0
+              },
+              "AND:00:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.0038766650031902827,
+                "accuracy": 1.0
+              },
+              "AND:01:depth_1": {
+                "count": 16,
+                "answer_ce": 0.005148878102772869,
+                "accuracy": 1.0
+              },
+              "AND:01:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.0033593379775993526,
+                "accuracy": 1.0
+              },
+              "AND:01:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.00617781541950535,
+                "accuracy": 1.0
+              },
+              "AND:10:depth_1": {
+                "count": 16,
+                "answer_ce": 0.05565495291375555,
+                "accuracy": 0.9375
+              },
+              "AND:10:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.004437336428964045,
+                "accuracy": 1.0
+              },
+              "AND:10:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.015335366035287734,
+                "accuracy": 1.0
+              },
+              "AND:11:depth_1": {
+                "count": 16,
+                "answer_ce": 0.03489112567331176,
+                "accuracy": 1.0
+              },
+              "AND:11:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.15885658290062565,
+                "accuracy": 0.9375
+              },
+              "AND:11:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.050169317779364064,
+                "accuracy": 1.0
+              },
+              "NOT:0:depth_1": {
+                "count": 16,
+                "answer_ce": 0.09547002099861857,
+                "accuracy": 0.9375
+              },
+              "NOT:0:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.025631739423261024,
+                "accuracy": 1.0
+              },
+              "NOT:0:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.01357789082248928,
+                "accuracy": 1.0
+              },
+              "NOT:1:depth_1": {
+                "count": 16,
+                "answer_ce": 0.0022813557807239704,
+                "accuracy": 1.0
+              },
+              "NOT:1:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.003844316292088479,
+                "accuracy": 1.0
+              },
+              "NOT:1:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.06644724353827769,
+                "accuracy": 0.9375
+              },
+              "OR:00:depth_1": {
+                "count": 16,
+                "answer_ce": 0.09065491639194079,
+                "accuracy": 0.9375
+              },
+              "OR:00:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.009122919538640417,
+                "accuracy": 1.0
+              },
+              "OR:00:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.013681385709787719,
+                "accuracy": 1.0
+              },
+              "OR:01:depth_1": {
+                "count": 16,
+                "answer_ce": 0.0052980501495767385,
+                "accuracy": 1.0
+              },
+              "OR:01:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.030953302019042894,
+                "accuracy": 1.0
+              },
+              "OR:01:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.009800886604352854,
+                "accuracy": 1.0
+              },
+              "OR:10:depth_1": {
+                "count": 16,
+                "answer_ce": 0.007124526935513131,
+                "accuracy": 1.0
+              },
+              "OR:10:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.006844669216661714,
+                "accuracy": 1.0
+              },
+              "OR:10:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.1255136441468494,
+                "accuracy": 0.9375
+              },
+              "OR:11:depth_1": {
+                "count": 16,
+                "answer_ce": 0.011199243825103622,
+                "accuracy": 1.0
+              },
+              "OR:11:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.019646159402327612,
+                "accuracy": 1.0
+              },
+              "OR:11:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.004990323919628281,
+                "accuracy": 1.0
+              },
+              "XOR:00:depth_1": {
+                "count": 16,
+                "answer_ce": 0.021029251962318085,
+                "accuracy": 1.0
+              },
+              "XOR:00:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.08207275030872552,
+                "accuracy": 0.9375
+              },
+              "XOR:00:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.008572422586439643,
+                "accuracy": 1.0
+              },
+              "XOR:01:depth_1": {
+                "count": 16,
+                "answer_ce": 0.0382116696855519,
+                "accuracy": 1.0
+              },
+              "XOR:01:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.028143839801487047,
+                "accuracy": 1.0
+              },
+              "XOR:01:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.12958430669095833,
+                "accuracy": 1.0
+              },
+              "XOR:10:depth_1": {
+                "count": 16,
+                "answer_ce": 0.07562650540785398,
+                "accuracy": 1.0
+              },
+              "XOR:10:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.07462085090810433,
+                "accuracy": 1.0
+              },
+              "XOR:10:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.13971702926210128,
+                "accuracy": 0.9375
+              },
+              "XOR:11:depth_1": {
+                "count": 16,
+                "answer_ce": 0.045177766180131584,
+                "accuracy": 1.0
+              },
+              "XOR:11:depth_2-3": {
+                "count": 16,
+                "answer_ce": 0.061673361517023295,
+                "accuracy": 1.0
+              },
+              "XOR:11:depth_4+": {
+                "count": 16,
+                "answer_ce": 0.031176798336673528,
+                "accuracy": 1.0
+              }
+            },
+            "macro_answer_ce": 0.04039307990838313,
+            "macro_accuracy": 0.9866071428571429
+          },
+          "operator": {
+            "cells": {
+              "AND": {
+                "count": 192,
+                "answer_ce": 0.034901684065819914,
+                "accuracy": 0.984375
+              },
+              "NOT": {
+                "count": 96,
+                "answer_ce": 0.034542094475909835,
+                "accuracy": 0.9791666666666666
+              },
+              "OR": {
+                "count": 192,
+                "answer_ce": 0.027902502321618766,
+                "accuracy": 0.9895833333333334
+              },
+              "XOR": {
+                "count": 192,
+                "answer_ce": 0.06130054605394738,
+                "accuracy": 0.9895833333333334
+              }
+            },
+            "macro_answer_ce": 0.039661706729323974,
+            "macro_accuracy": 0.9856770833333334
+          },
+          "depth": {
+            "cells": {
+              "1": {
+                "count": 224,
+                "answer_ce": 0.04037213513532022,
+                "accuracy": 0.9821428571428571
+              },
+              "2-3": {
+                "count": 224,
+                "answer_ce": 0.036619883457335946,
+                "accuracy": 0.9910714285714286
+              },
+              "4+": {
+                "count": 224,
+                "answer_ce": 0.044187221132493244,
+                "accuracy": 0.9866071428571429
+              }
+            },
+            "macro_answer_ce": 0.04039307990838314,
+            "macro_accuracy": 0.9866071428571429
+          },
+          "answer": {
+            "cells": {
+              "0": {
+                "count": 336,
+                "answer_ce": 0.02907798431330039,
+                "accuracy": 0.9851190476190477
+              },
+              "1": {
+                "count": 336,
+                "answer_ce": 0.05170817550346588,
+                "accuracy": 0.9880952380952381
+              }
+            },
+            "macro_answer_ce": 0.04039307990838314,
+            "macro_accuracy": 0.9866071428571429
+          },
+          "micro": {
+            "answer_count": 672,
+            "sequence_count": 672,
+            "answer_ce": 0.04039307990838313,
+            "accuracy": 0.9866071428571429,
+            "binary_accuracy": 0.9866071428571429,
+            "bit_mass": 0.9988868453850349
+          }
+        },
+        "paired_gap": {
+          "answer_ce_first_minus_repeat": 0.5525940937356305,
+          "accuracy_first_minus_repeat": -0.30505952380952384
+        }
+      }
+    },
+    "sha256": "4fe14caee319a506592e746a613bed70b6561a5b204e9553087a1a74de8310af"
+  },
+  "gate": null,
+  "last_checkpoint": "checkpoints/update_001082.pt",
+  "last_checkpoint_sha256": "4fe14caee319a506592e746a613bed70b6561a5b204e9553087a1a74de8310af",
+  "measurement_first_50_updates": {
+    "updates": 50,
+    "prediction_tokens": 371385,
+    "training_seconds": 6.248789093999221,
+    "peak_memory_bytes": 245043712
+  },
+  "session_seconds": 167.54790726199985,
+  "completed_at": "2026-09-19T02:38:28.889559+00:00"
+}

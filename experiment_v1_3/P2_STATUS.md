@@ -1,5 +1,8 @@
 # v1.3 P2 — 구현·CPU 검증 통과, GPU pilot 미실행
 
+> 이 문서는 2026-09-18 P2 종료 시점의 불변 기록이다. 현재 pilot·confirm 진행 상태는
+> [P3_STATUS.md](./P3_STATUS.md)를 따른다.
+
 2026-09-18. v1.3 실행기와 여섯 pilot cell의 CPU smoke, unit test를 완료하고 Colab 입력 번들과 노트북을 준비했다.
 **GPU smoke와 6-cell pilot은 아직 실행하지 않았다.** 이 문서는 준비 단계의 증빙이며 pilot 결과를 주장하지 않는다.
 

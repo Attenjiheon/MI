@@ -1,0 +1,151 @@
+{
+  "schema": "pilot-selection-v1.3",
+  "primary_metric": "select_first_member_42_cell_macro_answer_ce",
+  "eligibility": {
+    "general_accuracy_max_regression_absolute": 0.02,
+    "first_macro_ce_min_improvement_nats": 0.05,
+    "or_first_macro_accuracy_min_improvement_absolute": 0.05
+  },
+  "anchor_cell": "base4_uniform",
+  "decision": "promote",
+  "winner": "wide4_read4",
+  "next_step": "confirm_32m_seed_0",
+  "eligibility_by_cell": {
+    "base4_uniform": {
+      "eligible": false,
+      "finite": true,
+      "general_ok": true,
+      "improved": false
+    },
+    "base4_read4": {
+      "eligible": true,
+      "finite": true,
+      "general_ok": true,
+      "improved": true
+    },
+    "wide4_uniform": {
+      "eligible": true,
+      "finite": true,
+      "general_ok": true,
+      "improved": true
+    },
+    "wide4_read4": {
+      "eligible": true,
+      "finite": true,
+      "general_ok": true,
+      "improved": true
+    },
+    "deep8_uniform": {
+      "eligible": true,
+      "finite": true,
+      "general_ok": true,
+      "improved": true
+    },
+    "deep8_read4": {
+      "eligible": true,
+      "finite": true,
+      "general_ok": true,
+      "improved": true
+    }
+  },
+  "cells": {
+    "base4_uniform": {
+      "validated": true,
+      "update": 1082,
+      "prediction_tokens": 8001583,
+      "select_general_answer_ce": 0.5579099765693974,
+      "select_general_accuracy": 0.6474030724213606,
+      "first_macro_answer_ce": 0.7023831432008938,
+      "first_macro_accuracy": 0.4895833333333333,
+      "repeat_macro_accuracy": 0.5401785714285714,
+      "paired_answer_ce_gap": 0.02101247007903155
+    },
+    "base4_read4": {
+      "validated": true,
+      "update": 1082,
+      "prediction_tokens": 8001583,
+      "select_general_answer_ce": 0.20575620308290177,
+      "select_general_accuracy": 0.9002682272616435,
+      "first_macro_answer_ce": 0.5929871736440137,
+      "first_macro_accuracy": 0.6815476190476191,
+      "repeat_macro_accuracy": 0.9866071428571429,
+      "paired_answer_ce_gap": 0.5525940937356305
+    },
+    "wide4_uniform": {
+      "validated": true,
+      "update": 1082,
+      "prediction_tokens": 8001583,
+      "select_general_answer_ce": 0.41260629851738717,
+      "select_general_accuracy": 0.7682272616435016,
+      "first_macro_answer_ce": 0.658745807206807,
+      "first_macro_accuracy": 0.5982142857142857,
+      "repeat_macro_accuracy": 0.7857142857142857,
+      "paired_answer_ce_gap": 0.24198740557178444
+    },
+    "wide4_read4": {
+      "validated": true,
+      "update": 1082,
+      "prediction_tokens": 8001583,
+      "select_general_answer_ce": 0.14681348735677088,
+      "select_general_accuracy": 0.9261155815654718,
+      "first_macro_answer_ce": 0.49316066068743003,
+      "first_macro_accuracy": 0.7380952380952381,
+      "repeat_macro_accuracy": 1.0,
+      "paired_answer_ce_gap": 0.46835975340595076
+    },
+    "deep8_uniform": {
+      "validated": true,
+      "update": 1082,
+      "prediction_tokens": 8001583,
+      "select_general_answer_ce": 0.5319546873540901,
+      "select_general_accuracy": 0.7034869544013655,
+      "first_macro_answer_ce": 0.740180720774723,
+      "first_macro_accuracy": 0.5491071428571429,
+      "repeat_macro_accuracy": 0.6160714285714286,
+      "paired_answer_ce_gap": 0.08482841038078602
+    },
+    "deep8_read4": {
+      "validated": true,
+      "update": 1082,
+      "prediction_tokens": 8001583,
+      "select_general_answer_ce": 0.21187303231755317,
+      "select_general_accuracy": 0.8866130212143379,
+      "first_macro_answer_ce": 0.5082576666950661,
+      "first_macro_accuracy": 0.7172619047619048,
+      "repeat_macro_accuracy": 0.9985119047619048,
+      "paired_answer_ce_gap": 0.4759881421189112
+    }
+  },
+  "sources": {
+    "base4_uniform": {
+      "run": "/content/boolean_interp/experiment_v1_3/runs/recovered_base4_uniform",
+      "verification": "/content/boolean_interp/experiment_v1_3/results/pilot_base4_uniform_selection_audit.json",
+      "checkpoint_sha256": "92d70bf8ea75140f5e4f605dc53f2e100d2aa76d88f662807de624115f92ee41"
+    },
+    "base4_read4": {
+      "run": "/content/boolean_interp/experiment_v1_3/runs/recovered_base4_read4",
+      "verification": "/content/boolean_interp/experiment_v1_3/results/pilot_base4_read4_selection_audit.json",
+      "checkpoint_sha256": "4fe14caee319a506592e746a613bed70b6561a5b204e9553087a1a74de8310af"
+    },
+    "wide4_uniform": {
+      "run": "/content/boolean_interp/experiment_v1_3/runs/recovered_wide4_uniform",
+      "verification": "/content/boolean_interp/experiment_v1_3/results/pilot_wide4_uniform_selection_audit.json",
+      "checkpoint_sha256": "56590e858b3085f72dcf6087912fa401e62448fe22c2196634b2c17158cb383f"
+    },
+    "wide4_read4": {
+      "run": "/content/boolean_interp/experiment_v1_3/runs/recovered_wide4_read4",
+      "verification": "/content/boolean_interp/experiment_v1_3/results/pilot_wide4_read4_selection_audit.json",
+      "checkpoint_sha256": "cef275da1ca92377639be8b06f5f15a977a11ecd616fe855232a5ea68e665575"
+    },
+    "deep8_uniform": {
+      "run": "/content/boolean_interp/experiment_v1_3/runs/recovered_deep8_uniform",
+      "verification": "/content/boolean_interp/experiment_v1_3/results/pilot_deep8_uniform_selection_audit.json",
+      "checkpoint_sha256": "235e0edcd7d8e197e6d7dacd264df92f6cc069206f747fdadb1269b9d0a225d1"
+    },
+    "deep8_read4": {
+      "run": "/content/boolean_interp/experiment_v1_3/runs/recovered_deep8_read4",
+      "verification": "/content/boolean_interp/experiment_v1_3/results/pilot_deep8_read4_selection_audit.json",
+      "checkpoint_sha256": "a5accc58dd51808f0a8d29831bb1c38ef0bd1772e8782ad963f617e53dd8b00d"
+    }
+  }
+}
