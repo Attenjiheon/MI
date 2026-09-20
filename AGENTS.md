@@ -17,11 +17,12 @@
 
 | 문서 | 역할 |
 |---|---|
+| [README.md](./README.md) | 저장소 전체 구조, 버전 3종 세트 규칙, 버전 계보, 경로 이동 금지 원칙 |
 | [phase.md](./phase.md) | 실행 순서, 선행 조건, 단계별 산출물과 완료 gate |
 | [01_experiment_design.md](./01_experiment_design.md) | 연구 목적, 가설, 해석 범위와 보고 원칙 |
 | [02_language_and_corpus.md](./02_language_and_corpus.md) | 언어 문법, 토큰 ID, 실행 의미, 생성·split·metadata 규격 |
 | [03_experiment_spec.md](./03_experiment_spec.md) | 모델·학습·probe·SAE·TC·인과 평가의 상세 실행 규격 |
-| `experiment_v1/` | 현재 config, 상태, 실행 기록과 산출물 |
+| `experiment_v1*/` | 각 버전의 config, 상태, 실행 기록과 산출물. 현재 활성 버전은 아래 §8–10과 [README.md](./README.md) §3을 따른다 |
 
 규격 충돌의 적용 우선순위는 **사용자의 최신 명시 지시 → 03의 명시적 변경·상세 규격 → 02의 언어·코퍼스 규격 → 01의 연구 설계**다. 실행 순서와 단계 gate는 `phase.md`를 따르되, phase가 상세 규격을 바꾸는 근거로 쓰이지는 않는다. 충돌을 발견하면 조용히 절충하지 말고 해당 문서와 항목을 기록한다. 이 파일은 원문을 대체하지 않는다.
 
@@ -84,9 +85,9 @@
 - 노트북에는 입력 업로드·checksum 검증, 의존성 설치·환경 기록, 실행·저장·재개, 결과 다운로드 절차를 포함한다. 필요한 입력 번들도 함께 제공한다.
 - 노트북 준비·로컬 검증과 Colab 실제 실행을 구분하고, 내려받은 실행 증빙을 검증하기 전에는 해당 phase를 완료 처리하지 않는다.
 
-## 8. 현재 활성 실험 버전
+## 8. v1.1 4-block 보존 분기 (2026-09-16)
 
-- 2026-09-16 사용자 지시로 **4-block v1.1**을 새로 시작한다. 신규 실행은 `experiment_v1_1/CHANGELOG.md`를 먼저 읽고 `experiment_v1_1/`, `interp_v1_1/`, `tests_v1_1/`를 사용한다.
+- 2026-09-16 사용자 지시로 시작한 **4-block v1.1** 보존 분기다. 이 버전을 재현·감사할 때는 `experiment_v1_1/CHANGELOG.md`를 먼저 읽고 `experiment_v1_1/`, `interp_v1_1/`, `tests_v1_1/`를 사용한다.
 - 표의 v1.0 상세 규격 중 block 수·파라미터 수·깊이 기반 초기화는 위 변경 규격이 대체한다. 데이터·예산·선택/gate는 유지한다. 신규 CPU/GPU smoke 통과 전 GPU 본학습을 시작하지 않는다.
 - `experiment_v1/`와 `interp/`는 2-block 실패 실험 재현용이다. 해당 상태·설정·checkpoint를 신규 실험으로 덮어쓰거나 재사용하지 않는다. 과거 결과 감사는 그 버전의 규격·코드를 따른다.
 
@@ -98,5 +99,12 @@
 ## 10. v1.3 상태 전이 진단 설계 (2026-09-17)
 
 - 신규 v1.3 작업은 `experiment_v1_3/DESIGN.md`와 `design_config.json`을 먼저 읽는다. v1.2는 감사된 행동 gate 실패로 보존하고, v1.0–v1.2 validation은 v1.3 선택·gate에 재사용하지 않는다.
-- v1.3은 설계만 완료된 상태다. `interp_v1_3/`, `tests_v1_3/`, 새 corpus와 Colab notebook이 구현되고 CPU/GPU smoke가 통과하기 전에는 pilot이나 본학습을 시작하지 않는다.
+- v1.3은 P1·P2와 6-cell 8M pilot을 완료했고 `wide4_read4`를 winner로 승격한 상태다. 현재 진행 기준은 `experiment_v1_3/P3_STATUS.md`다. seed 0 32M confirm·gate는 미실행이며, 검증된 gate 통과 전에 seed 1·2, frozen test, P5 이후를 시작하지 않는다.
 - 여섯 pilot cell을 임의로 줄이거나 추가하지 않고, 새 select/gate/test 분리와 first/repeat 42-cell quota를 지킨다. Pilot winner 하나만 사전 규칙으로 승격하며 gate나 test를 보고 checkpoint·설정·threshold를 다시 고르지 않는다.
+
+## 11. v1.4 P3 생성·검증 진입 (2026-09-20)
+
+- 사용자 요청으로 `next_architecture_proposal.json`의 `deepwide12_read4`를 v1.4로 준비 중이다. `experiment_v1_4/DESIGN.md`, `design_config.json`, `corpus_rebuild.json`, `P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`를 먼저 읽는다. 구현과 검증은 `interp_v1_4/`, `tests_v1_4/`를 사용한다.
+- 최초 `data/language_v1_4/`의 64M 생성물은 historical READ-prefix 누락으로 거부됐다. 삭제·이동·학습하지 않는다. 수정본의 활성 경로는 `corpus_rebuild.json`의 `active_data_root`이며, 수정본 audit 통과 전에는 config 동결이나 GPU 학습을 허용하지 않는다.
+- 진행 중인 로컬 준비는 `experiment_v1_4/results/local_preparation/state.json`과 단계별 로그를 확인한다. DRAFT notebook은 실행용이 아니다. Local preparation, 실제 GPU smoke, P3 학습·gate 반환 증빙의 검증을 구분한다.
+- v1.3 confirm은 v1.4 설계에 인용된 반환 증빙상 행동 gate 실패다. v1.3 test를 열거나 seed 1·2를 추가하지 않는다. v1.4도 seed 0 gate 검증 통과 전에는 replication/test/표현 분석을 시작하지 않는다.

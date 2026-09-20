@@ -1,0 +1,213 @@
+{
+  "schema": "experiment-design-v1.4",
+  "status": "frozen_design",
+  "executable": false,
+  "created_date": "2026-09-20",
+  "base_spec": "experiment-spec-v1.2-with-explicit-v1.4-overrides",
+  "source_proposal": "experiment_v1_3/results/next_architecture_proposal.json",
+  "predecessor": {
+    "version": "v1.3",
+    "status": "failed_behavior_gate",
+    "candidate": "wide4_read4",
+    "lm_seed": 0,
+    "actual_prediction_tokens": 32004917,
+    "selected_update": 4249,
+    "selected_checkpoint_sha256": "00303521fcd440e43b6216e5495eca629ec92c9fb2a7b3bec9db7e69902dfbb3",
+    "evidence_zip": "experiment_v1_3/evidence/v1_3_confirm_wide4_read4_seed0_evidence_20260920T095655014484.zip",
+    "evidence_zip_sha256": "c7cca1856c51cddcf778c50c946fad57ca68677a6dde660fdc4676cd204e57d9",
+    "gate_general_accuracy": 0.9815342669475772,
+    "gate_first_42_cell_macro_accuracy": 0.9468005952380952,
+    "gate_repeat_42_cell_macro_accuracy": 1.0,
+    "test_scores_observed": false
+  },
+  "questions": [
+    "Does a deeper and wider 12-block transformer trained for a frozen 64M-token budget pass the independent state-transition behavior gate?",
+    "If seed 0 passes, does the same frozen configuration reproduce across LM seeds 1 and 2?",
+    "If at least two seeds pass, are READ-state representations linearly accessible and causally supported at the pre-registered block-0 sparse-analysis site?"
+  ],
+  "data": {
+    "root": "data/language_v1_4",
+    "seed_namespace": "20260920|language-v1.4|<purpose>|<index>",
+    "seed_derivation": "SHA256_first_8_bytes_unsigned_big_endian",
+    "rng": "PCG64",
+    "base_root": "data/language_v1_3",
+    "preserve_base_train_prefix_bytes": true,
+    "base_prefix_prediction_tokens": 32004917,
+    "base_prefix_sequences": 271936,
+    "base_prefix_shards": 68,
+    "nominal_prediction_tokens": 64000000,
+    "finish_first_complete_update_at_or_above_budget": true,
+    "effective_batch_sequences": 64,
+    "repeat_train_sequences": false,
+    "shuffle": false,
+    "distribution": "unchanged_IID",
+    "reject_against_all_v1_0_through_v1_4_reserved_hashes": true,
+    "generation_order": [
+      "select_validation",
+      "gate_validation",
+      "test",
+      "interpretation",
+      "causal",
+      "train_extension"
+    ]
+  },
+  "evaluation_splits": {
+    "select": {
+      "general_sequences": 512,
+      "first_repeat_pairs_per_cell": 64,
+      "may_select_checkpoint": true
+    },
+    "gate": {
+      "general_sequences": 1024,
+      "legacy_diagnostic_targets_each": 1024,
+      "first_repeat_pairs_per_cell": 64,
+      "may_select_checkpoint": false,
+      "evaluations_per_selected_checkpoint": 1
+    },
+    "test": {
+      "general_sequences": 2048,
+      "legacy_diagnostic_targets_each": 2048,
+      "first_repeat_pairs_per_cell": 128,
+      "may_select_or_change_anything": false
+    },
+    "first_repeat_cells": {
+      "first_definition": "first READ of queried variable after its last logical update",
+      "repeat_definition": "same origin semantics with one correct same-variable READ inserted after the update and before the target",
+      "depth_bins": ["1", "2-3", "4+"],
+      "not_input_bits": ["0", "1"],
+      "binary_operators": ["AND", "OR", "XOR"],
+      "binary_truth_patterns": ["00", "01", "10", "11"],
+      "cell_count": 42,
+      "one_target_per_independent_origin": true
+    }
+  },
+  "architecture": {
+    "id": "deepwide12",
+    "candidate_id": "deepwide12_read4",
+    "blocks": 12,
+    "residual_width": 256,
+    "attention_heads": 4,
+    "head_width": 64,
+    "mlp_width": 1024,
+    "rope_dimensions": 64,
+    "expected_trainable_parameters": 9485312,
+    "output_weight_multiplier": 0.20412414523193154,
+    "context_length": 768,
+    "vocabulary_size": 15,
+    "dropout": 0.0,
+    "tied_embedding_unembedding": false
+  },
+  "loss": {
+    "id": "read4",
+    "nonpad_weight": 1.0,
+    "read_answer_weight": 4.0,
+    "answer_position_detection": "token_ids_only_READ_then_VAR_predicting_B0_or_B1",
+    "metadata_or_state_labels_used": false,
+    "normalization": "sum_weighted_ce_divided_by_sum_weights"
+  },
+  "training": {
+    "fresh_initialization": true,
+    "dtype": "float32",
+    "amp": false,
+    "tf32": false,
+    "torch_compile": false,
+    "effective_batch_sequences": 64,
+    "smoke_microbatch_candidates_in_order": [16, 8, 4, 2, 1],
+    "optimizer": {
+      "name": "AdamW",
+      "learning_rate": 0.0003,
+      "betas": [0.9, 0.95],
+      "epsilon": 1e-8,
+      "matrix_and_embedding_weight_decay": 0.01,
+      "bias_and_norm_weight_decay": 0.0
+    },
+    "global_gradient_clip_norm": 1.0,
+    "warmup_prediction_tokens": 50000,
+    "stable_learning_rate": 0.0003,
+    "decay_start_prediction_tokens": 57600000,
+    "final_learning_rate": 0.00003,
+    "nominal_prediction_tokens": 64000000,
+    "automatic_extension": false
+  },
+  "checkpoint_selection": {
+    "split": "select",
+    "candidate_milestones_prediction_tokens": [
+      1000000,
+      3000000,
+      8000000,
+      16000000,
+      24000000,
+      32000000,
+      48000000,
+      57600000,
+      60800000,
+      64000000
+    ],
+    "primary_metric": "first_member_42_cell_macro_answer_ce",
+    "mode": "minimum",
+    "near_tie_nats": 0.0001,
+    "near_tie_reference": "global_minimum_primary_metric",
+    "tie_break": ["lower_select_general_answer_ce", "earlier_update"],
+    "gate_may_reselect_checkpoint": false
+  },
+  "gate": {
+    "general_full_vocabulary_accuracy_min": 0.99,
+    "each_legacy_diagnostic_accuracy_min": 0.95,
+    "first_member_42_cell_macro_accuracy_min": 0.95,
+    "each_first_member_operator_macro_accuracy_min": 0.95,
+    "each_first_member_depth_macro_accuracy_min": 0.95,
+    "each_first_member_answer_accuracy_min": 0.95,
+    "repeat_member_42_cell_macro_accuracy_min": 0.95,
+    "coverage_required": 1.0,
+    "individual_cells_additional_gate": false,
+    "seed0_must_pass_before_replication": true,
+    "minimum_passing_seeds_for_interpretation": 2,
+    "failed_seeds_are_preserved": true
+  },
+  "replication": {
+    "lm_seeds": [0, 1, 2],
+    "same_data_order": true,
+    "fresh_initialization_per_seed": true,
+    "maximum_nominal_training_tokens": 192000000,
+    "replace_failed_seeds": false
+  },
+  "test_policy": {
+    "evaluate_after_all_seed_training_and_validation_decisions_are_frozen": true,
+    "evaluate_all_trained_seeds": true,
+    "may_change_model_checkpoint_threshold_or_gate": false
+  },
+  "interpretation": {
+    "requires_at_least_two_passing_lm_seeds": true,
+    "mandatory_sparse_layer": 0,
+    "all_layer_full_probe_diagnostic": true,
+    "mandatory_tools": ["sae", "transcoder"],
+    "k_values": [4, 16],
+    "sparse_seed_repeat_for_lm_seed0": 1,
+    "dictionary_width_and_budget": "retain_existing_contract_unless_separately_versioned"
+  },
+  "inference_limits": {
+    "gate_success_guaranteed": false,
+    "success_probability_estimated": false,
+    "architecture_only_causal_comparison": false,
+    "changes_vs_v1.3_confirm": [
+      "architecture_depth_and_width",
+      "training_budget_and_decay_boundary",
+      "fresh_evaluation_splits",
+      "larger_select_pair_quota"
+    ]
+  },
+  "readiness": {
+    "design": "complete",
+    "implementation": "pending",
+    "corpus_generation": "pending",
+    "cpu_audit": "pending",
+    "cpu_smoke": "pending",
+    "gpu_smoke": "pending",
+    "colab_notebook": "pending",
+    "seed0_training": "pending",
+    "seed0_gate": "pending",
+    "replication": "blocked_on_seed0_gate",
+    "test_evaluation": "blocked_on_frozen_validation_decisions",
+    "interpretation": "blocked_on_two_passing_seeds"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "v1.4-corpus-rebuild-01",
+  "rejected_data_root": "data/language_v1_4",
+  "active_data_root": "data/language_v1_4/rebuild_01",
+  "reason": "Initial generator omitted inherited historical reserved READ prefixes and recorded legacy seeds despite using v1.4 RNGs.",
+  "preservation": "Initial files remain at their original paths; do not train on them. The rebuild is a distinct immutable child directory, not an overwrite or rename.",
+  "method": "Regenerate all fresh splits and extension from the same frozen v1.4 seeds, loading the inherited reserved-prefix registry before v1.3 rows. Copy the original v1.3 train prefix byte-identically.",
+  "unchanged": ["IID distribution", "seed namespace", "split quotas", "64M budget", "architecture", "selection", "gate"],
+  "model_scores_consulted": false
+}

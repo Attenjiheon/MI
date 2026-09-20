@@ -2,6 +2,7 @@
 __pycache__/
 .pytest_cache/
 .DS_Store
+.ipynb_checkpoints/
 
 # Preserved local preparation attempts; final release evidence is tracked.
 experiment_v1_2/bundles/p3_16m_bundle_v1.*
@@ -10,3 +11,11 @@ experiment_v1_2/smoke/cpu_02/
 
 # v1.3: debug-only smoke checkpoints; their SHA-256 is recorded in smoke.json.
 experiment_v1_3/smoke/**/*.pt
+
+# v1.3: raw Colab return archives are compacted into evidence/pilot_summaries.
+experiment_v1_3/evidence/*.zip
+
+# v1.4 rejected initial corpus stays local at its original paths.
+/data/language_v1_4/*
+!/data/language_v1_4/rebuild_01/
+experiment_v1_4/smoke/**/*.pt
