@@ -1,0 +1,48 @@
+checksum, full replay and independent historical isolation audit
+historical complete language_v1 54615 54615 810312
+historical complete language_v1_2 166807 166807 2490322
+historical complete language_v1_3 307645 344948 5287408
+{
+  "status": "passed",
+  "schema": "language-v1.4-postwrite-audit",
+  "file_checksums": "passed",
+  "train_token_metadata_alignment": "passed",
+  "train_independent_replay": "passed",
+  "all_new_fixed_splits_independent_replay": "passed",
+  "global_sequence_and_read_prefix_isolation": "passed",
+  "historical_reserved_registry_loaded": true,
+  "rng_metadata_matches_v14_namespace": true,
+  "interpretation_position_quota_and_join": "passed",
+  "causal_pair_replay": "passed",
+  "v1_3_train_prefix_byte_identical": "passed",
+  "first_repeat_replay_and_quota": "passed",
+  "first_repeat": {
+    "select": {
+      "pairs": 2688,
+      "members": 5376,
+      "cells": 42
+    },
+    "gate": {
+      "pairs": 2688,
+      "members": 5376,
+      "cells": 42
+    },
+    "test": {
+      "pairs": 5376,
+      "members": 10752,
+      "cells": 42
+    }
+  },
+  "first_repeat_unique_member_hashes": 21504,
+  "standard_new_sequences": 286496,
+  "causal_pairs": 3072,
+  "prior_sequence_hashes": 344948,
+  "prior_read_prefix_hashes": 5287408,
+  "all_sequence_hashes": 659092,
+  "all_read_prefix_hashes": 10245193,
+  "train_sequences": 537536,
+  "train_prediction_tokens": 64005751,
+  "first_repeat_cell_and_single_insertion_semantics": "passed"
+}
+independent quota, diagnostics and cursor checks
+data integrity passed; historical per-target attempt compliance remains unverified

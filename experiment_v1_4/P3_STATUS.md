@@ -9,9 +9,9 @@
 - [x] v1.3 confirm 반환 ZIP SHA-256과 내부 감사 `passed`를 확인했다.
 - [x] v1.3 seed 0 행동 gate 실패와 test 미개봉을 확인했다.
 - [x] v1.4 아키텍처·예산·선택·gate·replication 규칙을 test 열람 전에 동결했다.
-- [ ] v1.4 P1 corpus 생성과 postwrite audit가 통과했다.
-- [ ] v1.4 P2 unit test와 CPU/GPU smoke가 통과했다.
-- [ ] Colab input bundle과 notebook의 hash를 검증했다.
+- [x] v1.4 P1 corpus 생성과 전체 독립 audit가 통과했다 (`results/audit_20260921_01/completion.json`).
+- [ ] v1.4 P2 전체: 27 tests·정식 CPU smoke·CLI resume는 통과, 실제 GPU smoke는 미실행.
+- [x] Colab r2 input bundle 전체·내부 checksum 및 notebook 7개 코드 셀 compile을 검증했다 (`results/audit_20260921_01/delivery.json`).
 
 ## P3 동결 계약
 
@@ -35,10 +35,18 @@
 
 위 증빙을 모두 회수·검증하기 전에는 체크박스나 registry를 `passed`로 갱신하지 않는다.
 
-## 준비 작업 계속 실행
+## 이전 준비 경과 (2026-09-20 기록)
 
 최초 64,007,030-token 코퍼스는 historical READ-prefix 누락으로 승인하지 않는다.
 원본을 보존한 수정본 재생성과 후속 로컬 검증이 진행 중이다.
 현재 데이터 경로는 불변 설계 원본에 대한 운영 정정 `corpus_rebuild.json`을 따르며,
 상세 근거는 `P1_STATUS.md`, 구현 부분 검증은 `P2_STATUS.md`에 기록한다.
 최종 runtime config가 생성되고 GPU smoke가 통과하기 전에는 학습을 시작하지 않는다.
+
+## 2026-09-21 CPU 감사 결과
+
+수정 corpus 생성과 전체 CPU 감사가 통과했다. 실제 학습량은 64,005,751 tokens,
+8,399 updates로 동결됐다. 상세 증빙은 `results/audit_20260921_01/REPORT.md`를 따른다.
+기존 r1 notebook/bundle은 보존하며 감사 보완을 포함한 r2를 후속 전달물로 만든다.
+GPU smoke와 학습은 미실행이다. Cell CI 및 확장 행동 보고 항목은 P3 결과의 최종 승인 전
+보완해야 하며 현재 문서는 P3 완료나 모델 gate 통과를 의미하지 않는다.

@@ -228,6 +228,20 @@ def build(revision, draft=False):
             'scripts/verify_v1_4_evidence.py',
             'scripts/generate_v1_4_corpus.py',
         )]
+        # Preserve the generator actually used for rebuild_01, separately from
+        # subsequent audit/attempt-limit fixes, with final independent evidence.
+        audit = folder / 'results/audit_20260921_01'
+        assert json.loads((audit / 'corpus/summary.json').read_text())['status'] == 'passed_data_integrity'
+        assert json.loads((audit / 'attempts_02/summary.json').read_text())['status'] == 'passed'
+        assert json.loads((audit / 'policy.json').read_text())['status'] == 'passed'
+        audit_files = [audit / name for name in (
+                'REPORT.md', 'generator_at_creation.py', 'provenance.json',
+                'existing_cpu_verified.json', 'corpus/full_replay.json',
+                'corpus/summary.json', 'attempts_02/summary.json',
+                'policy.json', 'language_self_test.json',
+        )]
+        assert all(path.is_file() for path in audit_files)
+        selected += audit_files
         files = {str(p.relative_to(ROOT)): sha(p) for p in sorted(set(selected)) if p.is_file() and p.name != '.DS_Store'}
         destination.parent.mkdir(exist_ok=True)
         with zipfile.ZipFile(destination, 'x', zipfile.ZIP_DEFLATED, compresslevel=3, allowZip64=True) as archive:

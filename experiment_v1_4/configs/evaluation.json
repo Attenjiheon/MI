@@ -1,0 +1,68 @@
+{
+  "gate": {
+    "coverage_required": 1.0,
+    "each_first_member_answer_accuracy_min": 0.95,
+    "each_first_member_depth_macro_accuracy_min": 0.95,
+    "each_first_member_operator_macro_accuracy_min": 0.95,
+    "each_legacy_diagnostic_accuracy_min": 0.95,
+    "failed_seeds_are_preserved": true,
+    "first_member_42_cell_macro_accuracy_min": 0.95,
+    "general_full_vocabulary_accuracy_min": 0.99,
+    "individual_cells_additional_gate": false,
+    "minimum_passing_seeds_for_interpretation": 2,
+    "repeat_member_42_cell_macro_accuracy_min": 0.95,
+    "seed0_must_pass_before_replication": true
+  },
+  "schema": "evaluation-contract-v1.4",
+  "splits": {
+    "first_repeat_cells": {
+      "binary_operators": [
+        "AND",
+        "OR",
+        "XOR"
+      ],
+      "binary_truth_patterns": [
+        "00",
+        "01",
+        "10",
+        "11"
+      ],
+      "cell_count": 42,
+      "depth_bins": [
+        "1",
+        "2-3",
+        "4+"
+      ],
+      "first_definition": "first READ of queried variable after its last logical update",
+      "not_input_bits": [
+        "0",
+        "1"
+      ],
+      "one_target_per_independent_origin": true,
+      "repeat_definition": "same origin semantics with one correct same-variable READ inserted after the update and before the target"
+    },
+    "gate": {
+      "evaluations_per_selected_checkpoint": 1,
+      "first_repeat_pairs_per_cell": 64,
+      "general_sequences": 1024,
+      "legacy_diagnostic_targets_each": 1024,
+      "may_select_checkpoint": false
+    },
+    "select": {
+      "first_repeat_pairs_per_cell": 64,
+      "general_sequences": 512,
+      "may_select_checkpoint": true
+    },
+    "test": {
+      "first_repeat_pairs_per_cell": 128,
+      "general_sequences": 2048,
+      "legacy_diagnostic_targets_each": 2048,
+      "may_select_or_change_anything": false
+    }
+  },
+  "test_policy": {
+    "evaluate_after_all_seed_training_and_validation_decisions_are_frozen": true,
+    "evaluate_all_trained_seeds": true,
+    "may_change_model_checkpoint_threshold_or_gate": false
+  }
+}

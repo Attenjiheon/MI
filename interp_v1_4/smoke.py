@@ -174,7 +174,9 @@ def check_resume(model, optimizer, state, sequences, out, cell, loss_id, inputs,
     )
 
 
-def run(root, out, device):
+def run(root, out, device, *, fixture_only=False):
+    if fixture_only and device != "cpu":
+        raise ValueError("Fixture-only preflight is CPU-only and cannot authorize GPU training")
     root = Path(root).resolve()
     out = Path(out).resolve()
     out.mkdir(parents=True, exist_ok=False)
@@ -183,7 +185,7 @@ def run(root, out, device):
     torch.set_num_threads(2)
     if device == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA GPU required")
-    inputs = verify_inputs(root)
+    inputs = {"design": sha(root / "experiment_v1_4/design_config.json")} if fixture_only else verify_inputs(root)
     debug_path = root / "experiment_v1_2/debug/sequences.json"
     records = json.loads(debug_path.read_text())
     sequences = [record["token_ids"] for record in records]
@@ -193,12 +195,23 @@ def run(root, out, device):
         for folder in ("interp_v1_4", "interp_v1_2", "corpus")
         for p in sorted((root / folder).glob("*.py"))
     }
-    data_root = root / json.loads((root / "experiment_v1_4/configs/run.json").read_text())["data_root"]
-    contract = json.loads((root / "experiment_v1_4/configs/transformer.json").read_text())
     design = json.loads((root / "experiment_v1_4/design_config.json").read_text())
-    expected_parameters = contract["architecture"]["expected_trainable_parameters"]
-    pairs_fixture = write_pairs(data_root / "first_repeat/select.jsonl.gz", out / "select_pairs_slice.jsonl.gz")
-    general_slice = list(head(data_root / "select/general.jsonl.gz", SMOKE_SEQUENCES))
+    if fixture_only:
+        from corpus.v1_4 import cells as fixture_cells, rng, sample_pair
+        expected_parameters = design["architecture"]["expected_trainable_parameters"]
+        pairs_fixture = out / "debug_pairs.jsonl.gz"
+        with gzip.open(pairs_fixture, "wt") as handle:
+            for cell in fixture_cells():
+                pair, _, _ = sample_pair(rng("cpu_audit_fixture", cell.index), "cpu_audit_fixture", cell)
+                handle.write(json.dumps(pair) + "\n")
+        general_slice = records[:SMOKE_SEQUENCES]
+        inputs["pair_fixture"] = sha(pairs_fixture)
+    else:
+        data_root = root / json.loads((root / "experiment_v1_4/configs/run.json").read_text())["data_root"]
+        contract = json.loads((root / "experiment_v1_4/configs/transformer.json").read_text())
+        expected_parameters = contract["architecture"]["expected_trainable_parameters"]
+        pairs_fixture = write_pairs(data_root / "first_repeat/select.jsonl.gz", out / "select_pairs_slice.jsonl.gz")
+        general_slice = list(head(data_root / "select/general.jsonl.gz", SMOKE_SEQUENCES))
 
     cells = {}
     for cell in CELLS:
@@ -284,6 +297,8 @@ def run(root, out, device):
         phase="v1.4-smoke",
         status="passed",
         scope=device,
+        fixture_only=fixture_only,
+        frozen_input_verified=not fixture_only,
         debug_only=True,
         reuse_in_experiment=False,
         input_hashes=inputs,
@@ -314,5 +329,6 @@ if __name__ == "__main__":
     parser.add_argument("--root", default=".")
     parser.add_argument("--output", required=True)
     parser.add_argument("--device", choices=["cpu", "cuda"], required=True)
+    parser.add_argument("--fixture-only", action="store_true", help="CPU implementation preflight; does not satisfy the frozen-corpus smoke gate")
     args = parser.parse_args()
-    run(args.root, args.output, args.device)
+    run(args.root, args.output, args.device, fixture_only=args.fixture_only)
