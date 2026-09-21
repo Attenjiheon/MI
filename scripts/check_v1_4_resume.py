@@ -31,10 +31,11 @@ def equal(left, right):
         assert left == right
 
 
-def run(out):
+def run(out, stage="p3", lm_seed=0):
     out.mkdir(parents=True, exist_ok=False)
     base = [sys.executable, '-m', 'interp_v1_4.cli', '--root', str(ROOT),
-            '--cell', 'deepwide12_read4', '--stage', 'p3', '--debug', '--device', 'cpu', '--microbatch', '2']
+            '--cell', 'deepwide12_read4', '--stage', stage, '--lm-seed', str(lm_seed),
+            '--debug', '--device', 'cpu', '--microbatch', '2']
     subprocess.run(base + ['--output', str(out / 'full')], check=True, cwd=ROOT)
     subprocess.run(base + ['--output', str(out / 'paused'), '--persistent-dir', str(out / 'persistent'),
                            '--pause-after-updates', '1'], check=True, cwd=ROOT)
@@ -49,7 +50,7 @@ def run(out):
         subprocess.run([sys.executable, 'scripts/verify_v1_4_evidence.py', str(out / name), '--debug',
                         '--output', str(out / (name + '_audit.json'))], check=True, cwd=ROOT)
     atomic_json(out / 'resume_equivalence.json', dict(
-        status='passed', debug_only=True, reuse_in_experiment=False,
+        status='passed', stage=stage, lm_seed=lm_seed, debug_only=True, reuse_in_experiment=False,
         model_optimizer_rng_cursor_microbatch_next_boundary='bitwise_equal',
         state=first['state'], model_tensor_sha256=tensor_digest(first['model']),
         audits={name: sha(out / (name + '_audit.json')) for name in ('full', 'resumed')}), immutable=True)
@@ -58,4 +59,7 @@ def run(out):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
-    run(parser.parse_args().output.resolve())
+    parser.add_argument('--stage', choices=['p3', 'p4'], default='p3')
+    parser.add_argument('--lm-seed', type=int, default=0)
+    args = parser.parse_args()
+    run(args.output.resolve(), args.stage, args.lm_seed)

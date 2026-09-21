@@ -16,7 +16,7 @@ Seed 1·2와 test는 P3의 잔여 작업이 아니다. 아직 실행되지 않�
 | P1 | 완료 | [corpus 감사](experiment_v1_4/results/audit_20260921_01/completion.json) |
 | P2 | 완료 | [CPU/GPU smoke 상태](experiment_v1_4/P2_STATUS.md), [r3 GPU 반환 검증](experiment_v1_4/results/p3_audit_20260921_01/gpu_smoke/verification.json) |
 | P3 | **완료·passed** | [seed 0 반환 감사](experiment_v1_4/results/p3_audit_20260921_01/completion.json) |
-| P4 | **미실행·다음 작업** | seed 1·2 학습/선택/gate → 전체 validation 결정 동결 → 학습한 seed 전체의 test → 반환 증빙 검증 |
+| P4 | **로컬 준비 완료·GPU 미실행** | [P4 상태](experiment_v1_4/P4_STATUS.md): seed 1·2 학습/선택/gate → 전체 validation 결정 동결 → 학습한 seed 전체의 test → 반환 증빙 검증 |
 | P5–P9 | 미실행·대기 | P4 완료 및 LM seeds 0·1·2 중 최소 두 seed의 validation gate 통과 |
 | P10 | 미실행·선택 분석 | 필수 READ 분석 및 sparse 초기화 반복 완료 후 결정 |
 | P11 | 최종 집계 미완료 | 단계별 기록은 누적하며 전체 필수 분석은 아직 남아 있음 |
@@ -336,12 +336,13 @@ Select 규칙에 따라 update 7,983 (60,801,363 tokens)을 선택했고, 해당
 [동결 seed 0](experiment_v1_4/results/p3_audit_20260921_01/frozen_seed0.json)를 따른다.
 P3 완료 커밋은 `d6b91ae`이며 원격 main 반영을 확인했다.
 
-### 18.2 P4 — seed 1·2 재현 및 최종 test (미실행)
+### 18.2 P4 — seed 1·2 재현 및 최종 test (로컬 준비 완료·GPU 미실행)
 
 **선행 조건:** 검증된 seed 0 gate 통과와 동결 예산. 현재 충족했다.
 
-1. Seed 1·2 실행기·Colab 노트북·입력 번들 및 검증 절차를 준비한다. 현재 P3 CLI는 seed 0만
-   허용하므로 기존 r3 노트북에서 seed 숫자만 바꿔 실행하지 않는다.
+1. Seed 1·2 실행기·Colab 노트북·입력 번들 및 검증 절차를 준비한다.
+   `--stage p4`는 감사된 seed 0 증빙과 동결 입력을 확인한 후 seed 1·2만 허용한다.
+   [P4 전용 전달물](experiment_v1_4/P4_STATUS.md)을 사용하며 기존 r3 노트북에서 seed 숫자만 바꾸지 않는다.
 2. 같은 아키텍처·read4·optimizer/LR·effective batch·동결 train 순서로 seed 1과 2를 각각
    fresh initialization에서 학습한다. 각 seed는 실제 64,005,751 tokens / 8,399 updates를 소비한다.
 3. 각 seed의 지정 milestone 후보 중 **select first-member 42-cell macro answer CE 전역 최소**를
@@ -354,7 +355,7 @@ P3 완료 커밋은 `d6b91ae`이며 원격 main 반영을 확인했다.
 7. 반환 증빙의 checksum, 학습량, 선택/gate/test 절차, 환경과 checkpoint를 검증하고
    seed별 결과·실패 사유·통과 모델 목록과 hash를 registry에 기록한다.
 
-- [ ] Seed 1·2 실행 전달물과 사전 검증이 준비됐다.
+- [x] Seed 1·2 실행 전달물과 로컬 사전 검증이 준비됐다. [검증 증빙](experiment_v1_4/results/p4_preparation_r1/verification.json); 실제 GPU 실행은 미완료.
 - [ ] Seed 1의 학습·select 선택·one-time validation gate 반환 증빙을 검증했다.
 - [ ] Seed 2의 학습·select 선택·one-time validation gate 반환 증빙을 검증했다.
 - [ ] 전체 학습·validation 결정 및 checkpoint hash를 동결했다.

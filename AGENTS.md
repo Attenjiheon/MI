@@ -132,3 +132,24 @@
 - 다음은 같은 동결 설정의 P4 seed 1·2 재현이며 아직 미실행이다. 최소 두 seed 통과 전 표현 분석,
   전체 학습·validation 결정 동결 전 frozen test는 시작하지 않는다. Seed 0 결과만으로 전체 실험
   완료를 주장하지 않는다. Gate/test를 재평가하지 않았다.
+
+## 15. v1.4 P4 로컬 실행 준비 완료 (2026-09-21)
+
+- P4 현재 상태는 `experiment_v1_4/P4_STATUS.md`, 준비 증빙은
+  `experiment_v1_4/results/p4_preparation_r1/verification.json`을 먼저 확인한다.
+- `--stage p4`에서 seed 1·2만 허용하며 감사된 seed 0 증빙과 같은 config/data/예산,
+  microbatch 16을 검사한다. 모델·학습·평가 수치 코드는 seed 0과 byte-identical하다.
+- 전용 `P4_v1_4_seed1_r1.ipynb`, `P4_v1_4_seed2_r1.ipynb`와 공통
+  `v1_4_p4_bundle_r1.zip`을 사용한다. 기존 P3 노트북의 seed 숫자만 바꾸지 않는다.
+- 33 tests, CPU smoke, 두 seed의 CLI persistent resume 및 반환 감사, 421개 ZIP member
+  checksum과 노트북 검증은 통과했다. 실제 seed 1·2 GPU 학습·gate는 아직 미실행이다.
+- 두 반환물을 감사한 뒤 세 seed 전체의 학습·validation 결정을 동결하고 별도 frozen-test
+  노트북으로 모든 학습 seed를 평가한다. 현 준비 완료를 P4 전체 완료로 표시하지 않는다.
+
+## 16. 사용자 승인 디스크 정리 (2026-09-21)
+
+- 최신 사용자 지시에 따라 과거 원본 전체 보존 규칙에 이번 삭제 목록만 예외를 적용했다.
+- 현재 파일 가용성은 `maintenance/disk_cleanup_20260921/REPORT.md`와 `deleted.jsonl`을 먼저 확인한다.
+- 이전 전달 ZIP, 완료된 smoke/resume 디버그 checkpoint, 거부된 최초 v1.4 corpus payload 일부는 해시·축약 기록을 남기고 삭제했다. 옛 문서의 원본 존재 문구만 믿지 않는다.
+- 활성 rebuild_01, 동결 config, seed 0 반환 원본과 감사 증빙, P3 r3 및 P4 번들·노트북은 보존·해시 검증했다. 실험 상태와 gate는 변경하지 않았다.
+- 삭제된 debug checkpoint는 본학습 입력이 아니다. 과거 검증을 재실행하려면 별도 경로에서 재생성하며 기존 성공 보고서를 수정하지 않는다.

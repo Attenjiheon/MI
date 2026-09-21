@@ -42,6 +42,7 @@ from .runtime import (
     verify_inputs,
 )
 from .training import Progress, lm_optimizer, lm_update
+from .replication import replication_authorization, validate_seed
 
 EFFECTIVE_BATCH = 64
 CODE_FOLDERS = ("interp_v1_4", "interp_v1_2", "corpus")
@@ -58,8 +59,8 @@ def stage_contract(root, stage, cell):
     """Budgets, milestones and the frozen final cursor come from the frozen config set only."""
     config = json.loads((root / "experiment_v1_4/configs/run.json").read_text())
     transformer = json.loads((root / "experiment_v1_4/configs/transformer.json").read_text())
-    if stage != "p3" or cell != config["candidate"]:
-        raise ValueError("Only the frozen v1.4 P3 candidate is executable")
+    if stage not in ("p3", "p4") or cell != config["candidate"]:
+        raise ValueError("Only the frozen v1.4 P3/P4 candidate is executable")
     budget = config["nominal_prediction_tokens"]
     milestones = list(config["milestones"])
     if budget not in milestones or sorted(milestones) != milestones:
@@ -164,8 +165,7 @@ def cpu_copy(value):
 def run(a):
     root = a.root.resolve()
     output = a.output.resolve()
-    if a.lm_seed != 0:
-        raise ValueError("This P3 runner only permits seed 0; replication requires separately audited seed-0 gate evidence")
+    validate_seed(a.stage, a.lm_seed)
     if a.microbatch not in (16, 8, 4, 2, 1):
         raise ValueError("Invalid frozen microbatch")
     if not a.debug and (a.device != "cuda" or not torch.cuda.is_available()):
@@ -183,6 +183,10 @@ def run(a):
     hashes["run_settings"] = dict(
         schema="lm-run-v1.4", stage=a.stage, cell=a.cell, lm_seed=a.lm_seed, debug=a.debug
     )
+    if a.stage == "p4":
+        hashes["replication_authorization"] = replication_authorization(
+            root, contract, hashes, a.microbatch, debug=a.debug
+        )
     if not a.debug:
         if a.device != "cuda" or not torch.cuda.is_available():
             raise ValueError("Production v1.4 runs require a CUDA runtime")
@@ -373,7 +377,7 @@ def run(a):
     selected = select_checkpoint(milestones, "debug" if a.debug else a.stage, budget, contract["near_tie_nats"])
     selected["sha256"] = sha(output / selected["checkpoint"])
     gate_result = None
-    if a.stage == "p3" and not a.debug:
+    if a.stage in ("p3", "p4") and not a.debug:
         if (output / "gate.json").exists():
             gate_result = json.loads((output / "gate.json").read_text())
             if gate_result["checkpoint_sha256"] != selected["sha256"]:
@@ -440,7 +444,7 @@ def main():
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--cell", required=True)
-    parser.add_argument("--stage", choices=["p3"], default="p3")
+    parser.add_argument("--stage", choices=["p3", "p4"], default="p3")
     parser.add_argument("--lm-seed", type=int, default=0)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
     parser.add_argument("--microbatch", type=int, default=16)
