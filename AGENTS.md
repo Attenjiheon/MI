@@ -120,3 +120,15 @@
 - §12의 GPU 미실행 상태는 과거 기록이다. 반환 원본·환경 lock·동결 입력과 runtime code hash·checkpoint 복사본 및 smoke 결과 검증이 통과했다. 증빙은 `experiment_v1_4/evidence/gpu_smoke_20260921_01/REPORT.md`와 `verification.json`이다.
 - P2 완료: Tesla T4, microbatch 16, effective batch 64. Debug checkpoint는 본실험에 재사용하지 않는다.
 - P3는 미실행이다. Cell CI·확장 행동 보고 구현 보완과 검증을 마친 뒤 학습 준비를 이어간다. GPU smoke 통과를 행동 gate나 P3 완료로 해석하지 않는다.
+
+
+## 14. v1.4 P3 seed 0 gate·반환 검증 완료 (2026-09-21)
+
+- §13의 P3 미실행은 과거 상태다. 64,005,751 tokens / 8,399 updates로 seed 0 학습을 완료했고,
+  select 규칙으로 update 7,983을 선택해 one-time gate를 통과했다.
+- 증빙: `experiment_v1_4/results/p3_audit_20260921_01/REPORT.md`, `completion.json`,
+  `frozen_seed0.json`. 원본 ZIP·8,449개 checksum·GPU smoke·config/data/code·checkpoint·재개 검증 통과.
+- 일반 READ 99.9277%, first macro 99.8140%, repeat 100%; legacy와 모든 group/coverage gate 통과.
+- 다음은 같은 동결 설정의 P4 seed 1·2 재현이며 아직 미실행이다. 최소 두 seed 통과 전 표현 분석,
+  전체 학습·validation 결정 동결 전 frozen test는 시작하지 않는다. Seed 0 결과만으로 전체 실험
+  완료를 주장하지 않는다. Gate/test를 재평가하지 않았다.

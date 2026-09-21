@@ -1,4 +1,25 @@
-# v1.4 P3 — deepwide12_read4 seed 0 실행 전
+# v1.4 P3 — seed 0 행동 gate 통과 · 반환 검증 완료
+
+2026-09-21. **P3 완료 (`passed`).** 64,005,751 prediction tokens / 8,399 updates / cursor 537,536.
+선택 checkpoint는 update 7,983 (60,801,363 tokens)이며 select 전역 최소 CE 규칙과 일치한다.
+
+- [x] 원본 ZIP SHA-256과 내부 8,449개 checksum 검증.
+- [x] r3 GPU smoke·runtime/config/data hash·환경 lock 검증.
+- [x] init/10 milestones/last, optimizer/RNG/cursor·32M 재개 이력 검증.
+- [x] select 선택·one-time gate 기록·quota·CI·확장 보고 검증.
+- [x] 일반 READ 99.9277%, legacy 99.9023%/99.9023%/100%, first macro 99.8140%, repeat 100%.
+- [x] 모든 first group 기준과 coverage 통과. Gate/test 재채점 없음.
+
+증빙: [감사 보고서](results/p3_audit_20260921_01/REPORT.md),
+[완료 manifest](results/p3_audit_20260921_01/completion.json),
+[동결 seed 0](results/p3_audit_20260921_01/frozen_seed0.json).
+
+다음 단계는 **P4 seed 1·2 재현**이다. 아직 실행하지 않았다. 최소 두 seeds 통과 전 표현 분석,
+전체 validation 결정 동결 전 frozen test는 금지한다. 아래 미실행/미보완 표기는 당시 준비 이력이다.
+
+---
+
+# 이전 준비 기록 — seed 0 실행 전
 
 2026-09-21 기준. `next_architecture_proposal.json`을 정식 v1.4 계약으로 승격했으나,
 **GPU smoke 반환 검증은 통과했으며 seed 0 64M 학습은 아직 실행하지 않았다.** 이 문서는 P3 완료나 행동 gate 통과를

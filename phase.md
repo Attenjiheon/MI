@@ -280,3 +280,13 @@ phase / run_id / status(pending|running|passed|failed|paused|skipped)
 [v1.3 설계](./experiment_v1_3/DESIGN.md)는 v1.2의 첫 READ·구조 깊이별 실패와 같은 상태 재READ의 높은 정확도를 바탕으로 깊이·용량과 loss 배분 가설을 분리한다. 새 select/gate/test를 예약하고, `base4`/`wide4`/`deep8` × `uniform`/`read4` 여섯 pilot cell을 seed 0·8M에서 비교한다. 사전 eligibility와 tie-break로 winner 하나만 32M 확인 단계에 승격한다. Seed 0 gate 통과 뒤 seed 1·2를 실행하며 최소 2개 seed가 새 gate를 통과해야 표현 분석으로 진행한다.
 
 현재 상태는 **6-cell pilot 선택 완료, `wide4_read4` seed 0 confirm 대기**다. P1 corpus·CPU 감사와 P2 구현·CPU/GPU smoke를 통과했고, 여섯 cell의 고정 8M 결과에 사전 선택 규칙을 적용해 winner를 승격했다. 32M confirm 전달물은 준비·로컬 검증했지만 Colab 초기화 오류 두 건을 학습 전에 수정한 상태이며, seed 0 32M 학습·gate는 아직 시작하지 않았다. seed 0 gate 통과 전에 seed 1·2, frozen test, P5 이후를 시작하지 않는다. [P3 상태](./experiment_v1_3/P3_STATUS.md)와 [pilot 선택](./experiment_v1_3/evidence/pilot_selection.json)을 따른다.
+
+
+## 18. v1.4 P3 seed 0 반환 검증 완료 (2026-09-21)
+
+v1.4는 별도 동결 설계의 12×256/read4/64M 계약을 따른다. v1.0 P3의 1M→3M 규칙은 적용하지 않는다.
+P1·P2 및 r3 보고 보완 뒤 64,005,751 tokens / 8,399 updates를 완료했다.
+Select 규칙에 따라 update 7,983을 선택했고 일반/legacy/first/repeat/group/coverage gate 전부 통과했다.
+[감사 보고서](experiment_v1_4/results/p3_audit_20260921_01/REPORT.md)와
+[완료 manifest](experiment_v1_4/results/p3_audit_20260921_01/completion.json)를 확인했다.
+다음은 P4 seed 1·2 재현이며 test와 표현 분석은 아직 시작하지 않는다.
