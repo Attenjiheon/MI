@@ -77,7 +77,7 @@ MI/
 | v1.1 | 4-block, 797,184 params, 3M | **보존** — P3 행동 gate 실패 | `experiment_v1_1/CHANGELOG.md`, `results/p3_stop_report.md` |
 | v1.2 | 4-block 고정, 16M | **보존** — 감사된 행동 gate 실패 | `experiment_v1_2/DESIGN.md`, `results/p3_stop_report.md` |
 | v1.3 | 3 architecture × 2 loss pilot, 32M | **보존** — 32M confirm 행동 gate 실패 | `experiment_v1_3/P3_STATUS.md` |
-| v1.4 | 12 blocks × 256, read4, 64M | **활성** — 수정 corpus 감사·CPU smoke 통과, GPU 미실행 | `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md` |
+| v1.4 | 12 blocks × 256, read4, 64M | **활성** — 수정 corpus 감사·CPU/GPU smoke 통과, P3 미실행 | `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md` |
 
 실패한 버전은 재현과 감사를 위해 원본 그대로 남깁니다. 과거 결과를 감사할 때는 그 버전의
 코드(`interp_vX/`)와 config를 사용하며, 신규 버전의 구현으로 대체하지 않습니다.
