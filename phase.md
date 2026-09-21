@@ -1,10 +1,30 @@
 # 실험 실행 계획서
 
-작성일: 2026-09-10  
+작성일: 2026-09-10 · 최종 갱신: 2026-09-21
 기준: [01_experiment_design.md](./01_experiment_design.md), [03_experiment_spec.md](./03_experiment_spec.md)  
 실행 규칙: [AGENTS.md](./AGENTS.md)
 
 이 문서는 어떤 작업을 어떤 순서로 수행하고, 어떤 증빙이 있어야 다음 단계로 넘어갈지를 정한다. 체크박스는 실행 결과를 확인한 후에만 표시한다. 문서 작성 자체로 실험을 수행하거나 기존 코드·데이터의 검증 완료를 선언하지 않는다.
+
+## 현재 활성 버전 — v1.4 (2026-09-21)
+
+**P3 seed 0 완료·행동 gate 통과. 다음 단계는 P4 seed 1·2 재현과 최종 test 보고다.**
+Seed 1·2와 test는 P3의 잔여 작업이 아니다. 아직 실행되지 않은 P4 작업이다.
+
+| 단계 | v1.4 현재 상태 | 근거 또는 다음 조건 |
+|---|---|---|
+| P1 | 완료 | [corpus 감사](experiment_v1_4/results/audit_20260921_01/completion.json) |
+| P2 | 완료 | [CPU/GPU smoke 상태](experiment_v1_4/P2_STATUS.md), [r3 GPU 반환 검증](experiment_v1_4/results/p3_audit_20260921_01/gpu_smoke/verification.json) |
+| P3 | **완료·passed** | [seed 0 반환 감사](experiment_v1_4/results/p3_audit_20260921_01/completion.json) |
+| P4 | **미실행·다음 작업** | seed 1·2 학습/선택/gate → 전체 validation 결정 동결 → 학습한 seed 전체의 test → 반환 증빙 검증 |
+| P5–P9 | 미실행·대기 | P4 완료 및 LM seeds 0·1·2 중 최소 두 seed의 validation gate 통과 |
+| P10 | 미실행·선택 분석 | 필수 READ 분석 및 sparse 초기화 반복 완료 후 결정 |
+| P11 | 최종 집계 미완료 | 단계별 기록은 누적하며 전체 필수 분석은 아직 남아 있음 |
+
+**버전별 적용:** 아래 §2–6의 수치·체크박스·실패 판정은 v1.0 원래 실행 기록이다.
+v1.4의 아키텍처·64M 예산·checkpoint 선택·gate·진입 조건은
+[동결 설계](experiment_v1_4/DESIGN.md), [실행 상태](experiment_v1_4/P3_STATUS.md)와
+이 문서 §18을 따른다. 과거 버전의 완료 표시를 v1.4의 완료 증빙으로 사용하지 않는다.
 
 ## 1. 전체 순서와 우선순위
 
@@ -82,6 +102,8 @@ P3에서 행동 gate에 실패하면 규정된 연장 또는 중단 절차로 �
 
 **선행 조건:** P2 통과. **장소:** Colab 단일 GPU.
 
+> 이 절의 1M→3M 파일럿은 v1.0 기록이다. v1.4 P3는 §18에 따라 이미 완료됐다.
+
 1. Seed 0 초기 checkpoint를 저장하고 고정 train shard 순서로 학습한다.
 2. 최초 본실험 50 updates에서 tokens/sec와 peak VRAM을 측정한다. 이 구간은 본실험 예산에 포함한다.
 3. 약 100k 토큰 경계 및 최종 update에서 일반/핵심 진단 validation을 수행한다. 학습 로그, best/last checkpoint를 저장한다.
@@ -107,6 +129,9 @@ P3에서 행동 gate에 실패하면 규정된 연장 또는 중단 절차로 �
 
 **선행 조건:** P3 통과 및 예산 동결. **장소:** GPU, 결과 집계 CPU.
 
+> v1.4의 현재 P4 실행 순서·완료 조건은 §18.2를 따른다. 아래 최소 일반 val CE 선택은
+> v1.0 규칙이며, v1.4는 first-member 42-cell macro answer CE로 선택한다.
+
 1. Seed 1과 2를 같은 train 순서·effective batch·최종 update까지 실행한다. 각 seed 초기 상태도 저장한다.
 2. 각 seed에서 최소 val 답 CE checkpoint를 독립 선택하고 동일 gate를 적용한다. 실패 seed를 교체하지 않는다.
 3. 모델 선택을 마친 뒤 고정 IID·진단·composition test를 최종 평가한다. 길이 GPU 평가는 P10에서 선택 실행한다.
@@ -121,7 +146,7 @@ P3에서 행동 gate에 실패하면 규정된 연장 또는 중단 절차로 �
 
 ## 7. P5 — READ activation cache와 full probe·기준선
 
-**선행 조건:** P4. **장소:** 추출 GPU, probe CPU.
+**선행 조건:** P4. v1.4는 LM seed 최소 2개의 validation gate 통과도 필요하다. **장소:** 추출 GPU, probe CPU.
 
 1. 통과 LM을 동결해 interp train/val/test의 고정 READ 위치에서 block 0 `h,u,m`을 수집한다.
 2. Cache key와 라벨 join, answer 이전 위치, shape/dtype, missing/class support를 검증한다.
@@ -245,6 +270,10 @@ P3에서 행동 gate에 실패하면 규정된 연장 또는 중단 절차로 �
 
 ## 14. 계산 예산과 운영 기록
 
+아래 LM 1M/3M 예산은 v1.0 기준이다. v1.4는 seed당 명목 64M, 실제 64,005,751 tokens /
+8,399 updates이며 세 seed를 모두 실행하면 총 192,017,253 tokens다. 반복 없이 같은 stream을
+소비한다. Sparse 예산은 별도 변경 없이 해당 동결 규격을 따른다.
+
 | 작업 | 기본 예산 |
 |---|---|
 | LM | 3 seeds × 파일럿 동결 예산 1M 또는 3M; 최대 9M + seed별 overshoot |
@@ -279,14 +308,63 @@ phase / run_id / status(pending|running|passed|failed|paused|skipped)
 
 [v1.3 설계](./experiment_v1_3/DESIGN.md)는 v1.2의 첫 READ·구조 깊이별 실패와 같은 상태 재READ의 높은 정확도를 바탕으로 깊이·용량과 loss 배분 가설을 분리한다. 새 select/gate/test를 예약하고, `base4`/`wide4`/`deep8` × `uniform`/`read4` 여섯 pilot cell을 seed 0·8M에서 비교한다. 사전 eligibility와 tie-break로 winner 하나만 32M 확인 단계에 승격한다. Seed 0 gate 통과 뒤 seed 1·2를 실행하며 최소 2개 seed가 새 gate를 통과해야 표현 분석으로 진행한다.
 
-현재 상태는 **6-cell pilot 선택 완료, `wide4_read4` seed 0 confirm 대기**다. P1 corpus·CPU 감사와 P2 구현·CPU/GPU smoke를 통과했고, 여섯 cell의 고정 8M 결과에 사전 선택 규칙을 적용해 winner를 승격했다. 32M confirm 전달물은 준비·로컬 검증했지만 Colab 초기화 오류 두 건을 학습 전에 수정한 상태이며, seed 0 32M 학습·gate는 아직 시작하지 않았다. seed 0 gate 통과 전에 seed 1·2, frozen test, P5 이후를 시작하지 않는다. [P3 상태](./experiment_v1_3/P3_STATUS.md)와 [pilot 선택](./experiment_v1_3/evidence/pilot_selection.json)을 따른다.
+현재 v1.3은 **`wide4_read4` seed 0 32M confirm 행동 gate 실패로 보존**한다.
+일반 READ 98.1534%, first macro 94.6801%, repeat 100%이며 seed 1·2와 test는 실행하지 않는다.
+이 문서의 이전 confirm 대기 표기는 과거 준비 상태다. 반환 결과와 hash는
+[v1.4 진입 근거 §1](experiment_v1_4/DESIGN.md) 및
+[설계 계약의 predecessor](experiment_v1_4/design_config.json)에 기록돼 있다.
+v1.3 `P3_STATUS.md`에는 준비 당시 pending 기록이 남아 있으므로 현재 실행 지시로 해석하지 않는다.
 
 
-## 18. v1.4 P3 seed 0 반환 검증 완료 (2026-09-21)
+## 18. v1.4 현재 실행 계획 (2026-09-21)
+
+### 18.1 P3 — 완료·seed 0 행동 gate 통과
 
 v1.4는 별도 동결 설계의 12×256/read4/64M 계약을 따른다. v1.0 P3의 1M→3M 규칙은 적용하지 않는다.
-P1·P2 및 r3 보고 보완 뒤 64,005,751 tokens / 8,399 updates를 완료했다.
-Select 규칙에 따라 update 7,983을 선택했고 일반/legacy/first/repeat/group/coverage gate 전부 통과했다.
-[감사 보고서](experiment_v1_4/results/p3_audit_20260921_01/REPORT.md)와
-[완료 manifest](experiment_v1_4/results/p3_audit_20260921_01/completion.json)를 확인했다.
-다음은 P4 seed 1·2 재현이며 test와 표현 분석은 아직 시작하지 않는다.
+P1·P2 및 r3 보고 보완 뒤 64,005,751 tokens / 8,399 updates / cursor 537,536을 완료했다.
+Select 규칙에 따라 update 7,983 (60,801,363 tokens)을 선택했고, 해당 checkpoint에서
+일반/legacy/first/repeat/group/coverage gate 전부 통과했다.
+
+- [x] 원본 ZIP·8,449개 내부 checksum·runtime/config/data/환경 lock을 검증했다.
+- [x] Init/10 milestones/last, optimizer/RNG/cursor 및 32M 재개 증빙을 검증했다.
+- [x] Select의 전역 최소 first macro CE 및 near-tie 선택 규칙과 선택 checkpoint가 일치한다.
+- [x] 일반 READ 99.9277%, legacy 99.9023%/99.9023%/100%, first macro 99.8140%, repeat 100%.
+- [x] 모든 group 기준·quota·coverage와 CI/확장 보고를 확인했다. Gate/test 재채점은 하지 않았다.
+
+[감사 보고서](experiment_v1_4/results/p3_audit_20260921_01/REPORT.md),
+[완료 manifest](experiment_v1_4/results/p3_audit_20260921_01/completion.json),
+[동결 seed 0](experiment_v1_4/results/p3_audit_20260921_01/frozen_seed0.json)를 따른다.
+P3 완료 커밋은 `d6b91ae`이며 원격 main 반영을 확인했다.
+
+### 18.2 P4 — seed 1·2 재현 및 최종 test (미실행)
+
+**선행 조건:** 검증된 seed 0 gate 통과와 동결 예산. 현재 충족했다.
+
+1. Seed 1·2 실행기·Colab 노트북·입력 번들 및 검증 절차를 준비한다. 현재 P3 CLI는 seed 0만
+   허용하므로 기존 r3 노트북에서 seed 숫자만 바꿔 실행하지 않는다.
+2. 같은 아키텍처·read4·optimizer/LR·effective batch·동결 train 순서로 seed 1과 2를 각각
+   fresh initialization에서 학습한다. 각 seed는 실제 64,005,751 tokens / 8,399 updates를 소비한다.
+3. 각 seed의 지정 milestone 후보 중 **select first-member 42-cell macro answer CE 전역 최소**를
+   선택한다. 최소와 1e-4 nats 이내는 select/general answer CE, 이른 update 순으로 고른다.
+4. 각 seed의 선택 checkpoint에서 동일 validation gate를 한 번 평가한다. Gate로 checkpoint를
+   다시 고르지 않고, 실패 seed도 보존하며 다른 seed로 대체하지 않는다.
+5. 세 seed 전체의 학습·checkpoint 선택·validation gate 결정을 동결한다.
+6. **학습한 seed 전체(실패 seed 포함)**에 frozen test를 한 번 평가하고 최종 행동 결과를 보고한다.
+   Test는 추가 합격 gate가 아니다. Test 결과로 checkpoint·설정·threshold를 바꾸지 않는다.
+7. 반환 증빙의 checksum, 학습량, 선택/gate/test 절차, 환경과 checkpoint를 검증하고
+   seed별 결과·실패 사유·통과 모델 목록과 hash를 registry에 기록한다.
+
+- [ ] Seed 1·2 실행 전달물과 사전 검증이 준비됐다.
+- [ ] Seed 1의 학습·select 선택·one-time validation gate 반환 증빙을 검증했다.
+- [ ] Seed 2의 학습·select 선택·one-time validation gate 반환 증빙을 검증했다.
+- [ ] 전체 학습·validation 결정 및 checkpoint hash를 동결했다.
+- [ ] 학습한 모든 seed의 frozen test 최종 보고와 반환 증빙 검증을 마쳤다.
+- [ ] 실패 seed를 포함한 결과와 해석 대상 목록을 확정하고 Git에 반영했다.
+
+**P4 완료 조건:** 위 학습·평가·동결·반환 검증·기록이 모두 끝났다.
+Test 점수가 높다는 이유만으로 P4를 완료 처리하지 않는다.
+
+**P5 진입 조건:** P4 완료에 더해 **LM seed 0·1·2 중 최소 2개가 validation gate를 통과**해야 한다.
+현재 seed 0 하나만 통과했다. 조건 미달이면 표현 분석에 진입하지 않고 행동 결과와 중단 사유를
+보고한다. P4를 완료해도 전체 실험 완료는 아니며 필수 READ probe·SAE·TC·인과 평가와
+LM seed 0의 sparse seed 1 반복이 남는다.
