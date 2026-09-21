@@ -6,6 +6,7 @@ gate split a second time. `test/` is never opened.
 """
 import argparse
 import json
+import platform
 import sys
 from pathlib import Path
 
@@ -24,6 +25,29 @@ from interp_v1_4.training import Progress
 from interp_v1_4.replication import replication_authorization, validate_seed
 
 EFFECTIVE_BATCH = 64
+
+
+def verify_initialization(local, recorded, recorded_environment, allow_cross_environment=False):
+    """Exact in the original runtime; optionally bound foreign-runtime FP32 roundoff."""
+    local_digest, recorded_digest = tensor_digest(local), tensor_digest(recorded)
+    exact = local_digest == recorded_digest
+    foreign = (recorded_environment["torch"] != torch.__version__ or
+               recorded_environment["platform"] != platform.platform())
+    maximum = 0.0
+    if not exact:
+        if not allow_cross_environment or not foreign:
+            raise AssertionError("Not a bitwise fresh seed initialization in this environment")
+        assert local.keys() == recorded.keys()
+        for name, value in local.items():
+            other = recorded[name]
+            assert value.shape == other.shape and value.dtype == other.dtype
+            maximum = max(maximum, float((value - other).abs().max()))
+            assert torch.allclose(value, other, atol=1e-7, rtol=0), "Initialization mismatch exceeds FP32 bound: " + name
+    return dict(bitwise_equal=exact, max_absolute_difference=maximum,
+                comparison="exact" if exact else "cross_environment_atol_1e-7_rtol_0",
+                local_tensor_sha256=local_digest, recorded_tensor_sha256=recorded_digest,
+                local_torch=torch.__version__, local_platform=platform.platform(),
+                recorded_torch=recorded_environment["torch"], recorded_platform=recorded_environment["platform"])
 
 
 def verify_recorded_gate(result, thresholds):
@@ -93,7 +117,7 @@ def verify_recorded_gate(result, thresholds):
     )
 
 
-def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False):
+def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False, allow_cross_environment_init=False):
     """`debug` verifies a short debug run with the same contract logic, for runner self-tests."""
     run = Path(run)
     hashes = verify_inputs(ROOT)
@@ -196,7 +220,8 @@ def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False):
     assert not init["optimizer"]["state"] and init["hashes"] == result["hashes"] and init["debug_only"] == debug
     deterministic(result["lm_seed"])
     fresh_model = Transformer(result["architecture"])
-    assert tensor_digest(fresh_model.state_dict()) == tensor_digest(init["model"]), "Not a fresh seed initialization"
+    initialization = verify_initialization(fresh_model.state_dict(), init["model"], result["environment"],
+                                          allow_cross_environment_init)
     del fresh_model
     if not debug:
         started = json.loads((run / "gate_started.json").read_text())
@@ -205,6 +230,7 @@ def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False):
     checked = dict(
         status="passed",
         scope="run_contract_and_retention",
+        initialization_verification=initialization,
         stage=result["stage"],
         cell=result["cell"],
         lm_seed=result["lm_seed"],
@@ -263,10 +289,12 @@ if __name__ == "__main__":
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cpu")
     parser.add_argument("--anchor-checkpoint", type=Path, help="Preserved v1.2 checkpoint for the base4_uniform anchor")
     parser.add_argument("--debug", action="store_true", help="Verify a debug run produced by --debug training")
+    parser.add_argument("--allow-cross-environment-init", action="store_true",
+                        help="Allow at most 1e-7 absolute FP32 initialization differences only in a different runtime; records both hashes")
     args = parser.parse_args()
     atomic_json(
         args.output,
-        verify(args.run, args.reevaluate, args.device, args.anchor_checkpoint, args.debug),
+        verify(args.run, args.reevaluate, args.device, args.anchor_checkpoint, args.debug, args.allow_cross_environment_init),
         immutable=True,
     )
     print("Run evidence verified; the local smoke/environment audit is still required.")

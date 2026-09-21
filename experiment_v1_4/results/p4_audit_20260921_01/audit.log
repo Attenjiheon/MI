@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/Users/jangjiheon/Desktop/MI/experiment_v1_4/results/p4_audit_20260921_01/audit_returns.py", line 123, in <module>
+    for seed in (1,2):audit(seed)
+                      ^^^^^^^^^^^
+  File "/Users/jangjiheon/Desktop/MI/experiment_v1_4/results/p4_audit_20260921_01/audit_returns.py", line 51, in audit
+    subprocess.run([sys.executable,'scripts/verify_v1_4_evidence.py',str(run),'--output',str(output/'run_verification.json')],check=True,stdout=log,stderr=subprocess.STDOUT)
+  File "/opt/anaconda3/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/opt/anaconda3/bin/python', 'scripts/verify_v1_4_evidence.py', '/private/tmp/mi_p4_seed1_zgjp98dw/deepwide12_read4_seed1', '--output', '/Users/jangjiheon/Desktop/MI/experiment_v1_4/results/p4_audit_20260921_01/seed1/run_verification.json']' returned non-zero exit status 1.

@@ -1,6 +1,6 @@
-# v1.4 P4 — seed 1·2 재현 로컬 준비 완료
+# v1.4 P4 — 세 seed validation gate 통과 · frozen test 대기
 
-2026-09-21. **P4 진행 중. 실제 seed 1·2 GPU 학습·gate 및 frozen test는 미실행이다.**
+2026-09-21. **P4 진행 중. seed 1·2 GPU 학습·gate 반환 검증 완료, 세 seed 선택 동결. Frozen test는 미실행이다.**
 P3 seed 0의 감사된 gate 통과와 64M 예산 동결이 선행 증빙이다.
 
 ## 실행 계약
@@ -41,3 +41,30 @@ P5는 P4 완료와 validation gate 최소 두 seed 통과가 모두 필요하다
 디스크 정리 후 전달 ZIP·노트북·코드·준비 증빙 해시 재검증도 통과했다
 ([재검증](results/p4_preparation_r1/post_cleanup_verification.json)). 완료된 로컬 debug checkpoint는
 사용자 승인 정리로 삭제됐으며 성공 기록과 해시는 보존했다. 실제 본학습 입력에는 영향이 없다.
+
+## seed 1·2 반환 감사 완료
+
+[감사·분석 보고서](results/p4_audit_20260921_01/REPORT.md),
+[검증 manifest](results/p4_audit_20260921_01/completion.json),
+[세 seed validation 동결](results/p4_audit_20260921_01/validation_freeze.json)을 따른다.
+두 seed 모두 64,005,751 tokens / 8,399 updates를 소비했고 모든 gate·quota가 통과했다.
+일반 READ는 seed 1 99.9217%, seed 2 99.9699%; first macro는 99.8884% / 100%다.
+Seed 2는 init checkpoint에서 재개했으며 최종 token/cursor 중복은 없다.
+로컬 Mac과 Colab 초기화에는 최대 약 5e-8의 FP32 차이가 있어 교차환경 검사로 별도 기록했다.
+위 실행 준비 절은 이전 전달 이력이며, 현재 다음 작업은 세 seed 전체의 one-time frozen test다.
+P4 전체 완료나 P5 진입으로 표시하지 않는다.
+
+## Frozen test 전용 전달물 (2026-09-21)
+
+[최종 test 노트북](notebooks/P4_v1_4_frozen_test_r1.ipynb)과
+[전용 입력 번들](bundles/v1_4_frozen_test_bundle_r1.zip)을 새 CUDA 런타임에서 실행한다.
+준비 증빙은 [verification.json](results/frozen_test_preparation_r1/verification.json),
+평가 계약은 [contract.json](frozen_test_r1/contract.json)을 따른다.
+
+- 세 seed의 선택된 원본 checkpoint와 7개 suite의 metadata만 포함한다. Train shard는 필요 없다.
+- seed당 일반 READ, legacy 3종, first/repeat 42-cell×128쌍, composition 2종, 총 21개 평가다.
+- 기존 모델·행동·보고 수치 코드는 보존하고 새 orchestration 및 test 전용 집계만 추가했다.
+- 6개 테스트와 미학습 모델 CPU preflight를 통과했다. Microbatch 16 / 길이 302 fixture도 확인했다.
+- 결과별 시작 기록과 원시 측정값을 Drive에 저장한다. 완료 결과는 재사용하며 저장된 raw는
+  집계만 재개한다. 시작 기록만 남은 평가는 추론을 자동 반복하지 않고 부분 증빙을 반환한다.
+- 실제 GPU frozen test 및 반환 감사는 아직 미실행이다. P4 완료와 P5 진입은 계속 대기한다.
