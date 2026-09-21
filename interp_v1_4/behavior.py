@@ -10,6 +10,7 @@ from pathlib import Path
 import torch
 from torch.nn import functional as F
 
+from .reporting import event_context, extended_summary, pair_intervals
 from .model import batch
 from corpus.v1_4 import cells as pair_cells
 
@@ -38,14 +39,19 @@ def _target_row(logit, event, **extra):
 
 @torch.no_grad()
 def evaluate_records(model, records, *, target_only=False, microbatch=16):
+    if microbatch < 1:
+        raise ValueError("microbatch must be positive")
     model.eval()
     rows = []
+    total_ce, tokens = 0.0, 0
     records = list(records)
     device = next(model.parameters()).device
     for offset in range(0, len(records), microbatch):
         examples = records[offset : offset + microbatch]
-        ids, mask, _ = batch([example["token_ids"] for example in examples], device)
+        ids, mask, targets = batch([example["token_ids"] for example in examples], device)
         logits = model(ids, mask)
+        total_ce += float(F.cross_entropy(logits.flatten(0, 1), targets.flatten(), ignore_index=0, reduction="sum"))
+        tokens += int((targets != 0).sum())
         for row, example in enumerate(examples):
             targets = set(example["target_read_ids"])
             for event in example["read_events"]:
@@ -57,11 +63,13 @@ def evaluate_records(model, records, *, target_only=False, microbatch=16):
                         event,
                         sequence_id=example["sequence_id"],
                         read_id=event["read_id"],
+                        **event_context(example, event),
                     )
                 )
     if not rows:
         raise ValueError("No READ answer targets")
-    return summarize(rows)
+    return dict(**summarize(rows), all_token_ce=total_ce/tokens, prediction_tokens=tokens,
+                **extended_summary(rows))
 
 
 def summarize(rows):
@@ -143,7 +151,8 @@ def pair_summary(rows):
         }
         for key, value in paired.items()
     ]
-    return {
+    uncertainty = pair_intervals(rows)
+    result = {
         "pair_count": len(first),
         "first": {
             "cell": _macro(first, "cell_id"),
@@ -166,6 +175,13 @@ def pair_summary(rows):
         },
         "rows": rows,
     }
+
+    for member in ("first", "repeat"):
+        for cell, ci in uncertainty["cells"][member].items():
+            result[member]["cell"]["cells"][cell].update(ci)
+        result[member]["cell"].update(uncertainty["macro"][member])
+    result["uncertainty"] = uncertainty
+    return result
 
 
 def without_rows(value):

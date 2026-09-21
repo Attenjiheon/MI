@@ -56,3 +56,18 @@ T4 GPU smoke 반환 증빙이 통과했다. Microbatch 16 / effective batch 64,
 환경 `e74fb1dcf8112ca0`. 상세 증빙은 `evidence/gpu_smoke_20260921_01/REPORT.md`.
 앞선 CPU 감사 절의 GPU 미실행 표기는 당시 상태다. P3 학습은 계속 미실행이며,
 cell CI·확장 행동 보고 구현 보완과 검증이 다음 작업이다.
+
+## 2026-09-21 r3 학습 전달물 준비 완료
+
+Cell CI와 확장 행동 보고 구현을 보완했다. 동결 corpus/config/모델/선택/gate는 변경하지 않았다.
+30 tests, 새 frozen-input CPU smoke, 실제 CLI persistent resume bitwise 일치와 두 반환 감사,
+r3 ZIP 397개 파일 checksum 및 노트북 7개 코드 셀 compile 검증이 통과했다.
+증빙: [r3 준비 보고서](results/p3_preparation_r3/REPORT.md),
+[검증 manifest](results/p3_preparation_r3/verification.json),
+[보고 계약](results/p3_preparation_r3/REPORTING_CONTRACT.md).
+
+실행용: [P3_v1_4_r3.ipynb](notebooks/P3_v1_4_r3.ipynb),
+[v1_4_p3_bundle_r3.zip](bundles/v1_4_p3_bundle_r3.zip).
+이제 앞선 'cell CI·확장 행동 보고 미보완'은 해결됐다. 코드 hash가 바뀌었으므로 r3 노트북의
+GPU smoke를 먼저 통과한 뒤 seed 0을 실행한다. r1/r2와 이전 smoke는 원본으로 보존한다.
+**P3 실제 학습·gate는 계속 미실행이다.** Colab 반환 증빙 검증이 남아 있다.
