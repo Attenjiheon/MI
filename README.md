@@ -77,7 +77,7 @@ MI/
 | v1.1 | 4-block, 797,184 params, 3M | **보존** — P3 행동 gate 실패 | `experiment_v1_1/CHANGELOG.md`, `results/p3_stop_report.md` |
 | v1.2 | 4-block 고정, 16M | **보존** — 감사된 행동 gate 실패 | `experiment_v1_2/DESIGN.md`, `results/p3_stop_report.md` |
 | v1.3 | 3 architecture × 2 loss pilot, 32M | **보존** — 32M confirm 행동 gate 실패 | `experiment_v1_3/P3_STATUS.md` |
-| v1.4 | 12 blocks × 256, read4, 64M | **활성** — P3 seed 0 행동 gate·반환 검증 통과, P4 seed 1·2 대기 | `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md` |
+| v1.4 | 12 blocks × 256, read4, 64M | **활성** — P3 완료, P4 seed 1·2 로컬 준비 완료·GPU 미실행 | `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`, `P4_STATUS.md` |
 
 실패한 버전은 재현과 감사를 위해 원본 그대로 남깁니다. 과거 결과를 감사할 때는 그 버전의
 코드(`interp_vX/`)와 config를 사용하며, 신규 버전의 구현으로 대체하지 않습니다.
@@ -108,7 +108,7 @@ MI/
 `tests`/`interp`(v1.0), `tests_v1_1`/`interp_v1_1`(v1.1), `tests_v1_2`/`interp_v1_2`(v1.2)를
 같은 방식으로 사용합니다.
 
-진행 상태와 다음 작업은 `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`에서 확인합니다. 설계 당시 README는 원본 hash 보존을 위해 유지합니다.
+진행 상태와 다음 작업은 `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`, `P4_STATUS.md`에서 확인합니다. 설계 당시 README는 원본 hash 보존을 위해 유지합니다.
 
 ## 6. 작업 위생
 
@@ -116,3 +116,9 @@ MI/
   않으며, 발견하면 삭제합니다.
 - 큰 산출물(`.zip`, 대용량 hash 목록)은 `.gitattributes`의 Git LFS 규칙을 따릅니다.
 - 단계 완료 후 Git 갱신 절차는 [AGENTS.md](./AGENTS.md) §6을 따릅니다.
+
+## 7. 로컬 저장 공간 정리 (2026-09-21)
+
+사용자 요청에 따라 일부 과거 대용량 원본은 해시·축약 기록으로 대체했다.
+현재 보존·삭제 범위와 재현 한계는 [정리 보고서](maintenance/disk_cleanup_20260921/REPORT.md)를 따른다.
+이는 위 원본 보존 원칙에 대한 해당 삭제 목록만의 예외이며, 활성 v1.4 입력·seed 0 증빙·P4 전달물은 유지한다.

@@ -21,6 +21,7 @@ from interp_v1_4.model import Transformer, parameter_count
 from interp_v1_4.persistence import atomic_json, read_index
 from interp_v1_4.runtime import deterministic, sha, tensor_digest, verify_inputs
 from interp_v1_4.training import Progress
+from interp_v1_4.replication import replication_authorization, validate_seed
 
 EFFECTIVE_BATCH = 64
 
@@ -31,7 +32,7 @@ def verify_recorded_gate(result, thresholds):
         if result["gate"] is not None:
             raise ValueError("Debug run must not contain a gate result")
         return None
-    if result["stage"] != "p3":
+    if result["stage"] not in ("p3", "p4"):
         raise ValueError("Unsupported stage: " + result["stage"])
     recorded = result["gate"]
     if not recorded:
@@ -107,6 +108,13 @@ def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False):
     for name, digest in result["hashes"]["code"].items():
         assert sha(ROOT / name) == digest, name
     contract = stage_contract(ROOT, result["stage"], result["cell"])
+    validate_seed(result["stage"], result["lm_seed"])
+    settings = result["hashes"]["run_settings"]
+    assert settings == dict(schema="lm-run-v1.4", stage=result["stage"], cell=result["cell"],
+                            lm_seed=result["lm_seed"], debug=debug)
+    if result["stage"] == "p4":
+        authorization = replication_authorization(ROOT, contract, hashes, 16, debug=debug)
+        assert result["hashes"]["replication_authorization"] == authorization
     expected = contract["expected"]
     assert result["nominal_budget"] == contract["budget"]
     assert result["parameter_count"] == contract["expected_parameters"]
@@ -144,6 +152,8 @@ def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False):
         name = f"checkpoints/update_{update:06d}.pt"
         payload = torch.load(run / name, map_location="cpu", weights_only=False)
         assert payload["debug_only"] == debug and payload["hashes"] == result["hashes"]
+        if result["stage"] == "p4" and not debug:
+            assert payload["microbatch"] == 16
         assert payload["state"] == state and payload["microbatch"] == event["microbatch"]
         assert payload["cell"] == result["cell"] and payload["stage"] == result["stage"]
         assert "optimizer" in payload and "rng_states" in payload
@@ -184,6 +194,14 @@ def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False):
     init = torch.load(run / "checkpoints/init.pt", map_location="cpu", weights_only=False)
     assert init["state"] == {"update": 0, "prediction_tokens": 0, "next_data_cursor": 0}
     assert not init["optimizer"]["state"] and init["hashes"] == result["hashes"] and init["debug_only"] == debug
+    deterministic(result["lm_seed"])
+    fresh_model = Transformer(result["architecture"])
+    assert tensor_digest(fresh_model.state_dict()) == tensor_digest(init["model"]), "Not a fresh seed initialization"
+    del fresh_model
+    if not debug:
+        started = json.loads((run / "gate_started.json").read_text())
+        assert started["selected"] == result["selected"]
+        assert json.loads((run / "gate.json").read_text()) == result["gate"]
     checked = dict(
         status="passed",
         scope="run_contract_and_retention",
