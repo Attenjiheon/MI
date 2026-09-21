@@ -36,6 +36,9 @@ def notebook(bundle_name, bundle_sha, draft=False):
     않습니다. 64M 최초 완전 update까지 학습하고 select로 선택한 checkpoint의 gate를 한 번만
     평가합니다. 실패하면 seed 1·2/test/해석으로 넘어가지 않습니다. 이 노트북은 seed 0만 실행합니다.
 
+    보고 r1: 전체 토큰 CE, strata/기준선, first/repeat cell의 paired origin bootstrap CI를 저장합니다.
+    새 보고 코드가 포함되어 있으므로 아래 GPU smoke를 다시 통과한 뒤 본학습을 시작합니다.
+
     **재개:** Drive의 완전 저장 index를 새 로컬 디렉터리로 복구합니다. 예산과 microbatch를
     변경하지 않습니다. gate_started만 있고 완료 결과가 없으면 재평가하지 말고 증빙을 회수합니다.
     GPU smoke/본학습은 로컬에서 실행됐다고 가정하지 않습니다. 반환 ZIP의 로컬 감사가 필요합니다.
@@ -195,7 +198,7 @@ def notebook(bundle_name, bundle_sha, draft=False):
         language_info=dict(name="python"), accelerator="GPU"), cells=cells)
 
 
-def build(revision, draft=False):
+def build(revision, draft=False, cpu_report="experiment_v1_4/smoke/cpu_01/smoke.json"):
     folder = ROOT / 'experiment_v1_4'
     bundle_name = f'v1_4_p3_bundle_{revision}.zip'
     destination = folder / 'bundles' / bundle_name
@@ -206,7 +209,7 @@ def build(revision, draft=False):
         digest = 'UNAVAILABLE_PENDING_P1_AND_CPU_SMOKE'
     else:
         checked = verify_inputs(ROOT)
-        report_path = folder / 'smoke/cpu_01/smoke.json'
+        report_path = ROOT / cpu_report
         report = json.loads(report_path.read_text())
         assert report['status'] == 'passed' and report['scope'] == 'cpu'
         for key in ('configs', 'corpus_manifest'):
@@ -218,8 +221,8 @@ def build(revision, draft=False):
         for directory in ('corpus', 'interp_v1_2', 'interp_v1_4', 'tests_v1_4'):
             selected += list((ROOT / directory).glob('*.py'))
         selected += list((folder / 'configs').glob('*.json'))
-        selected += list((folder / 'smoke/cpu_01').glob('*.json'))
-        selected += list((folder / 'smoke/cpu_01').glob('*.txt'))
+        selected += list(report_path.parent.glob('*.json'))
+        selected += list(report_path.parent.glob('*.txt'))
         selected += [ROOT / name for name in (
             'requirements-interp.txt', 'experiment_v1_2/debug/sequences.json',
             'experiment_v1_3/results/next_architecture_proposal.json',
@@ -267,5 +270,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--revision', default='r1')
     parser.add_argument('--draft', action='store_true')
+    parser.add_argument('--cpu-report', default='experiment_v1_4/smoke/cpu_01/smoke.json')
     args = parser.parse_args()
-    build(args.revision, args.draft)
+    build(args.revision, args.draft, args.cpu_report)
