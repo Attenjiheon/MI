@@ -1,0 +1,153 @@
+{
+  "status": "passed",
+  "scope": "reported_environment_optimizer_schedule_metrics_and_timing",
+  "gate_reexecuted": false,
+  "test_scores_observed": false,
+  "checks": [
+    "same GPU smoke/runtime hashes and environment lock",
+    "two matching-environment sessions; resumed from complete update 4249",
+    "8399 finite updates with frozen read4 weights LR and microbatch",
+    "first 50 measurement reconciliation",
+    "10 select suites and all paired quotas",
+    "cell bootstrap CI and extended report presence",
+    "separate gate and started checkpoint binding"
+  ],
+  "sessions": [
+    {
+      "environment": {
+        "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+        "executable": "/usr/bin/python3",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "torch": "2.11.0+cu128",
+        "numpy": "2.1.3",
+        "cuda": "12.8",
+        "cudnn": 91900,
+        "disk_free_bytes": 198143946752,
+        "ram_bytes": 13605830656,
+        "gpu": "Tesla T4",
+        "vram_bytes": 15637086208,
+        "lock_sha256": "855ad8dea8f742c42f146cb8fa928ed6fbd3f1cb2dc70de8ff0dcfd7a250ffc7",
+        "environment_id": "e74fb1dcf8112ca0"
+      },
+      "command": "/content/boolean_interp/v1_4_fvgnjfom/interp_v1_4/cli.py --root /content/boolean_interp/v1_4_fvgnjfom --stage p3 --cell deepwide12_read4 --lm-seed 0 --device cuda --microbatch 16 --smoke-report /content/boolean_interp/v1_4_fvgnjfom/gpu_smoke/20260921T022348654650/smoke.json --output /content/boolean_interp/v1_4_fvgnjfom/runs/seed0_20260921T022348654650 --persistent-dir /content/drive/MyDrive/MI/v1_4/deepwide12_read4_seed0",
+      "resume": "None",
+      "started_at": "20260921T022428624892"
+    },
+    {
+      "environment": {
+        "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+        "executable": "/usr/bin/python3",
+        "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+        "torch": "2.11.0+cu128",
+        "numpy": "2.1.3",
+        "cuda": "12.8",
+        "cudnn": 91900,
+        "disk_free_bytes": 193455677440,
+        "ram_bytes": 13605830656,
+        "gpu": "Tesla T4",
+        "vram_bytes": 15637086208,
+        "lock_sha256": "855ad8dea8f742c42f146cb8fa928ed6fbd3f1cb2dc70de8ff0dcfd7a250ffc7",
+        "environment_id": "e74fb1dcf8112ca0"
+      },
+      "command": "/content/boolean_interp/v1_4_pjnqryg3/interp_v1_4/cli.py --root /content/boolean_interp/v1_4_pjnqryg3 --stage p3 --cell deepwide12_read4 --lm-seed 0 --device cuda --microbatch 16 --smoke-report /content/boolean_interp/v1_4_pjnqryg3/gpu_smoke/20260921T030145297091/smoke.json --output /content/boolean_interp/v1_4_pjnqryg3/runs/seed0_20260921T030145297091 --persistent-dir /content/drive/MyDrive/MI/v1_4/deepwide12_read4_seed0 --resume /content/boolean_interp/v1_4_pjnqryg3/runs/seed0_20260921T030145297091/checkpoints/update_004249.pt",
+      "resume": "/content/boolean_interp/v1_4_pjnqryg3/runs/seed0_20260921T030145297091/checkpoints/update_004249.pt",
+      "started_at": "20260921T030309171132"
+    }
+  ],
+  "timing": {
+    "all_recorded_training_seconds": 3124.152078564065,
+    "final_session_resume_update": 4249,
+    "session_seconds": 13069.187590255,
+    "training_seconds": 1560.222987989071,
+    "select_validation_seconds": 84.69169433200568,
+    "checkpoint_serialization_seconds": 5.219260366000526,
+    "unallocated_seconds": 11419.053647567922,
+    "unallocated_scope": "Drive copy/checksum, local event writes, gate evaluation and orchestration; not separately timed. Final session only; unrecorded/recomputed work from the first session is not recoverable."
+  },
+  "milestones": [
+    {
+      "boundary": 1000000,
+      "update": 136,
+      "general_accuracy": 0.5894104669689914,
+      "first_macro_ce": 0.6887624924226353,
+      "first_macro_accuracy": 0.5584077380952381
+    },
+    {
+      "boundary": 3000000,
+      "update": 407,
+      "general_accuracy": 0.6504473587449442,
+      "first_macro_ce": 0.7200349058146545,
+      "first_macro_accuracy": 0.5301339285714286
+    },
+    {
+      "boundary": 8000000,
+      "update": 1082,
+      "general_accuracy": 0.9346733668341709,
+      "first_macro_ce": 0.4101507700351617,
+      "first_macro_accuracy": 0.7991071428571429
+    },
+    {
+      "boundary": 16000000,
+      "update": 2160,
+      "general_accuracy": 0.9844343669567349,
+      "first_macro_ce": 0.08192042053906605,
+      "first_macro_accuracy": 0.9665178571428571
+    },
+    {
+      "boundary": 24000000,
+      "update": 3205,
+      "general_accuracy": 0.9950974384115701,
+      "first_macro_ce": 0.03622048172054465,
+      "first_macro_accuracy": 0.9888392857142857
+    },
+    {
+      "boundary": 32000000,
+      "update": 4249,
+      "general_accuracy": 0.9968133349675206,
+      "first_macro_ce": 0.017032253636251597,
+      "first_macro_accuracy": 0.9947916666666666
+    },
+    {
+      "boundary": 48000000,
+      "update": 6325,
+      "general_accuracy": 0.9981615394043387,
+      "first_macro_ce": 0.014932117394359068,
+      "first_macro_accuracy": 0.9955357142857143
+    },
+    {
+      "boundary": 57600000,
+      "update": 7568,
+      "general_accuracy": 0.9986517955631817,
+      "first_macro_ce": 0.008455998308993648,
+      "first_macro_accuracy": 0.9970238095238095
+    },
+    {
+      "boundary": 60800000,
+      "update": 7983,
+      "general_accuracy": 0.9998774359602892,
+      "first_macro_ce": 0.0032469069110952035,
+      "first_macro_accuracy": 0.9985119047619048
+    },
+    {
+      "boundary": 64000000,
+      "update": 8399,
+      "general_accuracy": 0.999509743841157,
+      "first_macro_ce": 0.004460475431776227,
+      "first_macro_accuracy": 0.9985119047619048
+    }
+  ],
+  "selected_update": 7983,
+  "gate": {
+    "passed": true,
+    "checks": {
+      "general": true,
+      "legacy": true,
+      "first_cell_macro": true,
+      "first_operator": true,
+      "first_depth": true,
+      "first_answer": true,
+      "repeat_cell_macro": true,
+      "coverage": true
+    }
+  }
+}
