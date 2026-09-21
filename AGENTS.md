@@ -153,3 +153,24 @@
 - 이전 전달 ZIP, 완료된 smoke/resume 디버그 checkpoint, 거부된 최초 v1.4 corpus payload 일부는 해시·축약 기록을 남기고 삭제했다. 옛 문서의 원본 존재 문구만 믿지 않는다.
 - 활성 rebuild_01, 동결 config, seed 0 반환 원본과 감사 증빙, P3 r3 및 P4 번들·노트북은 보존·해시 검증했다. 실험 상태와 gate는 변경하지 않았다.
 - 삭제된 debug checkpoint는 본학습 입력이 아니다. 과거 검증을 재실행하려면 별도 경로에서 재생성하며 기존 성공 보고서를 수정하지 않는다.
+
+## 17. v1.4 P4 seed 1·2 반환 감사 완료 (2026-09-21)
+
+- 현재 기준은 `experiment_v1_4/results/p4_audit_20260921_01/REPORT.md`, `completion.json`,
+  `validation_freeze.json`이다. seed 0·1·2 모두 validation gate 통과, checkpoint 선택 동결 완료다.
+- Seed 1 선택 update 7,983, seed 2 update 8,399. 두 seed 모두 64,005,751 tokens / 8,399 updates.
+- 로컬 Mac/PyTorch 2.10과 Colab Linux/PyTorch 2.11의 초기화는 tiny FP32 차이로
+  bitwise 동일하지 않다. 반환된 Colab 검증은 통과했고 로컬은 다른 환경에 한해 atol=1e-7,
+  rtol=0 및 동일 seed 비교를 적용했다. 최초 strict 실패와 최대 차이를 보존했다.
+- 다음은 동결된 세 seed 전체의 one-time frozen test와 반환 검증이다. 아직 미실행이며
+  P4 전체 완료 또는 P5 진입으로 표시하지 않는다. Gate/test 재채점은 하지 않았다.
+
+## 18. v1.4 Frozen test 실행 전달 (2026-09-21)
+
+- `experiment_v1_4/notebooks/P4_v1_4_frozen_test_r1.ipynb`와
+  `experiment_v1_4/bundles/v1_4_frozen_test_bundle_r1.zip`이 전용 전달물이다.
+- 기준은 `frozen_test_r1/contract.json`과 `results/frozen_test_preparation_r1/verification.json`이다
+  (모두 `experiment_v1_4/` 기준). 세 seed × 7 suite를 동결 checkpoint에서 평가한다.
+- 로컬 6 tests·미학습 CPU preflight와 입력 checksum 검증은 통과했다. 실제 test는 미실행이다.
+- 완료 결과는 재사용하고 raw 저장 후 집계만 재개한다. 시작만 기록된 평가는 자동 재추론하지 않는다.
+- 반환 검증 전 P4 완료/P5 진입으로 표시하지 않는다. Length는 P10 범위다.

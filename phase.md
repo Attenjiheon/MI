@@ -16,7 +16,7 @@ Seed 1·2와 test는 P3의 잔여 작업이 아니다. 아직 실행되지 않�
 | P1 | 완료 | [corpus 감사](experiment_v1_4/results/audit_20260921_01/completion.json) |
 | P2 | 완료 | [CPU/GPU smoke 상태](experiment_v1_4/P2_STATUS.md), [r3 GPU 반환 검증](experiment_v1_4/results/p3_audit_20260921_01/gpu_smoke/verification.json) |
 | P3 | **완료·passed** | [seed 0 반환 감사](experiment_v1_4/results/p3_audit_20260921_01/completion.json) |
-| P4 | **로컬 준비 완료·GPU 미실행** | [P4 상태](experiment_v1_4/P4_STATUS.md): seed 1·2 학습/선택/gate → 전체 validation 결정 동결 → 학습한 seed 전체의 test → 반환 증빙 검증 |
+| P4 | **seed 1·2 반환 검증 완료·test 대기** | [P4 상태](experiment_v1_4/P4_STATUS.md): seed 1·2 학습/선택/gate → 전체 validation 결정 동결 → 학습한 seed 전체의 test → 반환 증빙 검증 |
 | P5–P9 | 미실행·대기 | P4 완료 및 LM seeds 0·1·2 중 최소 두 seed의 validation gate 통과 |
 | P10 | 미실행·선택 분석 | 필수 READ 분석 및 sparse 초기화 반복 완료 후 결정 |
 | P11 | 최종 집계 미완료 | 단계별 기록은 누적하며 전체 필수 분석은 아직 남아 있음 |
@@ -336,7 +336,7 @@ Select 규칙에 따라 update 7,983 (60,801,363 tokens)을 선택했고, 해당
 [동결 seed 0](experiment_v1_4/results/p3_audit_20260921_01/frozen_seed0.json)를 따른다.
 P3 완료 커밋은 `d6b91ae`이며 원격 main 반영을 확인했다.
 
-### 18.2 P4 — seed 1·2 재현 및 최종 test (로컬 준비 완료·GPU 미실행)
+### 18.2 P4 — seed 1·2 재현 및 최종 test (세 seed validation 동결·test 대기)
 
 **선행 조건:** 검증된 seed 0 gate 통과와 동결 예산. 현재 충족했다.
 
@@ -356,9 +356,10 @@ P3 완료 커밋은 `d6b91ae`이며 원격 main 반영을 확인했다.
    seed별 결과·실패 사유·통과 모델 목록과 hash를 registry에 기록한다.
 
 - [x] Seed 1·2 실행 전달물과 로컬 사전 검증이 준비됐다. [검증 증빙](experiment_v1_4/results/p4_preparation_r1/verification.json); 실제 GPU 실행은 미완료.
-- [ ] Seed 1의 학습·select 선택·one-time validation gate 반환 증빙을 검증했다.
-- [ ] Seed 2의 학습·select 선택·one-time validation gate 반환 증빙을 검증했다.
-- [ ] 전체 학습·validation 결정 및 checkpoint hash를 동결했다.
+- [x] Seed 1의 학습·select 선택·one-time validation gate 반환 증빙을 검증했다.
+- [x] Seed 2의 학습·select 선택·one-time validation gate 반환 증빙을 검증했다.
+- [x] 전체 학습·validation 결정 및 checkpoint hash를 동결했다. [동결 기록](experiment_v1_4/results/p4_audit_20260921_01/validation_freeze.json).
+- [x] 동결된 세 seed의 최종 test 전용 노트북·번들과 로컬 사전 검증을 준비했다. [준비 증빙](experiment_v1_4/results/frozen_test_preparation_r1/verification.json). 실제 GPU test는 미실행.
 - [ ] 학습한 모든 seed의 frozen test 최종 보고와 반환 증빙 검증을 마쳤다.
 - [ ] 실패 seed를 포함한 결과와 해석 대상 목록을 확정하고 Git에 반영했다.
 
@@ -366,6 +367,6 @@ P3 완료 커밋은 `d6b91ae`이며 원격 main 반영을 확인했다.
 Test 점수가 높다는 이유만으로 P4를 완료 처리하지 않는다.
 
 **P5 진입 조건:** P4 완료에 더해 **LM seed 0·1·2 중 최소 2개가 validation gate를 통과**해야 한다.
-현재 seed 0 하나만 통과했다. 조건 미달이면 표현 분석에 진입하지 않고 행동 결과와 중단 사유를
+현재 seed 0·1·2가 모두 통과했으며, [반환 감사](experiment_v1_4/results/p4_audit_20260921_01/REPORT.md)를 마쳤다. P4의 frozen test는 아직 미완료다. 조건 미달이면 표현 분석에 진입하지 않고 행동 결과와 중단 사유를
 보고한다. P4를 완료해도 전체 실험 완료는 아니며 필수 READ probe·SAE·TC·인과 평가와
 LM seed 0의 sparse seed 1 반복이 남는다.

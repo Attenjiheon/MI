@@ -1,0 +1,480 @@
+{
+  "phase": "v1.4-smoke",
+  "status": "passed",
+  "scope": "cuda",
+  "fixture_only": false,
+  "frozen_input_verified": true,
+  "debug_only": true,
+  "reuse_in_experiment": false,
+  "input_hashes": {
+    "corpus_manifest": "9258ef6dbd0af0ca1893836bde8226000c06c52e5f98f9bfa6e0b312b566df97",
+    "configs": "e9218ae1179df2922453e2c60288a6aae883cecd4f72bbfde1bdc9bdee58bd73",
+    "verified_files": 330,
+    "debug": "815194b8b5795ba1238484e20531052c30cbfeecf6e1f13074d3e3f12d356e50",
+    "code": {
+      "interp_v1_4/__init__.py": "e933879401f5451110760ded33960b1b00b89d1aafad2f0cb2a0a83c20414a9d",
+      "interp_v1_4/behavior.py": "54d777377a20bd39d22504a569ecaae10bcac671a1ef271e92c29514dcbf063f",
+      "interp_v1_4/cli.py": "fe4bf242c6fb8f02e297284df90765f713805adf3427072c5831c7f5f81a97dd",
+      "interp_v1_4/data.py": "38f1b5729b06061588b2172ca6bd0c8975d58a5fb70114fbc8ea6c3babf5ad16",
+      "interp_v1_4/dictionary.py": "8ed9f2998bd0fbcb227eaadcfb80dd627ad001c6d679708527a631ab9051d242",
+      "interp_v1_4/integration.py": "edd92d64a658aec3123d7534ed8df88dff72b45dcddf8015cad7ab8ee55d902f",
+      "interp_v1_4/model.py": "db4c3225238fb913b3d312a52304952af34f2b848823bd99f1af15c79250487d",
+      "interp_v1_4/patching.py": "3bc74545811ef4de5114989ae9b6662e527d95a80b04f86326b9d42da1ee0308",
+      "interp_v1_4/persistence.py": "460e41f8429cfb3bceb8a041e6644e7f33c273b0ef68d47c5e94650b2cfa8219",
+      "interp_v1_4/probe.py": "bb1529582947ceb5738bce84c62dc45e7668429088893ae779a518d79651caf2",
+      "interp_v1_4/replication.py": "e5a1c784ffa305da292704faebf115c7309e6526174cf1948ea973f182e259c0",
+      "interp_v1_4/reporting.py": "d813c4a60be1b32fc270f0662a21516bbf33a114e6fadd58c5c14af30d82fe0a",
+      "interp_v1_4/runtime.py": "a98f680b7379f0a5e5c4cf1edd7e56a6ab0dfd4e7def916aa992a9a1641d4464",
+      "interp_v1_4/smoke.py": "ca9b2ede1f2c8c3405ca40e650c58a028860ef5ccc588e3bfaab5d055d6cc5ca",
+      "interp_v1_4/training.py": "b94b4a37cac5b0149317ca891ceb03d3995b25c36914d4481e72007265e6b69c",
+      "interp_v1_2/__init__.py": "ebdd8e28f2d87d6f564bc3b8898f424f38565fe60dac66f46105e77b5371a5da",
+      "interp_v1_2/behavior.py": "0fa52ba2b3561bc81c892ea31a1f8aba19ed74d70a6b59854bb33c9fc2ffeac9",
+      "interp_v1_2/cli.py": "7cd545ff6f3be34c8e85572f28cbc58668c55f99d50a6dd5dce1111ff3bc01a3",
+      "interp_v1_2/data.py": "dd21ad13cde95bf3c11d5ca08b6c66e5aead13a31c7150b28ab5d5268adb267c",
+      "interp_v1_2/dictionary.py": "ece4d1beca294b0d3b819af16bba1a98261247fc9036a903ce7bf5bfdbdfd54c",
+      "interp_v1_2/model.py": "061ef32e12219b4daa1294584d2ce674c02ef615426f216cf38734b24a9e7e26",
+      "interp_v1_2/patching.py": "190dd3f2b7f846c8bac7422a1b2d03602e6a4cac600599dd8552bdda22206ff5",
+      "interp_v1_2/persistence.py": "b4af6ccd7c0c3aa55f5b72085181d6e6f83c8e7cf6d62d6c0b0c23df28955c80",
+      "interp_v1_2/probe.py": "7b60477d1a4fe00442141f0dce34b4454343be606c8f7d1eba8bc0296830343e",
+      "interp_v1_2/runtime.py": "5e2e567e28058a100b09907b427032054a5bc121087247382cad32896470cf9b",
+      "interp_v1_2/smoke.py": "78093f4a019ee499b62392f998d7fd594712cefaa5f8cd158e3bead20ca1e34a",
+      "interp_v1_2/training.py": "75f5d340dd0ddb0e268e26a62fbe0c32387a8e872a2f6abbe531abcc2c1abed8",
+      "corpus/__init__.py": "8c5214860062d4fa21cfdbd9cb19f5701037b4f4537b057611b7f5076710c9e6",
+      "corpus/audit.py": "7b1fca975636ff107f62739c98d869f5b9461a98be781b2b9648bc8d130eb3e7",
+      "corpus/generate.py": "bc5bcfd8938edb5197f54e1328c55c39ef4d2d7056db77d7d571567779651c00",
+      "corpus/generate_v1_4_base.py": "3f1762ab88a23fd58895371b9862edc7e11ecfbcbbe7acd00a29369a3f130c50",
+      "corpus/language.py": "4c90c9d1a66f15d6062ac292a24c5c6f47ec65e4a6c1423713e4332ca942312c",
+      "corpus/replay.py": "4d4861be3ca04b1a0a7212ed3f39aa16d939b4cb31ae40ccf423d07d48f73a01",
+      "corpus/v1_3.py": "75640df81a754a0e0dd7f42768693e2484d724a470493dd96d9e4aba3f49871c",
+      "corpus/v1_4.py": "0350dd89d14a18d30af02d880bc839ad379c13e12ca9a5986abbb3bae2e7f01b"
+    }
+  },
+  "environment": {
+    "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+    "executable": "/usr/bin/python3",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.1.3",
+    "cuda": "12.8",
+    "cudnn": 91900,
+    "disk_free_bytes": 198147641344,
+    "ram_bytes": 13605830656,
+    "gpu": "Tesla T4",
+    "vram_bytes": 15637086208,
+    "lock_sha256": "855ad8dea8f742c42f146cb8fa928ed6fbd3f1cb2dc70de8ff0dcfd7a250ffc7",
+    "environment_id": "e74fb1dcf8112ca0"
+  },
+  "cells": {
+    "deepwide12_read4": {
+      "parameters": 9485312,
+      "blocks": 12,
+      "width": 256,
+      "padding_max_abs_error": 9.238719940185547e-07,
+      "causal_and_pad_mask": "passed",
+      "rope_head_width": 64,
+      "loss_weights": {
+        "read_answer_targets": 145,
+        "prediction_tokens": 1037,
+        "loss_weight_sum": 1472.0,
+        "rejects_non_bit_answer_target": true
+      },
+      "gradient_accumulation_max_abs_error": 1.4901161193847656e-07,
+      "selected_microbatch": 16,
+      "maximum_length_forward_backward": 302,
+      "training": [
+        {
+          "loss": 2.753856989767699,
+          "prediction_tokens": 7191,
+          "loss_weight_sum": 10170.0,
+          "read_answer_targets": 993,
+          "lr": 4.3145999999999997e-05,
+          "gradient_norm": 33.62871551513672
+        },
+        {
+          "loss": 2.2917179186758623,
+          "prediction_tokens": 7113,
+          "loss_weight_sum": 10032.0,
+          "read_answer_targets": 973,
+          "lr": 8.5824e-05,
+          "gradient_norm": 14.766119003295898
+        }
+      ],
+      "resume": {
+        "status": "passed",
+        "checkpoint_sha256": "8fdac12fd596fa86066b1026d5768dd5ddce8ed434b2722b2ea210219bba0fa7",
+        "next_cursor": 192,
+        "next_update": 3,
+        "prediction_tokens": 21755,
+        "model_tensor_sha256": "31982a3e42a2bc2f2068931f792f08f8b60203f89e76548e63148f1d166a21ba"
+      },
+      "interpretation": {
+        "sae_k4": {
+          "updates": 100,
+          "draws": 51200,
+          "first_loss": 0.8941622376441956,
+          "last_loss": 0.01819363236427307,
+          "validation_mse": 0.020418114960193634
+        },
+        "sae_k16": {
+          "updates": 100,
+          "draws": 51200,
+          "first_loss": 0.7858449816703796,
+          "last_loss": 0.011321969330310822,
+          "validation_mse": 0.013101908378303051
+        },
+        "transcoder_k4": {
+          "updates": 100,
+          "draws": 51200,
+          "first_loss": 1.1051112413406372,
+          "last_loss": 0.024739466607570648,
+          "validation_mse": 0.0270098727196455
+        },
+        "transcoder_k16": {
+          "updates": 100,
+          "draws": 51200,
+          "first_loss": 1.353105068206787,
+          "last_loss": 0.016079355031251907,
+          "validation_mse": 0.01808762736618519
+        },
+        "probe": {
+          "status": "passed",
+          "width": 256,
+          "parameters": 257,
+          "validation_balanced_accuracy": 0.5565260200487213
+        },
+        "sae_patches": {
+          "identity": "bitwise",
+          "full": "passed",
+          "sparse": "passed",
+          "output_scale": "h"
+        },
+        "transcoder_patches": {
+          "identity": "bitwise",
+          "full": "passed",
+          "sparse": "passed",
+          "output_scale": "m"
+        },
+        "hooks": {
+          "blocks": 12,
+          "width": 256,
+          "read_and_update": "passed"
+        }
+      },
+      "select_metric_path": {
+        "general": {
+          "answer_count": 384,
+          "sequence_count": 24,
+          "answer_ce": 1.5734859347964327,
+          "accuracy": 0.5546875,
+          "binary_accuracy": 0.5546875,
+          "bit_mass": 0.41430814036478597,
+          "all_token_ce": 2.129795589321928,
+          "prediction_tokens": 2897,
+          "strata": {
+            "operator": {
+              "cells": {
+                "initialization": {
+                  "count": 29,
+                  "accuracy": 0.5172413793103449,
+                  "answer_ce": 1.5947023917888772
+                },
+                "SET": {
+                  "count": 111,
+                  "accuracy": 0.5405405405405406,
+                  "answer_ce": 1.5768888544391941
+                },
+                "NOT": {
+                  "count": 74,
+                  "accuracy": 0.5540540540540541,
+                  "answer_ce": 1.579655664998132
+                },
+                "AND": {
+                  "count": 44,
+                  "accuracy": 0.29545454545454547,
+                  "answer_ce": 1.5962262885137037
+                },
+                "OR": {
+                  "count": 78,
+                  "accuracy": 0.7307692307692307,
+                  "answer_ce": 1.5553415616353352
+                },
+                "XOR": {
+                  "count": 48,
+                  "accuracy": 0.5625,
+                  "answer_ce": 1.5519260217746098
+                }
+              },
+              "coverage": 1.0,
+              "macro_accuracy": 0.5334266250214527,
+              "macro_answer_ce": 1.5757901305249753
+            },
+            "query_var": {
+              "cells": {
+                "A": {
+                  "count": 99,
+                  "accuracy": 0.5656565656565656,
+                  "answer_ce": 1.5123333918927895
+                },
+                "B": {
+                  "count": 92,
+                  "accuracy": 0.6413043478260869,
+                  "answer_ce": 1.611430823802948
+                },
+                "C": {
+                  "count": 89,
+                  "accuracy": 0.5393258426966292,
+                  "answer_ce": 1.590761447220706
+                },
+                "D": {
+                  "count": 104,
+                  "accuracy": 0.4807692307692308,
+                  "answer_ce": 1.583347967037788
+                }
+              },
+              "coverage": 1.0,
+              "macro_accuracy": 0.5567639967371282,
+              "macro_answer_ce": 1.5744684074885578
+            },
+            "answer": {
+              "cells": {
+                "0": {
+                  "count": 175,
+                  "accuracy": 0.13142857142857142,
+                  "answer_ce": 1.6163965838296073
+                },
+                "1": {
+                  "count": 209,
+                  "accuracy": 0.9090909090909091,
+                  "answer_ce": 1.5375559655102817
+                }
+              },
+              "coverage": 1.0,
+              "macro_accuracy": 0.5202597402597402,
+              "macro_answer_ce": 1.5769762746699445
+            },
+            "blocks": {
+              "cells": {
+                "8": {
+                  "count": 24,
+                  "accuracy": 0.6666666666666666,
+                  "answer_ce": 1.5770196467638016
+                },
+                "9": {
+                  "count": 18,
+                  "accuracy": 0.6666666666666666,
+                  "answer_ce": 1.595385279920366
+                },
+                "10": {
+                  "count": 0,
+                  "accuracy": null,
+                  "answer_ce": null
+                },
+                "11": {
+                  "count": 22,
+                  "accuracy": 0.45454545454545453,
+                  "answer_ce": 1.5878105326132341
+                },
+                "12": {
+                  "count": 12,
+                  "accuracy": 0.5833333333333334,
+                  "answer_ce": 1.569442331790924
+                },
+                "13": {
+                  "count": 13,
+                  "accuracy": 0.6923076923076923,
+                  "answer_ce": 1.5394154603664691
+                },
+                "14": {
+                  "count": 0,
+                  "accuracy": null,
+                  "answer_ce": null
+                },
+                "15": {
+                  "count": 45,
+                  "accuracy": 0.4222222222222222,
+                  "answer_ce": 1.5802121877670288
+                },
+                "16": {
+                  "count": 0,
+                  "accuracy": null,
+                  "answer_ce": null
+                },
+                "17": {
+                  "count": 0,
+                  "accuracy": null,
+                  "answer_ce": null
+                },
+                "18": {
+                  "count": 18,
+                  "accuracy": 0.3888888888888889,
+                  "answer_ce": 1.5939578811327617
+                },
+                "19": {
+                  "count": 57,
+                  "accuracy": 0.49122807017543857,
+                  "answer_ce": 1.5833006804449516
+                },
+                "20": {
+                  "count": 40,
+                  "accuracy": 0.675,
+                  "answer_ce": 1.5529032617807388
+                },
+                "21": {
+                  "count": 21,
+                  "accuracy": 0.7619047619047619,
+                  "answer_ce": 1.5430713721684046
+                },
+                "22": {
+                  "count": 44,
+                  "accuracy": 0.5454545454545454,
+                  "answer_ce": 1.5637183839624578
+                },
+                "23": {
+                  "count": 46,
+                  "accuracy": 0.41304347826086957,
+                  "answer_ce": 1.5862445779468701
+                },
+                "24": {
+                  "count": 24,
+                  "accuracy": 0.7916666666666666,
+                  "answer_ce": 1.563968077301979
+                }
+              },
+              "coverage": 0.7647058823529411,
+              "macro_accuracy": 0.5809944959302467,
+              "macro_answer_ce": 1.5720345903046145
+            },
+            "distance": {
+              "cells": {
+                "0": {
+                  "count": 173,
+                  "accuracy": 0.5317919075144508,
+                  "answer_ce": 1.5735444919222352
+                },
+                "1-2": {
+                  "count": 87,
+                  "accuracy": 0.5517241379310345,
+                  "answer_ce": 1.577567019681821
+                },
+                "3+": {
+                  "count": 124,
+                  "accuracy": 0.5887096774193549,
+                  "answer_ce": 1.5705408963464922
+                }
+              },
+              "coverage": 1.0,
+              "macro_accuracy": 0.5574085742882801,
+              "macro_answer_ce": 1.5738841359835163
+            },
+            "truth_table": {
+              "cells": {
+                "AND:00": {
+                  "count": 11,
+                  "accuracy": 0.0,
+                  "answer_ce": 1.6259451020847668
+                },
+                "AND:01": {
+                  "count": 8,
+                  "accuracy": 0.375,
+                  "answer_ce": 1.5616673976182938
+                },
+                "AND:10": {
+                  "count": 16,
+                  "accuracy": 0.0625,
+                  "answer_ce": 1.615875780582428
+                },
+                "AND:11": {
+                  "count": 9,
+                  "accuracy": 1.0,
+                  "answer_ce": 1.555689877933926
+                },
+                "OR:00": {
+                  "count": 18,
+                  "accuracy": 0.1111111111111111,
+                  "answer_ce": 1.628766655921936
+                },
+                "OR:01": {
+                  "count": 10,
+                  "accuracy": 1.0,
+                  "answer_ce": 1.4959078907966614
+                },
+                "OR:10": {
+                  "count": 29,
+                  "accuracy": 0.8620689655172413,
+                  "answer_ce": 1.5406237552905906
+                },
+                "OR:11": {
+                  "count": 21,
+                  "accuracy": 0.9523809523809523,
+                  "answer_ce": 1.5410321042651223
+                },
+                "XOR:00": {
+                  "count": 14,
+                  "accuracy": 0.0,
+                  "answer_ce": 1.6004992297717504
+                },
+                "XOR:01": {
+                  "count": 13,
+                  "accuracy": 1.0,
+                  "answer_ce": 1.5203243035536547
+                },
+                "XOR:10": {
+                  "count": 10,
+                  "accuracy": 0.9,
+                  "answer_ce": 1.5223137855529785
+                },
+                "XOR:11": {
+                  "count": 11,
+                  "accuracy": 0.45454545454545453,
+                  "answer_ce": 1.5543732751499524
+                }
+              },
+              "coverage": 1.0,
+              "macro_accuracy": 0.5598005402962299,
+              "macro_answer_ce": 1.5635849298768383
+            }
+          },
+          "baselines": {
+            "count": 384,
+            "majority_prediction": 1,
+            "split_majority_accuracy": 0.5442708333333334,
+            "independent_bernoulli_expected_accuracy": 0.5,
+            "latest_set_or_initialization_accuracy": 0.6666666666666666,
+            "latest_read_copy_accuracy": 0.5520833333333334
+          }
+        },
+        "first_macro_answer_ce": 1.5634963427271162,
+        "first_macro_accuracy": 0.5476190476190477,
+        "repeat_macro_answer_ce": 1.5568676051639376,
+        "paired_gap": {
+          "answer_ce_first_minus_repeat": 0.006628737563178653,
+          "accuracy_first_minus_repeat": 0.0
+        },
+        "pair_cells": 42
+      }
+    }
+  },
+  "selection_code_path": {
+    "candidate": "deepwide12_read4",
+    "primary_metric": "first_member_42_cell_macro_answer_ce",
+    "debug_only": true
+  },
+  "gate_code_path": {
+    "passed": false,
+    "checks": {
+      "general": false,
+      "legacy": false,
+      "first_cell_macro": false,
+      "first_operator": false,
+      "first_depth": false,
+      "first_answer": false,
+      "repeat_cell_macro": false,
+      "coverage": true
+    },
+    "debug_only": true
+  },
+  "smoke_select_pairs_one_per_cell": 42,
+  "smoke_select_sequences": 24,
+  "elapsed_seconds": 23.810620069503784,
+  "peak_memory_bytes": 1456639488
+}
