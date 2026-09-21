@@ -114,3 +114,9 @@
 - §11의 생성 중 상태는 과거 기록이다. `rebuild_01`의 전체 독립 감사, 27 tests, frozen-input CPU smoke와 실제 CLI persistent-index resume가 통과했다. 현재 증빙은 `experiment_v1_4/results/audit_20260921_01/REPORT.md`와 `completion.json`이다.
 - 원본 생성 코드 snapshot/hash와 감사 보완 코드를 구분한다. 시도 상한 결함은 수정했고 기존 10,752 targets의 stream 재현으로 최대 58,433회임을 확인했다. Corpus와 동결 manifest/config는 수정하지 않았다.
 - P2 GPU smoke 및 P3는 미실행이다. CPU 통과를 전체 P2/P3 완료로 표시하지 않는다. P3의 cell CI 및 확장 행동 보고 항목도 최종 승인 전 보완한다.
+
+## 13. v1.4 GPU smoke 반환 검증 완료 (2026-09-21)
+
+- §12의 GPU 미실행 상태는 과거 기록이다. 반환 원본·환경 lock·동결 입력과 runtime code hash·checkpoint 복사본 및 smoke 결과 검증이 통과했다. 증빙은 `experiment_v1_4/evidence/gpu_smoke_20260921_01/REPORT.md`와 `verification.json`이다.
+- P2 완료: Tesla T4, microbatch 16, effective batch 64. Debug checkpoint는 본실험에 재사용하지 않는다.
+- P3는 미실행이다. Cell CI·확장 행동 보고 구현 보완과 검증을 마친 뒤 학습 준비를 이어간다. GPU smoke 통과를 행동 gate나 P3 완료로 해석하지 않는다.
