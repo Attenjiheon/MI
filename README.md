@@ -38,11 +38,9 @@ MI/
     └── specifications/pre_v1_4_integration/   통합 전 루트 문서 원문
 ```
 
-옛 `experiment_v1*`, `interp*`, `tests*`, `data/language_v1*` 중 v1.0–v1.3 경로는
-archive를 가리키는 상대 symlink다. 파일을 이중 보관하지 않으며 import, frozen path,
-노트북 및 manifest의 기존 경로를 유지한다. `interp_v1_4`의 일부 모듈은 보존된
-`interp_v1_2`를 실제 사용하므로 링크도 저장소 인터페이스에 포함된다.
-Archive 내부에서는 옛 상대 링크를 위한 공용 경로 링크도 제공한다.
+과거 버전은 `archive/legacy/`의 실제 경로로만 접근한다. 루트와 archive 내부의
+바로가기는 모두 제거했다. `interp_v1_4`가 사용하는 과거 공용 모듈은
+`archive.legacy.interp_v1_2`에서 직접 import한다.
 
 ## 3. 버전 계보와 현재 상태
 
@@ -61,6 +59,7 @@ SAE·TC·인과 평가·sparse seed 반복까지 마쳐야 전체 실험 완료�
 
 ## 4. 원본 보존과 검증
 
+- [바로가기 제거 기록](maintenance/remove_shortcuts_20260922/REPORT.md)에 현재 경로·소스 변경·검증을 기록한다.
 - [Archive 안내](archive/README.md)와 [정리 보고](maintenance/repository_cleanup_20260922/REPORT.md)에 이동 매핑과 검증을 기록한다.
 - 기존 manifest의 루트 문서 hash는 [통합 전 snapshot](archive/specifications/pre_v1_4_integration/README.md)에 대응한다. 동결 manifest 자체를 수정하지 않는다.
 - Corpus·config·checkpoint·번들·증빙 bytes를 보존한다. 기존 결과는 새 실행으로 덮어쓰지 않는다.
@@ -78,6 +77,5 @@ python -m interp_v1_4.cli --help
 python scripts/verify_repository_layout.py
 ```
 
-기본 `pytest` 수집 대상도 `tests_v1_4/`다. 과거 검증은 명시적으로 해당 `tests_v1_*`
-호환 경로를 지정한다. 학습·gate/test 재실행은 위 확인 명령에 포함되지 않는다.
+기본 `pytest` 수집 대상도 `tests_v1_4/`다. 과거 검증은 해당 버전의 보존된 실행 환경과 `archive/legacy/tests_v1_*` 경로를 사용한다. 학습·gate/test 재실행은 위 확인 명령에 포함되지 않는다.
 단계 완료 후 Git 갱신은 AGENTS §6을 따른다.
