@@ -174,3 +174,15 @@
 - 로컬 6 tests·미학습 CPU preflight와 입력 checksum 검증은 통과했다. 실제 test는 미실행이다.
 - 완료 결과는 재사용하고 raw 저장 후 집계만 재개한다. 시작만 기록된 평가는 자동 재추론하지 않는다.
 - 반환 검증 전 P4 완료/P5 진입으로 표시하지 않는다. Length는 P10 범위다.
+
+## 19. v1.4 P4 frozen test 반환 감사 완료 (2026-09-22)
+
+- §18의 test 미실행 상태는 과거 기록이다. 현재 기준은
+  `experiment_v1_4/results/frozen_test_audit_20260922_01/REPORT.md`, `completion.json`, `frozen_lms.json`이다.
+- 세 seed × 7 suite, 21개 평가 및 원본 ZIP 외부·115개 내부 checksum 검증 통과.
+  저장된 raw의 집계·CI 재계산과 153,510 targets의 원본 metadata 대조가 통과했다.
+  모델 추론이나 gate/test 재채점은 하지 않았다.
+- 일반 READ 99.9410% / 99.9472% / 99.9659%, first macro 99.9442% / 99.9442% / 99.9628%,
+  repeat 모두 100%. Test는 새 gate나 모델 재선택에 사용하지 않았다.
+- P4 완료, validation 통과 seed 0·1·2 모두 P5 대상이다. 다음은 block 0 READ cache·probe이며
+  아직 미실행이다. 필수 SAE·TC·인과 평가·sparse seed 반복까지 전체 실험 완료로 표시하지 않는다.
