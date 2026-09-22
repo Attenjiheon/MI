@@ -1,124 +1,83 @@
-# Mechanistic Interpretability Project
+# Boolean 프로그램의 상태 표현 해석 — v1.4 본 실험
 
-상태 추적 인공어를 학습한 Transformer 내부에서 READ 연산의 표현과 인과적 역할을 분석하는
-연구 프로젝트입니다. 코퍼스 생성부터 행동 평가, probe, SAE, transcoder, activation patching까지
-재현 가능한 실험 절차를 담고 있습니다.
+Boolean 상태 추적 언어를 학습한 Transformer에서 READ 표현의 선형 접근성,
+SAE·Transcoder feature의 의미와 인과적 효과를 분석한다.
+**현재 P4 완료, 다음은 P5 READ cache·probe다. 전체 해석 실험은 아직 미완료다.**
 
-세션을 시작할 때는 [AGENTS.md](./AGENTS.md)를 먼저 읽습니다. 이 문서는 저장소의 **전체 구조와
-명명 규칙**을 정의하는 지도이며, 실행 순서와 단계 gate는 [phase.md](./phase.md)가, 상세 규격은
-`01`–`03` 원문이 담당합니다.
+## 1. 시작할 문서
 
----
-
-## 1. 저장소 구조
-
-```
-MI/
-├── AGENTS.md                  세션 진입 라우터 (가장 먼저 읽는 문서)
-├── README.md                  이 문서 — 전체 구조 지도
-├── phase.md                   P0–P11 실행 순서, 선행 조건, 완료 gate
-├── 01_experiment_design.md    연구 목적, 가설, 해석 범위와 보고 원칙
-├── 02_language_and_corpus.md  언어 문법, 토큰 ID, 생성·split·metadata 규격
-├── 03_experiment_spec.md      모델·학습·probe·SAE·TC·인과 평가 상세 규격
-├── requirements-corpus.txt    코퍼스 생성 의존성 (CPU)
-├── requirements-interp.txt    학습·해석 의존성
-│
-├── corpus/                    인공어 생성기 (버전 공용, 모듈로 버전 분기)
-│   ├── language.py  generate.py  replay.py  audit.py
-│   └── v1_3.py                v1.3 전용 생성 규칙
-│
-├── scripts/                   일회성 운영 스크립트 (번들 빌드·감사·선택·플롯)
-│
-├── data/                      생성 완료된 코퍼스 (불변)
-│   ├── language_v1/           v1.0·v1.1 공용
-│   ├── language_v1_2/         v1.2 (16M)
-│   └── language_v1_3/         v1.3 (32M, 신규 split)
-│
-├── experiment_v1/    interp/        tests/        ← v1.0  (2-block, 보존)
-├── experiment_v1_1/  interp_v1_1/   tests_v1_1/   ← v1.1  (4-block, 보존)
-├── experiment_v1_2/  interp_v1_2/   tests_v1_2/   ← v1.2  (16M, 보존)
-├── experiment_v1_3/  interp_v1_3/   tests_v1_3/   ← v1.3  (보존)
-└── experiment_v1_4/  interp_v1_4/   tests_v1_4/   ← v1.4  (활성)
-```
-
-추적하지 않는 로컬 항목: `.venv-p2/`(로컬 파이썬 환경), `__pycache__/`, `.pytest_cache/`,
-`.DS_Store`. 모두 `.gitignore` 대상이며 저장소 구조의 일부가 아닙니다.
-
-## 2. 버전 3종 세트 규칙
-
-실험 버전 하나는 항상 **세 디렉터리 + 코퍼스 하나**로 구성되며, 새 버전을 시작할 때도 같은
-규칙을 따릅니다. 기존 버전의 코드·설정·결과를 재사용하거나 덮어쓰지 않습니다.
-
-| 역할 | 디렉터리 | 내용 |
-|---|---|---|
-| 실행 산출물 | `experiment_vX/` | 설계·상태 문서, config, 번들, 노트북, smoke, evidence, 결과 |
-| 구현 코드 | `interp_vX/` | 모델·학습·평가·probe·SAE/TC·patching·저장/재개, CLI |
-| 검증 | `tests_vX/` | 해당 버전의 unit/contract test |
-| 데이터 | `data/language_vX/` | 동결된 코퍼스, manifest, 감사 결과 |
-
-`experiment_vX/` 내부의 표준 하위 구조는 다음과 같습니다.
-
-| 하위 경로 | 내용 |
+| 문서 | 역할 |
 |---|---|
-| `DESIGN.md`, `design_config.json`, `design_manifest.json` | 설계의 불변 기록과 기계 판독 계약 |
-| `Pn_STATUS.md` | 단계별 진행 상태와 증빙 경로 |
-| `configs/` | 동결된 config set과 `config_set_manifest.json` |
-| `notebooks/` | Colab 실행용 `.ipynb` |
-| `bundles/` | Colab 입력 번들 `.zip`과 `.sha256` |
-| `smoke/` | CPU/GPU smoke 결과 |
-| `evidence/` | Colab에서 회수해 검증한 실행 증빙 (불변) |
-| `results/` | 감사 결과, run registry, 보고서 |
+| [AGENTS.md](AGENTS.md) | 세션 진입·단계별 필수 읽기·보존·실행 규칙 |
+| [실험 설계](01_experiment_design.md) | v1.4 연구 질문·범위·해석 한계 |
+| [언어·코퍼스](02_language_and_corpus.md) | 문법·metadata·split·누출 방지 |
+| [상세 명세](03_experiment_spec.md) | 모델·read4 학습·선택·gate·probe·SAE·TC·인과 평가 |
+| [실행 계획](phase.md) | 현재 P0–P11 순서·완료 조건·증빙·계산 예산 |
+| [v1.4 현재 안내](experiment_v1_4/CURRENT.md) | 동결 계약·상태·결과로 연결되는 색인 |
 
-## 3. 버전 계보
+루트 01–03은 v1.4 기준으로 통합했다. v1.4의 동결 설계·기계 판독 계약·실행 증빙이
+우선하며, 문서 통합으로 이미 수행한 실험을 변경하지 않는다.
+`experiment_v1_4/README.md`와 `DESIGN.md`는 hash가 동결된 **설계 당시 원문**이다.
+그 안의 과거 상태 대신 위 현재 안내와 단계 상태 문서를 읽는다.
 
-| 버전 | 규격 | 상태 | 근거 문서 |
-|---|---|---|---|
-| v1.0 | 2-block, 400,640 params, 3M | **보존** — P3 행동 gate 실패 | `experiment_v1/results/p3_stop_report.md` |
-| v1.1 | 4-block, 797,184 params, 3M | **보존** — P3 행동 gate 실패 | `experiment_v1_1/CHANGELOG.md`, `results/p3_stop_report.md` |
-| v1.2 | 4-block 고정, 16M | **보존** — 감사된 행동 gate 실패 | `experiment_v1_2/DESIGN.md`, `results/p3_stop_report.md` |
-| v1.3 | 3 architecture × 2 loss pilot, 32M | **보존** — 32M confirm 행동 gate 실패 | `experiment_v1_3/P3_STATUS.md` |
-| v1.4 | 12 blocks × 256, read4, 64M | **활성** — P4 세 seed frozen test 반환 감사 완료, 다음 P5 READ cache·probe | `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`, `P4_STATUS.md` |
+## 2. 저장소 구조
 
-실패한 버전은 재현과 감사를 위해 원본 그대로 남깁니다. 과거 결과를 감사할 때는 그 버전의
-코드(`interp_vX/`)와 config를 사용하며, 신규 버전의 구현으로 대체하지 않습니다.
+```text
+MI/
+├── AGENTS.md, README.md, phase.md, 01–03_*.md   현재 v1.4 문서
+├── experiment_v1_4/                           본 실험 계약·상태·증빙·노트북·결과
+├── interp_v1_4/                               본 실험 구현
+├── tests_v1_4/                                본 실험 검증
+├── data/language_v1_4/rebuild_01/              활성 동결 corpus
+├── corpus/                                   공용·버전별 생성기 및 replay
+├── scripts/                                  운영·번들·감사 도구
+├── requirements-{corpus,interp}.txt            의존성 목록
+├── maintenance/                              정리·이동·검증 기록
+└── archive/
+    ├── legacy/                               v1.0–v1.3 실험·코드·테스트·데이터 실체
+    └── specifications/pre_v1_4_integration/   통합 전 루트 문서 원문
+```
 
-## 4. 경로 이동 금지 원칙
+옛 `experiment_v1*`, `interp*`, `tests*`, `data/language_v1*` 중 v1.0–v1.3 경로는
+archive를 가리키는 상대 symlink다. 파일을 이중 보관하지 않으며 import, frozen path,
+노트북 및 manifest의 기존 경로를 유지한다. `interp_v1_4`의 일부 모듈은 보존된
+`interp_v1_2`를 실제 사용하므로 링크도 저장소 인터페이스에 포함된다.
+Archive 내부에서는 옛 상대 링크를 위한 공용 경로 링크도 제공한다.
 
-`experiment_vX/evidence/`, `bundles/`, `data/*/manifest.json`, `provenance/`, run registry,
-노트북에는 **디렉터리 경로가 문자열로 기록**되어 있습니다. 이 기록은 hash 검증의 대상이므로
-디렉터리를 옮기거나 이름을 바꾸면 동결된 증빙이 깨집니다.
+## 3. 버전 계보와 현재 상태
 
-따라서 다음은 이동·개명하지 않습니다.
+| 버전 | 설정 | 상태·근거 |
+|---|---|---|
+| v1.0 | 2-block, 3M | [행동 gate 실패](archive/legacy/experiment_v1/results/p3_stop_report.md) |
+| v1.1 | 4-block, 3M | [행동 gate 실패](archive/legacy/experiment_v1_1/results/p3_stop_report.md) |
+| v1.2 | 4-block, 16M | [행동 gate 실패](archive/legacy/experiment_v1_2/results/p3_stop_report.md) |
+| v1.3 | 6-cell pilot, 32M confirm | [Confirm gate 실패](archive/legacy/experiment_v1_3/P3_STATUS.md) |
+| **v1.4** | **12×256, read4, 64M/seed** | [세 seed P4 완료](experiment_v1_4/P4_STATUS.md), P5 미실행 |
 
-- `experiment_v1*/`, `interp*/`, `tests*/`, `data/`, `corpus/`, `scripts/`
-- `interp_vX`는 `python -m interp_vX.cli` 형태로 호출되므로 패키지 위치가 곧 인터페이스입니다.
+Seed 0/1/2 일반 READ test는 99.9410% / 99.9472% / 99.9659%이며,
+선택 update는 7,983 / 7,983 / 8,399다. 세 seed 모두 해석 대상이다.
+[동결 모델 목록](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)을 따른다.
+SAE·TC·인과 평가·sparse seed 반복까지 마쳐야 전체 실험 완료다.
 
-정리가 필요하면 구조를 바꾸는 대신 이 문서의 지도를 갱신하고, 새 산출물은 해당 버전
-디렉터리 안에 둡니다.
+## 4. 원본 보존과 검증
 
-## 5. 현재 활성 버전 (v1.4) 빠른 확인
+- [Archive 안내](archive/README.md)와 [정리 보고](maintenance/repository_cleanup_20260922/REPORT.md)에 이동 매핑과 검증을 기록한다.
+- 기존 manifest의 루트 문서 hash는 [통합 전 snapshot](archive/specifications/pre_v1_4_integration/README.md)에 대응한다. 동결 manifest 자체를 수정하지 않는다.
+- Corpus·config·checkpoint·번들·증빙 bytes를 보존한다. 기존 결과는 새 실행으로 덮어쓰지 않는다.
+- [이전 디스크 정리](maintenance/disk_cleanup_20260921/REPORT.md)에서 삭제된 파일은 그 기록을 따른다. 이번 정리는 데이터 삭제 작업이 아니다.
+- `.gitattributes`의 LFS 및 `.gitignore` 규칙은 archive 경로에도 적용한다.
+
+## 5. 로컬 확인
+
+프로젝트 의존성을 설치한 Python 환경에서 저장소 루트를 기준으로 실행한다.
+현재 로컬 검증 환경은 `/opt/anaconda3/bin/python`이며 환경별 실제 lock은 실행 증빙을 따른다.
 
 ```bash
-.venv-p2/bin/python -m pytest tests_v1_4 -q
-.venv-p2/bin/python -m interp_v1_4.cli --help
-.venv-p2/bin/python -m interp_v1_4.smoke --device cpu --output experiment_v1_4/smoke/<새_경로>
+python -m pytest tests_v1_4 -q
+python -m interp_v1_4.cli --help
+python scripts/verify_repository_layout.py
 ```
 
-출력 디렉터리는 항상 새로 만들고 기존 결과를 덮어쓰지 않습니다. 과거 버전을 감사할 때는
-`tests`/`interp`(v1.0), `tests_v1_1`/`interp_v1_1`(v1.1), `tests_v1_2`/`interp_v1_2`(v1.2)를
-같은 방식으로 사용합니다.
-
-진행 상태와 다음 작업은 `experiment_v1_4/P1_STATUS.md`, `P2_STATUS.md`, `P3_STATUS.md`, `P4_STATUS.md`에서 확인합니다. 설계 당시 README는 원본 hash 보존을 위해 유지합니다.
-
-## 6. 작업 위생
-
-- 임시 파일·캐시(`__pycache__`, `.pytest_cache`, `.DS_Store`, `.ipynb_checkpoints`)는 커밋하지
-  않으며, 발견하면 삭제합니다.
-- 큰 산출물(`.zip`, 대용량 hash 목록)은 `.gitattributes`의 Git LFS 규칙을 따릅니다.
-- 단계 완료 후 Git 갱신 절차는 [AGENTS.md](./AGENTS.md) §6을 따릅니다.
-
-## 7. 로컬 저장 공간 정리 (2026-09-21)
-
-사용자 요청에 따라 일부 과거 대용량 원본은 해시·축약 기록으로 대체했다.
-현재 보존·삭제 범위와 재현 한계는 [정리 보고서](maintenance/disk_cleanup_20260921/REPORT.md)를 따른다.
-이는 위 원본 보존 원칙에 대한 해당 삭제 목록만의 예외이며, 활성 v1.4 입력·seed 0 증빙·P4 전달물은 유지한다.
+기본 `pytest` 수집 대상도 `tests_v1_4/`다. 과거 검증은 명시적으로 해당 `tests_v1_*`
+호환 경로를 지정한다. 학습·gate/test 재실행은 위 확인 명령에 포함되지 않는다.
+단계 완료 후 Git 갱신은 AGENTS §6을 따른다.

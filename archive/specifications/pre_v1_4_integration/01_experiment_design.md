@@ -1,12 +1,12 @@
 # 작은 프로그램 언어에서 SAE의 상태·연산 표현 평가
 
-작성일: 2026-09-09
-상태: v1.4 본 실험 통합 설계 (2026-09-22); P4 완료, P5 이후 미실행
+작성일: 2026-09-09  
+상태: 구현 전 실험 계획 v1.0  
 기술 부록: [인공어 규칙 및 코퍼스 생성 알고리즘](./02_language_and_corpus.md)
 
 ## 초록
 
-본 실험은 Boolean 프로그램 언어를 학습한 작은 transformer에서 sparse autoencoder(SAE)의 표현 분리 능력과 인과적 유효성을 평가한다. 네 변수에 대한 대입·반전·이항 논리 연산과 읽기로 코퍼스를 생성하고, READ 정답 위치에 가중치 4, 기타 유효 위치에 가중치 1인 token-only next-token cross-entropy를 적용해 모델을 학습한다. 독립적인 프로그램 실행기가 제공하는 정답으로 행동을 검증한 뒤, linear probe와 SAE를 통해 현재 값·과거 값·연산 입력 관계의 접근성과 분리도를 측정한다. 최소 대조쌍의 feature 패칭으로 출력 변화를 검증하며, 원래 좌표와 무작위 방향을 기준선으로 사용한다. 모델 학습, 표현 분석, 인과 평가를 구분하여 해석 도구의 성공과 실패를 모두 재현 가능한 결과로 보고한다.
+본 실험은 Boolean 프로그램 언어를 학습한 작은 transformer에서 sparse autoencoder(SAE)의 표현 분리 능력과 인과적 유효성을 평가한다. 네 변수에 대한 대입·반전·이항 논리 연산과 읽기로 코퍼스를 생성하고, 모든 유효 토큰에 동일한 next-token cross-entropy를 적용해 모델을 학습한다. 독립적인 프로그램 실행기가 제공하는 정답으로 행동을 검증한 뒤, linear probe와 SAE를 통해 현재 값·과거 값·연산 입력 관계의 접근성과 분리도를 측정한다. 최소 대조쌍의 feature 패칭으로 출력 변화를 검증하며, 원래 좌표와 무작위 방향을 기준선으로 사용한다. 모델 학습, 표현 분석, 인과 평가를 구분하여 해석 도구의 성공과 실패를 모두 재현 가능한 결과로 보고한다.
 
 ## 1. 실험 목적
 
@@ -32,11 +32,11 @@ SAE의 평가에는 재구성 오차뿐 아니라 발견된 feature가 어떤 �
 | 규칙의 의미를 일관되게 정의한다 | 모든 변수 조합에 동일한 SET·NOT·AND·OR·XOR 의미를 적용한다 |
 | 정답 예측의 빈도를 확보한다 | 짧은 갱신 블록마다 READ와 정답을 배치한다 |
 | 연산 합성을 평가한다 | 이항 상태 갱신 및 일부 무질의 연산 연쇄를 포함한다 |
-| 순수 LM 목적함수를 사용한다 | 토큰 패턴만으로 READ 정답 weight 4, 기타 non-PAD weight 1을 적용한다 |
+| 순수 LM 목적함수를 사용한다 | 모든 유효 next-token 위치에 동일한 CE를 적용한다 |
 | 평가와 학습을 분리한다 | 상태 라벨은 분석에만 사용하고 LM/SAE 학습에는 사용하지 않는다 |
 | 계산 예산을 통제한다 | 단일 seed 파일럿, 학습 토큰 상한, 명시적 통과 조건을 둔다 |
 
-정답 위치 비율은 비가중 token 비율이며 read4 목적함수의 정규화된 가중치 비율과 구분한다. 이를 gradient 기여율이나 signal-to-noise ratio로 해석하지 않는다.
+정답 위치 비율은 loss 항의 비율이다. 이를 gradient 기여율이나 signal-to-noise ratio로 해석하지 않는다.
 
 ## 3. 과제 개요
 
@@ -78,66 +78,71 @@ AND A C READ C B1 EOS
 3. 분할 중복, 합성 holdout 누출, 정답 위치 및 상태 라벨 시점을 검증한다.
 4. 소규모 코퍼스 통계를 저장한다. 이상이 없을 때만 GPU 학습을 시작한다.
 
-### 단계 B: seed 0 LM 학습
+### 단계 B: 단일 LM 파일럿
 
-본 실험은 `deepwide12_read4` 한 설정을 사용한다. 12-block, residual 256,
-4 heads × 64, MLP 1024, 9,485,312 parameters이며 Pre-LN, exact GELU, RoPE,
-dropout 0, 15-token vocabulary, context 768을 사용한다.
-AdamW lr 3e-4, betas (0.9, 0.95), eps 1e-8, matrix/embedding decay 0.01,
-global gradient clip 1.0, effective batch 64, GPU smoke에서 확정한 microbatch 16이다.
-FP32로 seed당 명목 64M prediction tokens를 학습하며 50k warmup,
-57.6M까지 일정 LR, 64M에서 3e-5가 되는 linear decay를 적용한다.
+처음부터 여러 모델 크기나 seed를 병렬 탐색하지 않는다. 아래 출발 설정 하나를 사용한다.
 
-데이터는 CPU에서 사전 생성한 `data/language_v1_4/rebuild_01`의 동일 shard 순서를
-모든 seed가 한 번씩 소비한다. BOS는 prediction target이 아니며 EOS는 포함한다.
-READ 정답 가중치는 token IDs만으로 판별하고 상태 metadata는 loss에 넣지 않는다.
-실제 소비량은 seed당 64,005,751 tokens / 8,399 updates다. 세부 수식은 03 §4를 따른다.
+| 항목 | 출발 설정 |
+|---|---|
+| 모델 | 2-layer causal decoder-only transformer |
+| residual width / attention heads | 128 / 4 |
+| MLP | hidden width 512, GELU |
+| 정규화 | Pre-LayerNorm |
+| 위치 표현 | RoPE; 설정을 학습·평가에서 고정 |
+| dropout | 0 |
+| vocabulary | 별도 명세의 15개 토큰 |
+| context capacity | 768; 학습 길이는 최대 302토큰 |
+| optimizer | AdamW, lr 3e-4, betas (0.9, 0.95), eps 1e-8 |
+| weight decay | 0.01; bias와 정규화 파라미터 제외 |
+| gradient clipping | global norm 1.0 |
+| batch | effective 64 sequences; microbatch 및 accumulation은 메모리에 맞춤 |
+| 파일럿 | LM seed 0, 비패딩 예측 토큰 최대 1M |
+| LR schedule | 최초 50k 토큰 linear warmup, 이후 상수 lr |
+| validation 간격 | 약 100k 비패딩 예측 토큰마다 |
 
-### 단계 C: 선택과 행동 gate
+이 수치는 검증된 최적값이 아닌 사전 출발값이다. 실제 라이브러리 버전, precision, 파라미터 수, device, microbatch를 결과 manifest에 기록한다. Batch 변경 시 effective batch를 유지한다. 한 optimizer update가 끝날 때만 평가하며 토큰 예산의 마지막 batch 초과량을 기록한다.
 
-Select, gate, test를 분리한다. 10개 사전 milestone 중 select first-member
-42-cell macro answer CE 전역 최소를 기준으로 checkpoint를 선택한다.
-최솟값과 1e-4 nats 이내 후보는 select/general answer CE, 이른 update 순으로 고른다.
-선택된 checkpoint에서 seed당 gate를 한 번만 평가한다.
+데이터는 온라인으로 새로 생성한다. 예산은 epoch 대신 처리한 비패딩 예측 토큰 수로 센다. BOS 자체는 예측 대상이 아니며, EOS는 예측 대상이다. PAD와 존재하지 않는 target만 loss에서 제외한다. Attention 및 loss mask의 역할을 구분한다.
 
-General READ ≥99%, legacy 세 진단 각각 ≥95%, first 42-cell macro ≥95%,
-first의 연산별·depth-bin별 macro 및 answer별 accuracy 각각 ≥95%,
-repeat macro ≥95%, quota/coverage 100%를 모두 만족해야 한다.
-개별 cell의 count·CI는 보고하며 추가 gate로 쓰지 않는다.
-명목 64M 예산을 결과에 따라 연장하거나 gate로 checkpoint를 재선택하지 않는다.
-Seed 0 실패 시 중단하고 seed 1·2, test, 표현 분석으로 진행하지 않는다.
+### 단계 C: 진행/중단 기준
+
+| 관측 | 다음 행동 |
+|---|---|
+| 일반 validation 답 정확도 ≥99%, 핵심 진단 조건별 ≥95% | SAE 단계로 진행 |
+| 1M에서 미달이나 최근 3회 중 2회 이상 답 CE가 개선 | 동일 설정으로 누적 3M까지 한 번 연장 |
+| 기준 미달이고 개선도 뚜렷하지 않음 | 중단하고 데이터/구현을 CPU에서 확인 |
+| 3M에서도 기준 미달 | 대규모 sweep 금지; 짧은 시퀀스로 단순화한 v1.1을 별도 계획으로 기록 |
+
+핵심 진단은 (a) 직전 목적변수와 다른 변수 읽기, (b) 관련 변수에 복수 갱신 존재, (c) 유효한 SET 이후 해당 변수를 처음 읽기다. 각 진단 validation은 최소 512개 독립 시퀀스의 지정 target을 사용한다. 생성기의 feasibility와 표본 수를 CPU 단계에서 확인한다.
+
+길이 외삽과 합성 holdout은 연구 결과이며 필수 통과 gate가 아니다. 이 평가에서 실패했다는 이유로 설정을 사후 변경하지 않는다.
+
+Checkpoint는 사전 지정한 일반 validation 정답 CE가 최소인 것을 선택한다. 동률이면 이른 checkpoint를 선택한다. 해당 checkpoint가 gate도 만족해야 한다. 전체 LM loss 또는 test 성능으로 선택하지 않는다.
 
 ### 단계 D: 재현 및 해석
 
-Seed 0 통과 후 같은 동결 설정·데이터·예산으로 fresh seed 1·2를 학습한다.
-실패 seed도 보존하고 대체하지 않는다. 전체 학습·validation 결정 동결 후
-학습한 모든 seed의 frozen test를 한 번 보고한다. Test는 추가 gate가 아니다.
-최소 두 seed가 validation gate를 통과해야 해석에 진입하며 모든 통과 seed를 포함한다.
-현재 세 seed 모두 통과하고 P4 반환 감사까지 완료했으므로 해석 대상 G=3이다.
-P5 이후의 완료 증빙은 아직 없다. [실행 계획](phase.md)과
-[동결 모델 목록](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)을 따른다.
+파일럿이 통과하면 파일럿에서 사용한 총 토큰 예산과 설정을 고정하고 LM seed 1, 2를 학습한다. 모든 seed의 행동 결과를 보고하며 실패 seed를 다른 seed로 대체하지 않는다. 해석은 행동 gate를 통과한 모델에 대해 수행하고 적용 모델 수를 명시한다. seed 0에서만의 결과와 seed 간 재현 결과를 분리한다.
 
 ## 6. 데이터 및 평가 집합
 
 정확한 생성법, seed 역할, holdout 패턴은 별도 명세를 따른다.
 
-| 데이터 | 사용 | v1.4 고정 규모 |
+| 데이터 | 사용 | 초기 규모 |
 |---|---|---|
 | LM train stream | 순수 LM 학습 | 토큰 예산으로 제한 |
-| Select/general + first/repeat | checkpoint 선택 | 512 sequences + 42 cells × 64 pairs |
-| Gate/general + legacy + first/repeat | one-time 행동 gate | 1,024 sequences + legacy 조건당 1,024 targets + 42 cells × 64 pairs |
+| 일반 validation | checkpoint 선택 | 고정 512 sequences |
+| 진단 validation | 행동 gate | 조건당 512 target sequences |
 | 일반 test | 최종 행동 보고 | 고정 2,048 sequences |
-| Legacy diagnostic test | 실패 유형 평가 | 조건당 2,048 target sequences |
-| First/repeat test | 상태 전이·재읽기 평가 | 42 cells × 128 independent origin pairs |
+| 진단 test | 실패 유형 평가 | 조건당 1,024 target sequences |
 | 합성 holdout test | 미노출 3연산 패턴 | 2개 패턴 × 1,024 target sequences |
 | 길이 test | 33~48블록 시퀀스 | 1,024 sequences, 선택 확장 |
-| 해석 train pool | SAE 학습, probe 학습 | READ 및 update 각 50k positions |
-| 해석 validation pool | feature·threshold·probe 선택 | 각 10k positions |
-| 해석 test pool | 최종 해석 지표 | 각 20k positions |
+| 해석 train pool | SAE 학습, probe 학습 | READ 및 update 각 50k positions까지 |
+| 해석 validation pool | feature·threshold·probe 선택 | 각 10k positions까지 |
+| 해석 test pool | 최종 해석 지표 | 각 20k positions까지 |
 
 해석 pool은 별도의 시퀀스 집합이며 LM train/validation/test와 정확 중복되지 않는다. 동일 시퀀스의 모든 위치는 반드시 같은 split에 속한다. READ와 update 위치를 같은 시퀀스에서 추출하는 것은 허용한다. 합성 holdout 패턴은 해석 train/validation에도 넣지 않는다.
 
-표의 quota는 고정 목표이며 미달은 완료가 아니다. 실제 표본 수를 함께 보고한다. 대량 activation 수집 전에 작은 pool로 전체 파이프라인을 한 번 실행한다.
+초기 규모는 상한 목표다. 중단된 실험에서는 실제 표본 수를 보고한다. 대량 activation 수집 전에 작은 pool로 전체 파이프라인을 한 번 실행한다.
 
 ## 7. 행동 평가
 
@@ -158,7 +163,7 @@ P5 이후의 완료 증빙은 아직 없다. [실행 계획](phase.md)과
 
 ### 8.1 READ 위치
 
-`READ A B1`에서 A 토큰을 처리한 직후, B1을 입력하기 전 activation을 사용한다. 주 sparse 분석 대상은 첫 transformer block의 residual output이며 둘째 block sparse 분석은 선택 범위다. 모든 block output은 해당 block residual 합 이후이며 final LayerNorm을 적용하지 않는다. 전체 12개 층의 full probe 진단을 포함하되, block 1의 sparse 분석·개입은 선택 분석이다.
+`READ A B1`에서 A 토큰을 처리한 직후, B1을 입력하기 전 activation을 사용한다. 주 분석 대상은 첫 transformer block의 residual output, 보조 대상은 둘째 block의 residual output이다. 후자는 final LayerNorm 이전으로 통일한다.
 
 라벨:
 
@@ -197,13 +202,13 @@ READ 분석을 먼저 완결한 뒤 update 분석을 실행한다. Update 표현
 
 ### 9.1 최초 실행 범위
 
-첫 층 READ residual에서 TopK SAE dictionary width 512, k ∈ {4, 16} 두 설정을 비교한다. 처음에는 LM seed 0, SAE seed 0으로 실행한다. READ SAE 뒤 READ Transcoder와 필수 sparse seed 반복을 완료한다. Update는 이후 선택 분석으로 별도 수행한다. 서로 다른 위치를 하나의 학습 pool에 섞지 않는다.
+첫 층 READ residual에서 TopK SAE dictionary width 512, k ∈ {4, 16} 두 설정을 비교한다. 처음에는 LM seed 0, SAE seed 0으로 실행한다. READ 결과를 완료한 뒤 같은 방식으로 update 위치를 별도로 분석한다. 서로 다른 위치를 하나의 학습 pool에 섞지 않는다.
 
 SAE는 개념 라벨 없이 activation MSE로 학습한다. Encoder의 ReLU 출력 중 상위 k개를 유지하고 나머지는 0으로 한다. Decoder는 column norm을 1로 정규화한다. 기본 설정에서는 auxiliary loss, label loss, dead-latent 재초기화를 추가하지 않는다. dead-latent 비율을 보고한다.
 
 입력 전처리: 해석 train의 평균 μ와 scalar RMS scale s를 사용해 x=(h−μ)/s로 변환한다. 차원별 whitening은 하지 않는다. μ와 s를 validation/test에 고정 적용한다. Raw residual로 개입할 때 s를 다시 곱한다.
 
-초기 optimizer는 Adam lr 1e-3, batch 512, 최대 5k updates, 250 updates 간격 validation MSE 평가로 둔다. k별 최소 validation MSE checkpoint를 선택한다. k를 semantic test 성능으로 선택하지 않고 두 결과를 모두 보고한다. Dictionary width 512와 5k-update 예산은 고정이며 실제 연산량과 수렴 여부를 함께 기록한다.
+초기 optimizer는 Adam lr 1e-3, batch 512, 최대 5k updates, 250 updates 간격 validation MSE 평가로 둔다. k별 최소 validation MSE checkpoint를 선택한다. k를 semantic test 성능으로 선택하지 않고 두 결과를 모두 보고한다. 수치는 파일럿 출발 설정이며 실제 연산량과 수렴 여부를 함께 기록한다.
 
 ### 9.2 비교 대상
 
@@ -212,7 +217,7 @@ SAE는 개념 라벨 없이 activation MSE로 학습한다. Encoder의 ReLU 출�
 3. 고정 seed의 unit-norm random projection 512개 중 1개 또는 최대 4개를 선택한 probe.
 4. SAE latent 중 1개 또는 최대 4개를 선택한 probe.
 
-Raw 좌표 수 256과 dictionary/random 512의 후보 수 차이를 명시한다. 기존 128후보 대조 규모를 유지하되 좌표·SAE·TC·random 각각에서 사전 seed로 128개를 추출해 후보 수를 맞춘다. 상세 선택·동결은 03 §7.2를 따른다. 큰 후보군에서 feature를 찾기 쉬워지는 효과를 숨기지 않는다.
+Raw 좌표 수 128과 dictionary 512의 후보 수 차이를 명시한다. 추가로 SAE/random 후보 128개를 사전 seed로 추출한 후보 수 일치 분석을 수행한다. 큰 후보군에서 feature를 찾기 쉬워지는 효과를 숨기지 않는다.
 
 Feature 선택은 해석 train에서 단변량 점수로 후보를 정렬하고 순차적으로 최대 4개를 선택한다. Logistic probe fitting은 train, 개수와 threshold 선택은 validation, 최종 수치는 test에서 산출한다. 순차 선택의 세부 점수와 tie-break는 코드에 고정한다. 라벨별 다른 feature 집합을 허용하되 이를 비지도 발견 자체와 구분해 '사후 감독 평가'로 기술한다.
 
@@ -261,28 +266,28 @@ h_patched = μ + s * x_patched
 ## 11. 반복, 불확실성 및 예산
 
 - 주요 결과는 LM seed별로 개별 표시하고 3개 seed의 평균/범위를 함께 제공한다. 3개로 정밀한 모집단 추정을 주장하지 않는다.
-- LM seed 0의 READ SAE와 TC는 두 k 각각 sparse seed 1을 추가해 학습 초기화 민감도를 확인한다.
+- LM seed 0의 주 READ SAE는 SAE seed 1을 추가해 학습 초기화 민감도를 확인한다.
 - 토큰들이 같은 시퀀스에 묶여 있으므로 bootstrap은 시퀀스 또는 counterfactual pair 단위로 수행한다. 1,000회 bootstrap을 기본으로 한다.
-- LM 학습 최대 예산은 3 seeds × 64M = 192M (마지막 완전 update 초과량 별도) 비패딩 예측 토큰이다. 이는 실제 GPU 시간 보장이 아니다.
+- LM 학습 최대 예산은 기본 3 seeds × 3M = 9M 비패딩 예측 토큰이다. 이는 실제 GPU 시간 보장이 아니다.
 - SAE 학습, activation 추출 및 반복 validation 비용은 LM 학습 예산과 별도로 기록한다. 첫 파일럿 처리량으로 벽시계 시간을 추산한 뒤 다음 단계로 간다.
-- 필수 READ SAE → READ TC → sparse 초기화 반복을 완료한 뒤에만 update·block 1 등 선택 분석을 시작한다. Crosscoder와 변수 8개 확장은 기본 범위 밖이다.
+- READ의 핵심 그림이 나오기 전 update SAE, transcoder, crosscoder, 변수 8개 확장은 시작하지 않는다.
 
 ## 12. 최종 산출물
 
 1. 결정적 simulator, corpus generator, split manifest 및 CPU 검증 코드.
 2. LM 학습 코드, checkpoint, 환경·seed·실제 토큰 수·처리 시간.
-3. Activation cache, probe/SAE/TC 설정 및 결과.
+3. Activation cache, probe/SAE 설정 및 결과.
 4. 그림: 행동 학습 곡선과 조건별 성능; feature 접근성/분리도; reconstruction과 인과 개입 효과.
 5. 성공·실패를 모두 포함한 짧은 보고서 및 재현 명령.
 
-완료 조건은 행동 검증을 통과한 모델에 대해 READ 위치의 기준선·SAE 두 설정·reconstruction·인과 대조 실험을 재현 가능하게 보고하는 것이다. Update 분석은 계획된 2차 분석이며 자원 제한으로 생략하면 명시한다. READ Transcoder 두 k와 LM seed 0의 SAE/TC sparse seed 1 반복은 필수 완료 조건이다. Crosscoder는 기본 범위 밖이다.
+완료 조건은 행동 검증을 통과한 모델에 대해 READ 위치의 기준선·SAE 두 설정·reconstruction·인과 대조 실험을 재현 가능하게 보고하는 것이다. Update 분석은 계획된 2차 분석이며 자원 제한으로 생략하면 명시한다. Transcoder와 crosscoder는 필수 완료 조건이 아니다.
 
 ## 13. 관련 연구와 본 실험의 위치
 
 - [Hewitt & Liang, Designing and Interpreting Probes with Control Tasks (2019)](https://aclanthology.org/D19-1275/): probe 성능과 표현에 대한 해석을 구분하는 배경.
 - [Transformers Learn Shortcuts to Automata](https://arxiv.org/abs/2210.10749): 상태 과제의 행동 성공이 특정 순차 알고리즘의 구현을 보장하지 않는다는 배경.
 - [Measuring Progress in Dictionary Learning for Language Model Interpretability with Board Game Models](https://arxiv.org/abs/2408.00113): 알려진 과제 상태를 이용한 SAE 평가의 선행연구.
-- [Transcoders Find Interpretable LLM Feature Circuits](https://arxiv.org/abs/2406.11944): 필수 READ MLP 계산 분석을 위한 참고.
+- [Transcoders Find Interpretable LLM Feature Circuits](https://arxiv.org/abs/2406.11944): 후속 MLP 계산 분석을 위한 참고.
 - [Sparse Crosscoders for Cross-Layer Features and Model Diffing](https://transformer-circuits.pub/2024/crosscoders/): 후속 층간 표현 비교를 위한 참고.
 
 본 문서는 독창성에 대한 전수 문헌 검토나 성공 결과를 주장하지 않는다. 위 논문을 배경으로, 작은 상태 갱신 과제에서 현재성·문맥 전이·인과 효과를 함께 평가하는 재현 가능한 학부 연구를 설계한다.

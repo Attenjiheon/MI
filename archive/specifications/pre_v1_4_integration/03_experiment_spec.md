@@ -1,42 +1,35 @@
 # Boolean 프로그램 transformer 해석 실험 상세 명세
 
-작성일: 2026-09-09
-규격 버전: experiment-spec-v1.4-integrated-r1
-상태: 2026-09-22 본 실험 통합 명세. P1–P4 완료; P5–P11은 실행·검증이 남은 규격이다.
-상위 설계: [01_experiment_design.md](./01_experiment_design.md)
+작성일: 2026-09-09  
+규격 버전: experiment-spec-v1.0  
+상태: 구현 전 사전 명세. 아래 수치는 실행 결과나 검증된 최적값이 아니다.  
+상위 설계: [01_experiment_design.md](./01_experiment_design.md)  
 언어·생성 규칙: [02_language_and_corpus.md](./02_language_and_corpus.md)
 
 ## 1. 범위와 문서 간 우선순위
 
 목표는 Boolean 프로그램을 next-token prediction으로 학습한 작은 transformer에서 상태 정보의 선형 접근성, SAE feature의 분리도, Transcoder feature의 MLP 계산 설명력과 인과 효과를 비교하는 것이다. LM 행동 검증을 먼저 통과시킨 뒤 동결된 모델을 해석한다. 해석 결과가 나쁘다는 이유로 LM을 다시 선택하지 않는다.
 
-현재 루트 01–03은 v1.4 본 실험의 통합 규격이다. 우선순위는 최신 사용자 지시 →
-v1.4 동결 실행 계약·명시적 변경 → 이 문서 → 02 → 01이다. 실행 순서와 gate 증빙은
-[phase.md](phase.md)를 따른다. 불일치는 원문·항목을 기록하고 해결하며 사후 결과로 절충하지 않는다.
+02의 문법·토큰 ID·실행 의미·holdout 규칙은 그대로 따른다. 본 문서는 01의 미정 세부사항을 고정하고 다음 두 항목을 명시적으로 확장한다.
 
-[설계 계약](experiment_v1_4/design_config.json), [동결 config set](experiment_v1_4/configs/config_set_manifest.json),
-[corpus 수정 계약](experiment_v1_4/corpus_rebuild.json), [보고 계약](experiment_v1_4/results/p3_preparation_r3/REPORTING_CONTRACT.md)을 통합했다.
-설계 당시 DESIGN/README의 “미실행”은 역사적 상태이며 현재 상태가 아니다.
-원문과 hash는 보존하고 [통합 전 문서](archive/specifications/pre_v1_4_integration/README.md)에서 확인한다.
-
-Transcoder는 필수 READ 분석이며 SAE 다음에 수행한다. LM은 CPU 사전 생성 shard를 같은
-순서로 한 번씩 소비한다. GPU에서 코퍼스를 새로 생성하지 않는다.
+1. **Transcoder를 필수 해석 도구에 포함한다.** 01의 선택 확장에서 승격한다. READ SAE를 먼저 완료한 뒤 READ Transcoder, update 분석 순서로 진행한다. Crosscoder와 변수 8개 확장은 제외한다.
+2. **LM의 온라인 생성 스트림을 CPU 사전 생성 shard로 구현한다.** 동일한 RNG·샘플링·중복 거부·순서를 유지하고 매 시퀀스를 한 번만 소비하므로 데이터 분포와 토큰 예산은 유지한다. GPU 런타임에서는 코퍼스를 새로 생성하지 않는다.
 
 기본 필수 범위는 행동 gate를 통과한 각 LM seed의 첫 block READ residual SAE, 첫 block READ MLP Transcoder, 각각의 probe·재구성/대체·인과 평가다. update 분석과 둘째 block 분석은 명세는 제공하되 2차 분석으로 구분한다. 실패한 행동 gate, 생성 제약 미충족, 자원 중단은 실패·미완료로 보고하며 성공으로 간주하지 않는다.
 
 ## 2. 공통 표기와 분석 지점
 
-수식은 열벡터 기준이다. 실제 batch tensor의 마지막 축은 feature 차원이다. Layer index는 **0..11**로 표기한다. 문장의 ‘첫 층’은 block 0이다.
+수식은 열벡터 기준이다. 실제 batch tensor의 마지막 축은 feature 차원이다. Layer index는 **0, 1**로 표기한다. 문장의 ‘첫 층’은 block 0이다.
 
 | 기호 | 의미 | 단일 위치 shape |
 |---|---|---|
-| `r_l` | block l 입력 residual | 256 |
-| `a_l` | attention 출력, output projection 이후 | 256 |
-| `r_mid_l` | `r_l + a_l` | 256 |
-| `u_l` | `LN_mlp(r_mid_l)`, 실제 MLP 입력 | 256 |
-| `g_l` | MLP GELU hidden activation | 1024 |
-| `m_l` | MLP output projection 및 bias 이후, residual 덧셈 이전 | 256 |
-| `h_l` | block 출력 `r_mid_l + m_l` | 256 |
+| `r_l` | block l 입력 residual | 128 |
+| `a_l` | attention 출력, output projection 이후 | 128 |
+| `r_mid_l` | `r_l + a_l` | 128 |
+| `u_l` | `LN_mlp(r_mid_l)`, 실제 MLP 입력 | 128 |
+| `g_l` | MLP GELU hidden activation | 512 |
+| `m_l` | MLP output projection 및 bias 이후, residual 덧셈 이전 | 128 |
+| `h_l` | block 출력 `r_mid_l + m_l` | 128 |
 | `z` | SAE 또는 Transcoder sparse latent | 512 |
 
 Hook 이름을 `blocks.{l}.resid_post`, `blocks.{l}.mlp_in`, `blocks.{l}.mlp_out`으로 고정하여 각각 `h_l`, `u_l`, `m_l`을 반환한다. 구현이 모듈 hook 대신 명시적 반환을 사용해도 이 의미와 저장 이름은 유지한다.
@@ -73,7 +66,7 @@ Colab Pro의 GPU 종류·메모리·연속 사용 시간은 고정 보장이 아
 
 Colab에서는 `/content/boolean_interp/`를 작업 디렉터리로 사용한다. 데이터는 실행 전 로컬 디스크로 복사하고 체크섬을 검증한다. Google Drive 등의 영속 저장소에는 checkpoint와 결과를 주기적으로 복사한다. 매 batch를 Drive에서 읽고 쓰지 않는다.
 
-Checkpoint에는 모델, optimizer, RNG state, update 번호, 누적 비패딩 예측 토큰, 다음 데이터 cursor, 다음 평가 경계, best validation 값, config/hash를 포함한다. SAE/Transcoder는 sampler RNG·전처리·decoder norm도 포함한다. LM은 init, 모든 지정 milestone, 15분 경과 후 다음 완전 update 경계, last를 영속 저장한다. Dictionary는 매 250 updates에 저장한다. 임시 파일 기록 후 rename하고 복사 완료 checksum을 확인한다.
+Checkpoint에는 모델, optimizer, RNG state, update 번호, 누적 비패딩 예측 토큰, 다음 데이터 cursor, 다음 평가 경계, best validation 값, config/hash를 포함한다. SAE/Transcoder는 sampler RNG·전처리·decoder norm도 포함한다. LM은 매 validation 및 15분 경과 후 다음 update 경계에서 저장한다. Dictionary는 매 250 updates에 저장한다. 임시 파일 기록 후 rename하고 복사 완료 checksum을 확인한다.
 
 복구 시 마지막으로 완전히 저장된 update부터 재개한다. 미저장 update의 재연산은 결과 토큰 예산에 중복 가산하지 않되, 실제 소요 시간에는 포함한다. 서로 다른 환경에서 재개한 사실을 manifest에 남긴다.
 
@@ -83,27 +76,27 @@ Checkpoint에는 모델, optimizer, RNG state, update 번호, 누적 비패딩 �
 
 | 항목 | 값 |
 |---|---|
-| 형태 | 12-block causal decoder-only, attention → MLP 순차 residual |
-| Vocabulary / embedding | 15 / 256, embedding scaling 없음 |
-| Residual dimension | 256 |
-| Attention | 4 heads, head dimension 64, Q/K/V 각각 총 256차원 |
-| QKV projection | `Linear(256, 768, bias=True)` |
-| Attention output | `Linear(256, 256, bias=True)` |
-| Attention score | `QKᵀ / sqrt(64)` 후 causal masked softmax |
-| MLP | `Linear(256,1024,bias=True)` → exact GELU → `Linear(1024,256,bias=True)` |
+| 형태 | 2-block causal decoder-only, attention → MLP 순차 residual |
+| Vocabulary / embedding | 15 / 128, embedding scaling 없음 |
+| Residual dimension | 128 |
+| Attention | 4 heads, head dimension 32, Q/K/V 각각 총 128차원 |
+| QKV projection | `Linear(128, 384, bias=True)` |
+| Attention output | `Linear(128, 128, bias=True)` |
+| Attention score | `QKᵀ / sqrt(32)` 후 causal masked softmax |
+| MLP | `Linear(128,512,bias=True)` → exact GELU → `Linear(512,128,bias=True)` |
 | LayerNorm | block당 attention 전·MLP 전 각각 1개, affine=True, eps=1e-5 |
-| Final LayerNorm | 256차원, affine=True, eps=1e-5 |
-| Unembedding | `Linear(256,15,bias=False)`, token embedding과 **가중치 공유 안 함** |
-| 위치 표현 | RoPE, base=10,000, Q/K의 64차원 전체에 적용, V에는 미적용 |
+| Final LayerNorm | 128차원, affine=True, eps=1e-5 |
+| Unembedding | `Linear(128,15,bias=False)`, token embedding과 **가중치 공유 안 함** |
+| 위치 표현 | RoPE, base=10,000, Q/K의 32차원 전체에 적용, V에는 미적용 |
 | Context | 768, 학습 시 최대 실제 sequence 길이 302 |
 | Dropout | embedding/attention/residual/MLP 모두 0 |
 | 추가 구조 | learned positional embedding, GQA, gated MLP, KV cache, packing 사용 안 함 |
 
-RoPE는 head 벡터의 `(0,1), (2,3), …, (62,63)`을 쌍으로 회전한다. 쌍 i=0..31의 각도는 `position × 10000^(-2i/64)`다. 각 시퀀스 BOS의 위치는 0이며 padding 위치의 출력은 평가하지 않는다. 학습·길이 평가에서 base나 위치 스케일을 변경하지 않는다. 위치 회전의 원리는 [RoFormer](https://arxiv.org/abs/2104.09864)를 따른다.
+RoPE는 head 벡터의 `(0,1), (2,3), …, (30,31)`을 쌍으로 회전한다. 쌍 i=0..15의 각도는 `position × 10000^(-2i/32)`다. 각 시퀀스 BOS의 위치는 0이며 padding 위치의 출력은 평가하지 않는다. 학습·길이 평가에서 base나 위치 스케일을 변경하지 않는다. 위치 회전의 원리는 [RoFormer](https://arxiv.org/abs/2104.09864)를 따른다.
 
 ```text
-tokens → Embedding(15,256) → r_0
-각 l=0..11:
+tokens → Embedding(15,128) → r_0
+각 l=0,1:
   v_l     = LN_attn_l(r_l)
   Q,K,V   = split(W_qkv_l v_l + b_qkv_l)
   a_l     = W_o_l Concat(CausalAttention(RoPE(Q),RoPE(K),V)) + b_o_l
@@ -113,7 +106,7 @@ tokens → Embedding(15,256) → r_0
   m_l     = W_out_l g_l + b_out_l
   h_l     = r_mid_l + m_l
   r_(l+1) = h_l
-logits = W_U LN_final(h_11)  # [batch, input_length, 15]
+logits = W_U LN_final(h_1)  # [batch, input_length, 15]
 ```
 
 PAD도 15-class softmax의 한 출력이다. BOS/PAD logit을 인위적으로 제거하지 않는다. PAD 입력 embedding도 일반 학습 파라미터로 세되 유효 토큰에서 PAD key를 보지 못하게 한다. PAD **target**만 loss에서 제외한다.
@@ -122,81 +115,49 @@ PAD도 15-class softmax의 한 출력이다. BOS/PAD logit을 인위적으로 �
 
 | 구성 | 산식 | 개수 |
 |---|---|---:|
-| Embedding | 15×256 | 3,840 |
-| QKV / block | 256×768 + 768 | 197,376 |
-| Attention output / block | 256×256 + 256 | 65,792 |
-| MLP input / block | 256×1024 + 1024 | 263,168 |
-| MLP output / block | 1024×256 + 256 | 262,400 |
-| 두 LayerNorm / block | 2×(256+256) | 1,024 |
-| Block 소계 | 위 block 항목 합계 | 789,760 |
-| 12 blocks | 12×789,760 | 9,477,120 |
-| Final LayerNorm | 256+256 | 512 |
-| Unembedding | 256×15 | 3,840 |
-| **총 학습 파라미터** | 3,840+9,477,120+512+3,840 | **9,485,312** |
+| Embedding | 15×128 | 1,920 |
+| QKV / block | 128×384 + 384 | 49,536 |
+| Attention output / block | 128×128 + 128 | 16,512 |
+| MLP input / block | 128×512 + 512 | 66,048 |
+| MLP output / block | 512×128 + 128 | 65,664 |
+| 두 LayerNorm / block | 2×(128+128) | 512 |
+| Block 소계 | 위 block 항목 합계 | 198,272 |
+| 두 block | 2×198,272 | 396,544 |
+| Final LayerNorm | 128+128 | 256 |
+| Unembedding | 128×15 | 1,920 |
+| **총 학습 파라미터** | 1,920+396,544+256+1,920 | **400,640** |
 
-RoPE와 mask는 학습 파라미터가 없다.
-`sum(p.numel() for p in model.parameters()) == 9485312`를 검증한다.
+RoPE와 mask는 학습 파라미터가 없다. 구현 후 `sum(p.numel() for p in model.parameters()) == 400640`을 검증한다.
 
 ### 4.3 초기화·학습 하이퍼파라미터
 
-Embedding과 모든 Linear weight는 독립 `Normal(0,0.02²)`로 초기화한다. 각 block의 attention output 및 MLP output weight에는 추가로 `1/sqrt(2×12)=1/sqrt(24)`를 곱한다. 모든 Linear bias는 0, LayerNorm weight는 1, bias는 0이다. LM seed는 0, 1, 2다. 학습 전 probe 기준선용으로 초기 상태도 저장한다.
+Embedding과 모든 Linear weight는 독립 `Normal(0,0.02²)`로 초기화한다. 각 block의 attention output 및 MLP output weight에는 추가로 `1/sqrt(2×2)=1/2`를 곱한다. 모든 Linear bias는 0, LayerNorm weight는 1, bias는 0이다. LM seed는 0, 1, 2다. 학습 전 probe 기준선용으로 초기 상태도 저장한다.
 
 | 항목 | 명세 |
 |---|---|
-| Loss | token-only read4: READ 답 weight 4, 기타 non-PAD weight 1, label smoothing=0 |
+| Loss | 모든 유효 next-token에 동일 가중 CE, label smoothing=0 |
 | Optimizer | AdamW, lr=3e-4, betas=(0.9,0.95), eps=1e-8, amsgrad=False |
 | Weight decay | 0.01, embedding과 matrix weight에만 적용; 모든 bias/LN 제외 |
-| Batch | effective 64 sequences; GPU smoke 확정 microbatch=16, accumulation=4 |
-| Smoke 메모리 조정 | 최초 GPU smoke에서 16→8→4→2→1 허용; 본학습 재현은 확정값 16 유지 |
+| Batch | effective 64 sequences; 초기 microbatch=16, accumulation=4 |
+| 메모리 부족 시 | microbatch 16→8→4→2→1, accumulation=64/microbatch |
 | Clipping | accumulation 완료 후 global gradient norm=1.0 |
-| LR | 첫 50k linear warmup, 57.6M까지 3e-4, 64M까지 3e-5로 linear decay |
-| 학습 예산 | seed당 명목 64M 비패딩 prediction tokens, 최초 완전 update overshoot 포함 |
-| 자동 연장 | 허용하지 않음 |
-| Select 평가·후보 | 1M, 3M, 8M, 16M, 24M, 32M, 48M, 57.6M, 60.8M, 64M을 처음 넘는 완전 update |
-| Checkpoint 선택 | select first-member 42-cell macro answer CE 전역 최소 및 §4.4 near-tie 규칙 |
+| LR | 첫 50,000 예측 토큰 linear warmup, 이후 3e-4 고정 |
+| 파일럿 예산 | seed 0, 1,000,000 비패딩 예측 토큰 |
+| 조건부 연장 | 동일 optimizer/scheduler 상태로 누적 3,000,000까지 한 번 |
+| Validation | 누적 토큰이 100k의 다음 배수를 넘은 update 및 최종 update |
+| Checkpoint 선택 | 일반 validation 정답 CE 최소, 동률은 더 이른 update |
 
-길이가 다른 microbatch의 평균 loss를 단순 평균하지 않는다. Effective batch 전체의
-가중치 합 W를 분모로 각 microbatch의 `sum(weight * CE)/W`를 backward한다.
-READ 답 위치는 `READ → 변수 → B0/B1` 토큰 패턴만으로 검출한다. Metadata는 사용하지 않는다.
-
-예산의 prediction token 수 N은 가중치 합과 다르며 각 sequence의 `len(tokens)-1` 합이다.
-LR은 update 이후 누적 prediction tokens T로 계산한다.
-
-```text
-T <= 50,000:      lr = 3e-4 * T / 50,000
-T <= 57,600,000:  lr = 3e-4
-그 이후:          lr = 3e-4 + min(1, (T-57,600,000)/6,400,000) * (3e-5-3e-4)
-```
-
-Update를 쪼개지 않는다. 실제 seed당 64,005,751 tokens, overshoot 5,751,
-8,399 updates, cursor 537,536을 소비했다.
+길이가 다른 microbatch의 평균 loss를 단순 평균하지 않는다. effective batch의 유효 target 수를 N이라 할 때 각 microbatch의 `sum(CE)/N`을 backward하여 정확한 전체 token mean을 만든다. 한 update의 처리 토큰 수는 각 sequence의 `len(tokens)-1` 합이다. Warmup update의 LR은 `3e-4 × min(1,(T_before+N)/50000)`으로 정한다. Update를 쪼개 예산에 맞추지 않고 최초 초과 update까지 수행하며 overshoot를 저장한다.
 
 Batch 내 우측 padding, causal mask와 key padding mask를 함께 사용한다. 유효 query t가 t보다 큰 key를 보지 못하고 PAD key를 보지 못함을 직접 검사한다. 구현 초기에는 명시적 matmul·mask·softmax를 사용한다. 빠른 attention kernel을 도입하면 별도 버전에서 동등성을 검증한다.
 
-### 4.4 Checkpoint 선택과 one-time 행동 gate
+### 4.4 파일럿 gate와 연장 판정
 
-10개 milestone 후보에서 select first-member 42-cell macro answer CE의 **전역 최소**를 찾는다.
-그 최소와 1e-4 nats 이내 후보를 select/general answer CE, 이른 update 순으로 정렬한다.
-Gate는 선택된 checkpoint에서 seed당 한 번만 열고 다른 checkpoint로 재선택하지 않는다.
+일반 validation **15-token full-vocabulary argmax 정답 정확도 ≥99%**, 세 핵심 진단 각각 지정 target 정확도 ≥95%가 gate다. 핵심 진단은 다른 변수 읽기, 초기화 외 복수 갱신, 최신 SET/초기화 이후 첫 READ이며 조건당 512개 독립 시퀀스를 사용한다.
 
-| Gate 항목 | 통과 조건 |
-|---|---|
-| General READ | 15-token full-vocabulary accuracy ≥99% |
-| Legacy diagnostic 세 종류 | 조건당 1,024 independent targets, 각각 accuracy ≥95% |
-| First | 42-cell macro accuracy ≥95% |
-| First group | 연산별·depth-bin별 macro 및 answer별 accuracy 각각 ≥95% |
-| Repeat | 42-cell macro accuracy ≥95% |
-| Quota·coverage | 100% |
+1M에서 최소 정답 CE checkpoint가 gate를 통과하면 파일럿을 끝낸다. 미달하면 마지막 세 번의 validation 변화 중 두 번 이상 `CE_previous - CE_current ≥ 1e-4 nats`일 때만 3M까지 연장한다. 세 변화를 계산하기 위해 마지막 네 평가를 사용한다. 그렇지 않거나 3M에서 미달이면 중단하고 구현/데이터를 확인한다. Gate를 통과한 다른 checkpoint를 사후에 골라 최소 CE 선택 규칙을 바꾸지 않는다.
 
-개별 42 cell은 count와 CI를 보고하며 추가 gate로 쓰지 않는다.
-Seed 0 실패 시 중단한다. 통과 후 동일 설정·데이터 순서·64M 예산으로 seed 1·2를
-fresh initialization에서 실행하고 실패 seed도 보존한다. 최소 두 seed 통과가 해석 진입 조건이다.
-전체 학습·validation 결정 동결 후 모든 학습 seed를 frozen test에서 한 번 평가한다.
-
-현재 seed 0/1은 update 7,983, seed 2는 update 8,399가 선택됐고 세 seed 모두 통과했다.
-[동결 모델 목록](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)과
-[validation 동결](experiment_v1_4/results/p4_audit_20260921_01/validation_freeze.json)을 사용한다.
-기존 gate/test 추론을 문서 정리나 표현 분석 준비를 위해 반복하지 않는다.
+통과 시 파일럿의 명목 예산 1M 또는 3M과 실제 최종 데이터 cursor를 고정하여 seed 1, 2도 같은 데이터 순서·최종 update까지 실행한다. 각 seed에서 최소 validation 답 CE checkpoint를 독립 선택하고 gate를 확인한다. 실패 seed는 교체하지 않는다. Test는 모델 선택이 끝난 뒤 한 번 평가한다.
 
 ## 5. CPU 코퍼스 제작 규격
 
@@ -206,9 +167,8 @@ fresh initialization에서 실행하고 실패 seed도 보존한다. 최소 두 
 
 | Split | 생성 목표 | 선택·평가 단위 |
 |---|---:|---|
-| Select/general / gate/general / test/general | 512 / 1,024 / 2,048 sequences | 모든 READ |
-| Legacy diagnostic gate / test | 조건당 1,024 / 2,048 sequences | 시퀀스당 지정 READ 1개 |
-| First/repeat select / gate / test | 42 cells × 64 / 64 / 128 pairs | independent origin별 first·repeat target |
+| `val_iid` / `test_iid` | 512 / 2,048 sequences | 모든 READ |
+| 핵심 diagnostic val / test | 조건당 512 / 1,024 sequences | 시퀀스당 지정 READ 1개 |
 | 거리 diagnostic test | 0, 1~2, ≥3별 1,024 sequences | 지정 READ 1개 |
 | 진리표 diagnostic test | 3 operators×4 inputs별 256 sequences | 지정 READ 1개 |
 | 답 균형 diagnostic test | B0/B1별 512 sequences | 지정 READ 1개 |
@@ -217,18 +177,18 @@ fresh initialization에서 실행하고 실패 seed도 보존한다. 최소 두 
 | Interpretation train / val / test | READ 각 50k / 10k / 20k positions, update도 각각 동일 | 시퀀스 split 후 위치 추출 |
 | Causal val | changed 512 + unchanged 512 pairs | origin/pair |
 | Causal test | changed 1,024 + unchanged 1,024 pairs | origin/pair |
-| LM train | 명목 64M, 실제 64,005,751 prediction tokens / 537,536 sequences | 동일 순서, 반복 없이 소비 |
+| LM train | 최소 3M 예측 토큰과 마지막 64-sequence batch를 완성할 분량 | 동일 순서, 반복 없이 소비 |
 
 길이 test는 초기 CPU 단계에서 예약·생성하되 GPU 평가는 2차 분석으로 둔다. 핵심 진단끼리 조건은 중첩될 수 있지만 파일 간 정확히 같은 sequence는 넣지 않는다. 진리표/답 균형 평가를 자연 분포 점수에 섞지 않는다.
 
 ### 5.2 생성·중복·샘플링 절차
 
-1. `20260920|language-v1.4|<purpose>|<index>`와 02의 SHA-256 파생식을 사용하고 NumPy `Generator(PCG64)`를 고정한다. 목적 이름·diagnostic 조건·pair 유형·shard 번호는 활성 manifest와 생성 코드에 저장된 매핑을 따른다.
-2. Fresh select/gate/test → interpretation → causal → train 확장 순서다. v1.0–v1.3 inherited sequence/READ-prefix registry와 v1.4 예약 집합을 모두 대조한다. v1.3 train prefix의 byte-identical 계승은 명시적 예외다. 해석용 시퀀스의 모든 READ/update는 같은 split에 속한다.
+1. Master seed 20260909와 02의 SHA-256 파생식을 사용하고 NumPy `Generator(PCG64)`를 고정한다. 목적 이름은 02의 목록을 유지하고 diagnostic 조건·pair 유형·shard 번호를 index에 매핑한 표를 저장한다.
+2. validation/test → interpretation → causal → LM train 순서로 예약 데이터를 만든다. 모든 split에 전역 hash registry를 적용한다. 해석용 시퀀스의 모든 READ/update는 같은 split에 속한다.
 3. LM train, IID, diagnostic, interpretation, 기본 causal 데이터에서 두 holdout `(XOR,AND,OR)`, `(OR,XOR,AND)`가 같은 블록에 나타나는 시퀀스를 거부한다. Composition test만 지정 패턴을 허용한다.
 4. Interpretation은 시퀀스를 순서대로 생성하여 READ/update 후보 수가 각각 quota 이상이 될 때 멈춘다. 별도 고정 RNG로 각 종류에서 quota만큼 균등 비복원 추출하고 `(sequence_id, token_index)` 순으로 저장한다. 라벨 값이나 모델 activation으로 위치를 선별하지 않는다.
 5. Pair는 origin 전체 sequence hash와 실제 분석 prefix hash를 모두 등록한다. 같은 origin의 파생 데이터는 같은 causal split에 둔다. Full sequence가 달라도 다른 split과 prefix가 같으면 pair를 거부한다. 다른 데이터의 READ prefix hash도 예약하여 causal prefix의 정확 중복을 막는다. Pair 내부의 동일 토큰 문맥 공유는 의도된 예외다.
-6. Train stream은 4,096 sequences 단위 shard로 저장한다. 계승한 과거 예산 경계의 짧은 shard는 유지하고 shard 경계를 넘어 effective batch를 이어 읽는다. Train 후보의 각 READ prefix도 예약 causal prefix와 비교하여 정확 중복이면 거부한다. 마지막 shard는 짧아도 되고, 소비할 마지막 batch는 64 sequences를 확보한다. 토큰 budget은 저장량이 아니라 실제 소비량으로 계산한다. 모든 LM seed가 같은 train shard를 읽는다.
+6. Train stream은 4,096 sequences 단위 shard로 저장한다. Train 후보의 각 READ prefix도 예약 causal prefix와 비교하여 정확 중복이면 거부한다. 마지막 shard는 짧아도 되고, 소비할 마지막 batch는 64 sequences를 확보한다. 토큰 budget은 저장량이 아니라 실제 소비량으로 계산한다. 모든 LM seed가 같은 train shard를 읽는다.
 7. 02의 target당 MAX_ATTEMPTS=100,000을 적용한다. 수락률·거부 사유·quota 부족을 저장하고, 상한에 도달하면 중단한다. 제약을 바꾼 데이터는 새 버전이다.
 
 Canonical sequence hash는 PAD 없는 token ID의 쉼표 연결 ASCII에 대한 SHA-256이다. Prefix hash도 같은 직렬화 규칙을 사용한다. Hash 비교는 누출 방지 용도이며 test 점수는 보지 않는다.
@@ -246,15 +206,15 @@ GPU 작업 전에 다음 항목이 모두 통과해야 한다.
 7. 길이·정답 빈도·16상태·48명령·진리표 12칸·거리·깊이·변수별 값·quota 및 거부율 통계를 저장한다.
 8. 작은 고정 seed 샘플을 두 번 생성하여 token 및 metadata hash가 같은지 확인한다.
 
-활성 root의 `manifest.json`, `cpu_validation.json`, `corpus_statistics.json`, 파일별 SHA-256, RNG state, split 목록을 저장한다. 모델 입력용 token array와 정답·상태 metadata는 별도 파일로 관리하고 LM forward에는 token ID와 padding mask만 전달한다.
+`corpus_manifest.json`, `cpu_validation.json`, `corpus_statistics.json`, 파일별 SHA-256, RNG state, split 목록을 저장한다. 모델 입력용 token array와 정답·상태 metadata는 별도 파일로 관리하고 LM forward에는 token ID와 padding mask만 전달한다.
 
 ## 6. Activation cache와 라벨
 
 ### 6.1 추출
 
-선택된 LM checkpoint를 `eval()` 및 gradient 비활성 상태로 실행한다. Interpretation split 전체 시퀀스는 teacher forcing으로 처리하되 5절에서 고정한 위치만 저장한다. 초기 microbatch는 16이며 메모리 부족 시 절반으로 줄인다. float32로 256차원 `h_0,u_0,m_0`를 수집한다. 동결 설계의 all-layer full probe 진단은 block 0..11에 포함한다. 전체 층 진단의 hook·저장 범위·실행 순서는 P5 config에 사전 고정하며, block 1 sparse dictionary·개입은 P10 선택 분석이다.
+선택된 LM checkpoint를 `eval()` 및 gradient 비활성 상태로 실행한다. Interpretation split 전체 시퀀스는 teacher forcing으로 처리하되 5절에서 고정한 위치만 저장한다. 초기 microbatch는 16이며 메모리 부족 시 절반으로 줄인다. float32로 `h_0,u_0,m_0`를 수집한다. block 1은 2차 분석 시 같은 규칙으로 수집한다.
 
-Cache key는 `(lm_seed, checkpoint_sha256, split, position_type, layer, sequence_id, token_index, hook)`다. 라벨 파일과 key join을 검증한다. Layer당 READ/update 합계 160k positions에서 세 256차원 tensor는 float32 원시 배열 기준 약 491.52 MB다. Metadata와 latent 저장 용량은 별도다. 512차원 latent는 필요한 실험만 순차 계산하며 모든 모델 결과를 GPU에 동시에 적재하지 않는다.
+Cache key는 `(lm_seed, checkpoint_sha256, split, position_type, layer, sequence_id, token_index, hook)`다. 라벨 파일과 key join을 검증한다. Layer당 READ/update 합계 160k positions에서 세 128차원 tensor는 float32 원시 배열 기준 약 245.76 MB다. Metadata와 latent 저장 용량은 별도다. 512차원 latent는 필요한 실험만 순차 계산하며 모든 모델 결과를 GPU에 동시에 적재하지 않는다.
 
 ### 6.2 라벨과 적용 범위
 
@@ -283,7 +243,7 @@ Label별 각 split에 기대 class가 존재하는지 확인한다. Train/val에
 
 | 입력 차원 | Binary | 4-class | 12-class | 16-class |
 |---:|---:|---:|---:|---:|
-| 256, full activation | 257 | 1,028 | 3,084 | 4,112 |
+| 128, full activation | 129 | 516 | 1,548 | 2,064 |
 | 1 feature | 2 | 8 | 24 | 32 |
 | 4 features | 5 | 20 | 60 | 80 |
 
@@ -307,7 +267,7 @@ Random dictionary R은 task seed로부터 `Normal(0,1)` 512개 방향을 뽑아 
 1. 각 feature에 대해 train에서 class 간/내 분산비인 단변량 ANOVA F-score를 계산한다. Binary에도 같은 기준을 쓴다. 상수 feature는 제외하고 score 동률은 작은 feature ID가 우선한다.
 2. 이 순위의 상위 1, 2, 3, 4개로 **누적 prefix**를 만든다. 매 단계에서 새 조합 전체를 탐색하는 forward selection은 하지 않는다. 이 규칙으로 01의 순차 선택을 고정한다.
 3. 각 prefix와 lambda로 train probe를 fit한다. 단일 feature 결과는 m=1의 validation 선택값을 사용한다. ≤4 feature 결과는 m∈{1,2,3,4}에서 validation balanced accuracy 최대를 선택한다. 동률은 작은 m, 이후 7.1 규칙을 따른다.
-4. 원래 좌표 256개와 SAE/Transcoder/random 512개의 후보 수 차이를 보고한다. 기존 128후보 대조 규모는 유지한다. v1.4에서는 **좌표를 포함한 네 표현 모두** 사전 RNG로 128개를 비복원 선택한 뒤 **다시** train ranking을 한다. 선택 seed·subset ID는 P5 config에 동결한다. 이는 residual 폭 변경에 따른 후보 수 일치의 명시적 정합화이며 실행 완료를 뜻하지 않는다. 성능을 보고 후보를 뽑지 않는다.
+4. 원래 좌표 128개와 SAE/Transcoder/random 512개의 후보 수 차이를 보고한다. 추가 분석은 dictionary/random 후보에서 사전 RNG로 128개를 비복원 선택한 뒤 **다시** train ranking을 한다. 성능을 보고 후보를 뽑지 않는다.
 5. Label별 feature 집합과 fitted coefficient를 저장한다. 이는 라벨을 이용한 사후 감독 평가이며 dictionary 비지도 학습과 구분한다.
 
 ### 7.3 대조군·전이
@@ -323,11 +283,11 @@ Random dictionary R은 task seed로부터 `Normal(0,1)` 512개 방향을 뽑아 
 
 ### 8.1 구조와 전처리
 
-주 SAE는 block 0의 READ `h_0∈R^256`을 입력·복원한다. Train 위치 전체에서 다음 통계를 float64 누적으로 구하고 float32로 저장한다.
+주 SAE는 block 0의 READ `h_0∈R^128`을 입력·복원한다. Train 위치 전체에서 다음 통계를 float64 누적으로 구하고 float32로 저장한다.
 
 ```text
 mu = mean_train(h)
-s  = sqrt(mean_train(||h-mu||²) / 256)
+s  = sqrt(mean_train(||h-mu||²) / 128)
 x  = (h-mu)/s
 z  = TopK_k(ReLU(W_enc x + b_enc))
 x_hat = D z + b_dec
@@ -338,13 +298,13 @@ h_hat = mu + s*x_hat
 
 | 구성 | shape | 파라미터 |
 |---|---|---:|
-| Encoder weight | 512×256 | 131,072 |
+| Encoder weight | 512×128 | 65,536 |
 | Encoder bias | 512 | 512 |
-| Decoder D | 256×512 | 131,072 |
-| Decoder bias | 256 | 256 |
-| **합계 / SAE** | 256→512→256 | **262,912** |
+| Decoder D | 128×512 | 65,536 |
+| Decoder bias | 128 | 128 |
+| **합계 / SAE** | 128→512→128 | **131,712** |
 
-Dictionary expansion factor는 2, k는 **4와 16 두 설정 모두** 실행한다. ReLU 후 상위 k개를 유지하므로 실제 positive L0는 k 이하일 수 있다. 동률은 작은 latent ID 우선으로 정렬하고 test에서도 같은 연산을 쓴다. TopK의 기본 동기는 [Scaling and evaluating sparse autoencoders](https://arxiv.org/abs/2406.04093)를 따르되, 본 실험은 아래의 단순 변형이며 논문 전체 학습 recipe 재현을 주장하지 않는다.
+Dictionary expansion factor는 4, k는 **4와 16 두 설정 모두** 실행한다. ReLU 후 상위 k개를 유지하므로 실제 positive L0는 k 이하일 수 있다. 동률은 작은 latent ID 우선으로 정렬하고 test에서도 같은 연산을 쓴다. TopK의 기본 동기는 [Scaling and evaluating sparse autoencoders](https://arxiv.org/abs/2406.04093)를 따르되, 본 실험은 아래의 단순 변형이며 논문 전체 학습 recipe 재현을 주장하지 않는다.
 
 ### 8.2 초기화와 학습
 
@@ -352,7 +312,7 @@ D의 각 column을 독립 표준정규로 생성 후 L2 norm=1로 만든다. Enc
 
 | 항목 | 고정값 |
 |---|---|
-| Loss | `mean((x_hat-x)²)`, batch와 256차원 모두 평균 |
+| Loss | `mean((x_hat-x)²)`, batch와 128차원 모두 평균 |
 | Optimizer | Adam, lr=1e-3, betas=(0.9,0.999), eps=1e-8 |
 | Weight decay / LR schedule | 0 / 상수 |
 | Batch / 최대 update | 512 positions / 5,000 |
@@ -374,8 +334,8 @@ Decoder gradient는 update 전에 각 column의 방사 성분을 제거한다: `
 Transcoder는 `h→h` 복원이 아니라 **동일 block·동일 위치의 MLP 입력 u에서 MLP 출력 m을 예측**한다. 주 대상은 block 0 READ의 `u_0→m_0`다. Transformer 전체는 동결하고 원래 MLP 출력은 supervision target으로만 쓴다. 프로그램 상태 라벨은 loss에 넣지 않는다.
 
 ```text
-mu_u = mean_train(u); s_u = sqrt(mean_train(||u-mu_u||²)/256)
-mu_m = mean_train(m); s_m = sqrt(mean_train(||m-mu_m||²)/256)
+mu_u = mean_train(u); s_u = sqrt(mean_train(||u-mu_u||²)/128)
+mu_m = mean_train(m); s_m = sqrt(mean_train(||m-mu_m||²)/128)
 x_u = (u-mu_u)/s_u
 y_m = (m-mu_m)/s_m
 z_tc = TopK_k(ReLU(E_tc x_u + b_tc_enc))
@@ -384,9 +344,9 @@ m_hat = mu_m + s_m*y_hat
 L_tc = mean((y_hat-y_m)²)
 ```
 
-어느 scale이든 <1e-8이면 중단한다. Encoder 512×256, encoder bias 512, decoder 256×512, decoder bias 256로 **262,912 parameters**다. 입력과 출력의 평균·scale은 서로 다르며 반드시 별도로 저장한다. Residual skip, attention output, LayerNorm을 예측 target에 포함하지 않는다. 추가 선형 skip도 없다.
+어느 scale이든 <1e-8이면 중단한다. Encoder 512×128, encoder bias 512, decoder 128×512, decoder bias 128로 **131,712 parameters**다. 입력과 출력의 평균·scale은 서로 다르며 반드시 별도로 저장한다. Residual skip, attention output, LayerNorm을 예측 target에 포함하지 않는다. 추가 선형 skip도 없다.
 
-본 실험은 SAE와 width/k를 맞춘 **TopK Transcoder 변형**이다. [Transcoders Find Interpretable LLM Feature Circuits](https://arxiv.org/abs/2406.11944)의 기본 목적은 MLP 입출력 근사이며, 해당 논문의 ReLU+L1 학습을 그대로 복제한 것은 아니다. 원 MLP hidden은 1024, TC latent는 512이며 residual dimension 대비 2배 dictionary를 갖는 sparse 대체 모델이다.
+본 실험은 SAE와 width/k를 맞춘 **TopK Transcoder 변형**이다. [Transcoders Find Interpretable LLM Feature Circuits](https://arxiv.org/abs/2406.11944)의 기본 목적은 MLP 입출력 근사이며, 해당 논문의 ReLU+L1 학습을 그대로 복제한 것은 아니다. 원 MLP hidden도 512이므로 본 transcoder는 원 MLP보다 더 넓지 않고, residual dimension 대비 4배 dictionary를 갖는 sparse 대체 모델이다.
 
 ### 9.2 초기화·학습·평가
 
@@ -406,12 +366,6 @@ Transcoder latent의 의미 평가는 7절 probe 절차를 그대로 사용한�
 
 기준선은 split majority, 독립 Bernoulli(0.5) 추측의 기대 정확도, query 변수의 최근 SET/초기화 값, 가장 최근 READ 답 복사다. 이전 READ가 없으면 복사 기준선은 B0로 예측한다. 각 규칙을 같은 target에 실제 적용하여 정확도를 산출한다.
 
-First/repeat 각 cell의 accuracy·answer CE와 42-cell macro에 95% percentile CI를 보고한다.
-Cell 내 independent origin을 1,000회 복원 추출하며 first/repeat가 같은 draw를 공유한다.
-Macro gap CI, 요청/유효 draw 수 및 seed를 저장한다. Behavior bootstrap은
-`20260920|experiment-spec-v1.4|behavior-bootstrap-r1|<cell_id>`를 SHA-256 파생하여
-PCG64를 사용한다. 보고용 unweighted CE와 학습용 read4 loss는 구분하며 CI로 선택·gate를 바꾸지 않는다.
-
 ### 10.2 해석 도구 fidelity
 
 SAE는 target v=x, prediction v_hat=x_hat, Transcoder는 v=y_m, v_hat=y_hat으로 둔다.
@@ -426,7 +380,7 @@ L0_i  = count(z_i > 0)
 
 NMSE 분모는 **train 평균 predictor**를 해당 평가 split에 적용한 오차다. 정규화 공간에서 train 평균은 거의 0이다. R2와 EV를 혼동하지 않으며 각각 분모가 0이면 NA로 둔다. L0 평균·중앙값·분위수, latent별 활성 비율을 저장한다. Dead latent는 **선택 checkpoint로 전체 train pool을 다시 encode했을 때 positive activation이 0회인 latent**로 정의한다. Validation/test에서만 비활성인 latent 비율도 별도 기록한다.
 
-Reconstruction 행동 평가는 동결 general behavior test 각 sequence에서 고정 seed로 READ 1개를 선택하고 **그 한 위치만** 대체한다. SAE는 h를 h_hat으로, Transcoder는 m을 m_hat으로 바꾸고 나머지 모델을 실행한다. 해당 답 CE/정확도 변화와 원래 모델 점수를 paired 보고한다. Null patch, 원본 activation을 그대로 반환하는 identity hook이 원래 logits을 재현하는지 먼저 검증한다.
+Reconstruction 행동 평가는 test_iid 각 sequence에서 고정 seed로 READ 1개를 선택하고 **그 한 위치만** 대체한다. SAE는 h를 h_hat으로, Transcoder는 m을 m_hat으로 바꾸고 나머지 모델을 실행한다. 해당 답 CE/정확도 변화와 원래 모델 점수를 paired 보고한다. Null patch, 원본 activation을 그대로 반환하는 identity hook이 원래 logits을 재현하는지 먼저 검증한다.
 
 ### 10.3 의미 지표
 
@@ -512,7 +466,7 @@ Unchanged pair에서는 정답과 반대 bit 간 margin 변화, 원래 맞은 �
 
 | 범위 | 실행 수/최대량 |
 |---|---|
-| LM | 3 seeds × 64M = 192M 예측 토큰 + seed별 마지막 batch 초과량 |
+| LM | 3 seeds × 최대 3M = 9M 예측 토큰 + seed별 마지막 batch 초과량 |
 | READ SAE, 주 layer | 통과 LM 수 G × 2 k × 1 sparse seed |
 | READ TC, 주 layer | G × 2 k × 1 sparse seed |
 | seed 0 READ 초기화 민감도 | SAE 2 k + TC 2 k = 4 runs 추가, seed 0 gate 통과 시 |
@@ -528,13 +482,8 @@ Probe와 baseline은 같은 cache를 재사용하고 GPU 학습 예산에 포함
 
 ## 14. 저장 구조와 최종 산출물
 
-아래는 산출물 역할별 목표 구조이며 미실행 P5 이후 파일의 존재를 주장하지 않는다.
-실제 동결 corpus는 `data/language_v1_4/rebuild_01/`, LM checkpoint는
-`experiment_v1_4/frozen_test_r1/checkpoints/seed{0,1,2}.pt`, 환경·원본은 evidence/results에 있다.
-신규 산출물 경로는 P5 config에서 별도 확정하고 기존 파일을 덮어쓰지 않는다.
-
 ```text
-experiment_v1_4/
+experiment_v1/
   configs/
     language.json
     transformer.json
@@ -581,7 +530,7 @@ experiment_v1_4/
 
 각 run ID는 spec version, LM seed/checkpoint hash, layer, hook, READ/update, 도구, k, sparse seed를 포함한다. Manifest에는 정확한 파라미터 수, 모든 config, 코드 hash, 환경 ID, 파일 hash, 실제 token/position/draw 수, best update, 학습·평가 시간, peak memory, 실패/생략 사유를 기록한다. Feature ID는 dictionary 간 공통 의미를 가진다고 가정하지 않는다.
 
-P5 이후 분석 난수는 계승 규칙인 `20260909|experiment-spec-v1.0|<purpose>|<run_key>`의 SHA-256 앞 8 bytes를 unsigned big-endian 정수로 변환해 사용한다. Purpose는 `dictionary_init`, `position_draw`, `random_projection`, `candidate_subset`, `shuffle_label`, `reconstruction_target`, `random_patch`, `bootstrap`으로 고정한다. NumPy는 PCG64를 쓰고 PyTorch seed는 해당 정수를 `2^63-1`로 나눈 나머지로 설정한다. Run key는 위 run ID의 필드를 고정 순서로 연결하되, 공유해야 하는 position_draw에서는 도구 종류를 제외하고 reconstruction_target에서는 LM/도구 종류를 제외하여 같은 표본을 사용한다. Sparse seed 0/1은 이 run key에 들어가는 반복 ID이며 LM 직접 초기화 seed 0/1/2와 역할이 다르다. 최종 파생 정수와 key도 manifest에 저장한다. Namespace의 v1.0 문자열은 계승한 RNG 식별자이며 적용 실험 버전은 run key의 v1.4로 구분한다. 기존 LM·corpus·behavior bootstrap의 RNG 기록을 바꾸지 않는다. P5 config에 실제 파생값을 사전 고정한다.
+분석 난수는 `20260909|experiment-spec-v1.0|<purpose>|<run_key>`의 SHA-256 앞 8 bytes를 unsigned big-endian 정수로 변환해 사용한다. Purpose는 `dictionary_init`, `position_draw`, `random_projection`, `candidate_subset`, `shuffle_label`, `reconstruction_target`, `random_patch`, `bootstrap`으로 고정한다. NumPy는 PCG64를 쓰고 PyTorch seed는 해당 정수를 `2^63-1`로 나눈 나머지로 설정한다. Run key는 위 run ID의 필드를 고정 순서로 연결하되, 공유해야 하는 position_draw에서는 도구 종류를 제외하고 reconstruction_target에서는 LM/도구 종류를 제외하여 같은 표본을 사용한다. Sparse seed 0/1은 이 run key에 들어가는 반복 ID이며 LM 직접 초기화 seed 0/1/2와 역할이 다르다. 최종 파생 정수와 key도 manifest에 저장한다.
 
 필수 그림은 다음과 같다.
 
@@ -591,4 +540,4 @@ P5 이후 분석 난수는 계승 규칙인 `20260909|experiment-spec-v1.0|<purp
 4. Changed delta margin·flip과 unchanged 오류 유발률, full/random/좌표 대조, matching coverage.
 5. LM seed와 sparse seed별 분포, 현재≠과거 및 전이 분석.
 
-**완료 판정:** CPU 검증, LM의 사전 gate 결정, 통과한 LM들의 필수 READ probe·SAE·Transcoder 두 k·후보 수 대조·근사 대체·인과 평가·재현 정보가 모두 보고되어야 한다. 해석 진입 조건인 최소 두 통과 seed를 충족하지 못하면 ‘행동 학습 단계에서 중단’한 보고서로 끝내며 SAE/TC 가설을 검증했다고 쓰지 않는다. 본 `03_experiment_spec.md`는 그 실행을 위한 명세서이고 실험 수행 자체는 별도 작업이다.
+**완료 판정:** CPU 검증, LM의 사전 gate 결정, 통과한 LM들의 필수 READ probe·SAE·Transcoder 두 k·후보 수 대조·근사 대체·인과 평가·재현 정보가 모두 보고되어야 한다. 행동 gate를 통과한 모델이 없으면 ‘행동 학습 단계에서 중단’한 보고서로 끝내며 SAE/TC 가설을 검증했다고 쓰지 않는다. 본 `03_experiment_spec.md`는 그 실행을 위한 명세서이고 실험 수행 자체는 별도 작업이다.

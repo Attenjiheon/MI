@@ -18,3 +18,17 @@ experiment_v1_4/bundles/v1_4_frozen_test_bundle_r1.zip filter=lfs diff=lfs merge
 experiment_v1_4/evidence/v1_4_seed1_evidence_20260921T121619607352.zip filter=lfs diff=lfs merge=lfs -text
 experiment_v1_4/evidence/v1_4_seed2_evidence_20260921T134421434839.zip filter=lfs diff=lfs merge=lfs -text
 experiment_v1_4/frozen_test_r1/checkpoints/*.pt filter=lfs diff=lfs merge=lfs -text
+
+# Archived paths retain their original ignore / LFS rules.
+archive/legacy/experiment_v1/bundles/p2_colab_bundle_v1.zip filter=lfs diff=lfs merge=lfs -text
+archive/legacy/experiment_v1/bundles/p3_colab_bundle_v4.zip filter=lfs diff=lfs merge=lfs -text
+archive/legacy/experiment_v1_1/bundles/p3_4block_bundle_v1.zip filter=lfs diff=lfs merge=lfs -text
+archive/legacy/experiment_v1_2/bundles/p3_16m_bundle_v2.zip filter=lfs diff=lfs merge=lfs -text
+archive/legacy/experiment_v1_2/bundles/p3_16m_bundle_v1.zip filter=lfs diff=lfs merge=lfs -text
+archive/legacy/experiment_v1_2/evidence/p3_16m_verified_contents_20260917.zip filter=lfs diff=lfs merge=lfs -text
+archive/legacy/data/language_v1_3/reserved_prefix_hashes.txt filter=lfs diff=lfs merge=lfs -text
+archive/legacy/experiment_v1_3/bundles/v1_3_pilot_bundle_v1.zip filter=lfs diff=lfs merge=lfs -text
+archive/legacy/experiment_v1_3/bundles/v1_3_confirm_wide4_read4_seed0_support_v2.zip filter=lfs diff=lfs merge=lfs -text
+
+# Immutable Markdown snapshots retain their original two-space line breaks.
+archive/specifications/pre_v1_4_integration/*.md whitespace=-blank-at-eol

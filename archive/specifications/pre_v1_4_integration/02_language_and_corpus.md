@@ -1,14 +1,14 @@
 # 인공어 규칙 및 코퍼스 생성 알고리즘
 
-작성일: 2026-09-09
-상태: v1.4 본 실험 코퍼스 통합 규격 (2026-09-22)
+작성일: 2026-09-09  
+상태: 구현 전 규격 v1.0  
 관련 문서: [전체 실험 설계서](./01_experiment_design.md)
 
 ## 1. 목적과 적용 범위
 
 Boolean 변수 네 개를 갱신하고 읽는 autoregressive 프로그램 언어를 정의한다. 프로그램, 정답, 분석 라벨은 CPU에서 정확하게 생성한다. 상태·진리표·의존성 라벨은 별도 metadata로 저장하며 모델 입력이나 학습 loss에 추가하지 않는다.
 
-문법과 실행 의미는 필수 규격이다. IID 샘플링 확률은 초기 언어와 같고, 표본 수·split·seed는 v1.4 동결 계약을 따른다. 활성 데이터는 `data/language_v1_4/rebuild_01/`이다. 최초 root의 거부된 생성물은 학습 입력이 아니다. 구현은 `corpus/`, 감사 증빙은 `experiment_v1_4/P1_STATUS.md`에 있다.
+문법과 실행 의미는 필수 규격이다. 샘플링 확률과 표본 수는 v1.0의 출발 설정이며, 변경 시 버전과 manifest에 기록한다. 본 문서는 알고리즘 명세이며 실행 가능한 생성기는 별도로 구현한다.
 
 ## 2. 어휘와 토큰 ID
 
@@ -32,7 +32,7 @@ Boolean 변수 네 개를 갱신하고 읽는 autoregressive 프로그램 언어
 | 13 | B0 | Boolean 0 |
 | 14 | B1 | Boolean 1 |
 
-B0/B1은 SET 상수와 READ 정답에서 같은 토큰이다. 평가용 정답 위치는 parser의 role metadata로 구분한다. LM read4 loss는 metadata 대신 `READ → 변수 → B0/B1` 토큰 패턴으로 정답 prediction 위치를 판별한다. 공백·줄바꿈·화살표·등호는 토큰이 아니다.
+B0/B1은 SET 상수와 READ 정답에서 같은 토큰이다. 정답 위치는 token ID가 아닌 parser의 role metadata로 구분한다. 공백·줄바꿈·화살표·등호는 토큰이 아니다.
 
 ## 3. 문법
 
@@ -88,7 +88,7 @@ AND A C READ C B1 EOS
 
 ## 5. 기본 생성 분포
 
-| 항목 | v1.4 IID 분포 |
+| 항목 | v1.0 분포 |
 |---|---|
 | 초기 bit | 변수마다 독립 Bernoulli(0.5) |
 | 블록 수 T | 8..24 정수 균등 |
@@ -115,28 +115,22 @@ AND A C READ C B1 EOS
 
 ## 7. 분할, seed 및 중복 방지
 
-v1.4 fresh split과 train 확장은 namespace 20260920을 사용한다. 다음 문자열의 SHA-256 앞 8bytes를 unsigned big-endian 정수로 읽어 목적별 seed를 만든다.
+Master seed는 20260909를 제안한다. 다음 문자열의 SHA-256 앞 8bytes를 unsigned big-endian 정수로 읽어 목적별 seed를 만든다.
 
 ```text
-20260920|language-v1.4|<purpose>|<index>
+20260909|language-v1.0|<purpose>|<index>
 ```
 
-Purpose/index의 실제 목록은 활성 manifest와 `corpus/v1_4.py`, `scripts/generate_v1_4_corpus.py`의 기록을 따른다. Select/gate/test 및 first/repeat를 구분하며 Python 내장 hash는 쓰지 않는다. 계승 train prefix는 새 seed로 다시 생성하지 않고 아래 원본 bytes와 provenance를 보존한다.
+purpose: lm_train, val_iid, val_diagnostic, test_iid, test_diagnostic, test_composition, test_length, interp_train, interp_val, interp_test, causal_val, causal_test. index는 shard 또는 조건 번호다. Python 내장 hash는 쓰지 않는다.
 
-RNG는 numpy.random.Generator(PCG64)로 고정하고 버전을 기록한다. 모든 LM seed에 같은 학습 데이터 순서를 사용해 모델 초기화 효과를 우선 비교한다.
+RNG는 numpy.random.Generator(PCG64) 등 하나로 고정하고 버전을 기록한다. 모든 LM seed에 같은 학습 데이터 순서를 사용해 모델 초기화 효과를 우선 비교한다.
 
-1. Fresh select/gate/test → 해석 pool → 인과 pair를 먼저 예약하고 train을 확장한다.
+1. 고정 validation/test, 해석 pool, 인과 pair를 먼저 생성한다.
 2. PAD 없는 token ID를 쉼표로 연결한 ASCII를 canonical 형식으로 삼아 SHA-256을 저장한다.
-3. 새 sequence/READ·causal prefix는 v1.0–v1.3의 inherited registry와 v1.4 예약 집합에 대해 충돌을 거부한다. LM train 내부 중복도 거부한다. 기존 train prefix 복사는 의도된 계승이며 fresh split 재사용과 구분한다.
+3. LM train에서 모든 예약 hash와 train 내부 중복을 거부한다.
 4. Split을 나중에 추가하면 기존 train을 포함한 전체 hash와 비교한다.
 
 시퀀스의 모든 위치는 같은 split에 둔다. 인과 pair와 같은 origin의 파생 예제도 같은 split에 둔다. 중복 확인을 위한 hash 사용은 허용하지만 test 점수를 checkpoint 선택에 사용하지 않는다.
-
-v1.3 train 68 shards / 271,936 sequences / 32,004,917 tokens를 byte-identical하게 계승한다.
-IID 분포에서 확장해 최초 완전 64-sequence update로 64M을 넘길 때 종료한다.
-활성 corpus는 133 shards / 537,536 sequences / 64,005,751 prediction tokens다.
-Shuffle·epoch 반복은 없다. Historical READ-prefix 누락을 수정한 rebuild_01만 사용하며
-원본 manifest/config/hash는 [동결 데이터 계약](experiment_v1_4/configs/data.json)을 따른다.
 
 ## 8. 합성 holdout
 
@@ -210,7 +204,7 @@ def generate_accepted(rng, split, reserved_hashes):
 
 일반 split은 기본 생성, 합성 split은 8절의 패턴 주입, 진단 split은 12절의 target 선택, 인과 split은 13절의 변형을 적용한다. 진단 제약을 학습 분포에 섞지 않는다.
 
-MAX_ATTEMPTS는 target당 100,000을 상한으로 두고 수락률을 기록한다. 상한 도달 시 중단하며 제약을 몰래 완화하지 않는다. 낮은 수락률은 CPU 단계에서 조건을 직접 만족하는 생성기로 수정할 수 있으나 분포와 버전 변경을 기록한다.
+MAX_ATTEMPTS는 target당 100,000을 초기 상한으로 두고 수락률을 기록한다. 상한 도달 시 중단하며 제약을 몰래 완화하지 않는다. 낮은 수락률은 CPU 단계에서 조건을 직접 만족하는 생성기로 수정할 수 있으나 분포와 버전 변경을 기록한다.
 
 ## 10. Metadata 규격
 
@@ -274,20 +268,6 @@ Train에서는 저렴한 구조 metadata만 저장해도 된다. 국소 감도�
 
 조건 중복을 허용하고 명시한다. 균형 평가에서는 target 답이나 진리표 strata에 quota를 적용한다. 일반 test와 균형 진단을 합쳐 단일 점수로 만들지 않는다. 일반 split의 실제 다수 클래스 기준선을 계산하며, 균형 이진 진단의 추측 기준선만 50%다.
 
-### 12.1 v1.4 first/repeat 42-cell 진단
-
-First는 query 변수의 마지막 논리 갱신 뒤 첫 READ다. NOT 입력 0/1 및
-AND/OR/XOR 입력 00/01/10/11에 depth bin 1, 2–3, 4+를 곱해 42 cells를 만든다.
-Repeat는 같은 origin 의미를 유지하면서 해당 갱신과 target 사이에 올바른 동일 변수 READ를
-하나 삽입한 쌍이다. 문법·길이·정답·origin 독립성을 검증한다.
-이 정의는 legacy의 “최신 SET 이후 첫 읽기”와 다르다.
-
-Select와 gate는 각각 cell당 64 independent origin pairs, test는 128 pairs다.
-General은 select/gate/test 각 512/1,024/2,048 sequences이며 legacy 세 진단은
-gate/test 각각 조건당 1,024/2,048 targets다. Select만 checkpoint 선택에 사용한다.
-First/repeat 한 쌍을 독립 표본 두 개로 세지 않으며 quota와 coverage는 100%여야 한다.
-First/repeat origin·member·cell·target 식별자는 활성 metadata와 manifest에 보존한다.
-
 ## 13. 반사실적 pair
 
 1. 일반 예제의 target READ를 선택한다.
@@ -307,9 +287,7 @@ First/repeat origin·member·cell·target 식별자는 활성 metadata와 manife
 ```python
 input_ids = token_ids[:-1]
 labels = token_ids[1:]
-weight[t] = 4 if token_only_read_answer(input_ids, labels, t) else 1
-weight[t] = 0 if labels[t] == PAD else weight[t]
-loss = sum(weight[t] * cross_entropy(logits[t], labels[t])) / sum(weight)
+loss = mean(cross_entropy(logits[t], labels[t]) for each nonpad target t)
 ```
 
 원본 위치 j의 정답을 예측하는 logit/activation은 j−1, 즉 READ 직후 변수 위치다.
@@ -317,9 +295,9 @@ loss = sum(weight[t] * cross_entropy(logits[t], labels[t])) / sum(weight)
 - 정답 입력 이후 activation을 정답의 사전 표현으로 분석하지 않는다.
 - 상태 라벨은 실행 도중 snapshot으로 만들고 미래 상태를 참조하지 않는다.
 - 상태·holdout 라벨·answer mask를 embedding 입력에 넣지 않는다.
-- Metadata answer mask는 평가 집계에만 사용한다. Read4 loss의 위치 mask는 token IDs에서 독립적으로 계산한다.
-- READ 정답 prediction weight는 4, 기타 non-PAD 명령·상수·READ·EOS는 1이다. BOS 자체는 예측 target이 아니다. 상태 라벨이나 정답 metadata를 loss에 추가하지 않는다.
-- Packing 시 예제 사이 attention을 차단한다. v1.4는 packing 없이 독립 시퀀스의 우측 padding batch를 사용한다.
+- Answer mask는 평가 집계에만 사용하고 loss weighting에는 쓰지 않는다.
+- PAD 외 명령·상수·READ·답·EOS는 동일 가중치로 학습한다. BOS 자체는 예측 target이 아니다.
+- Packing 시 예제 사이 attention을 차단한다. 초판은 독립 시퀀스의 padding batch를 권장한다.
 
 ## 15. 필수 CPU 검증
 
@@ -339,12 +317,11 @@ loss = sum(weight[t] * cross_entropy(logits[t], labels[t])) / sum(weight)
 
 ```text
 data/
-  language_v1_4/rebuild_01/
+  language_v1/
     manifest.json
     vocab.json
-    select/
-    gate/
-    test/
+    val_iid.jsonl
+    test_iid.jsonl
     diagnostics/
     composition/
     interpretation/
@@ -355,6 +332,6 @@ data/
 
 Manifest에는 schema/version, 토큰 표, 분포, holdout 정의, master/파생 seed, RNG 구현과 버전, 코드 commit/hash, 생성일시, 수락/거부 수와 사유, split 예제 수, 실제 토큰·답 수, 파일별 SHA-256을 저장한다.
 
-CPU 사전 생성은 seed·shard·생성 예제 수·RNG state와 hash를 기록한다. LM은 동결 shard cursor와 완전 update 경계로 재개하여 중복·누락을 검출한다. 위 tree는 역할별 개념도이며 실제 파일 경로는 활성 manifest를 따른다.
+온라인 train 생성은 초기 seed 외에 shard, 생성 예제 수, RNG state 또는 재개 가능한 counter를 기록하여 재개 중 중복·누락을 검출한다.
 
 Corpus 통계는 길이, 명령, 변수별 0/1, READ 정답 비율, 진리표 coverage, 구조 깊이, 첫 READ 비율, 정답 위치율을 포함한다. 이 통계와 CPU 검증을 확인한 뒤 LM 학습을 시작한다.
