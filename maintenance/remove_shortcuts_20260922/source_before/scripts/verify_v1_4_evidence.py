@@ -145,7 +145,7 @@ def verify(run, reevaluate=False, device="cpu", anchor=None, debug=False, allow_
     data_root = ROOT / contract["config"]["data_root"]
     events = [json.loads(p.read_text()) for p in sorted((run / "events").glob("*.json"))]
     if debug:
-        rows = [r["token_ids"] for r in json.loads((ROOT / "archive/legacy/experiment_v1_2/debug/sequences.json").read_text())]
+        rows = [r["token_ids"] for r in json.loads((ROOT / "experiment_v1_2/debug/sequences.json").read_text())]
         expected = dict(
             update=len(events),
             cursor=len(events) * EFFECTIVE_BATCH,

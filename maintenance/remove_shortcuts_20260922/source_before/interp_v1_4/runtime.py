@@ -7,7 +7,7 @@ from pathlib import Path
 
 import torch
 
-from archive.legacy.interp_v1_2.runtime import (
+from interp_v1_2.runtime import (
     deterministic,
     environment,
     restore,

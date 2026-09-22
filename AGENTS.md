@@ -17,7 +17,7 @@
 
 | 문서 | 역할 |
 |---|---|
-| [README.md](./README.md) | 저장소 전체 구조, 본 실험 구조, 과거 버전 archive, 호환 경로와 동결 원문 보존 |
+| [README.md](./README.md) | 저장소 전체 구조, 본 실험 구조, 과거 버전 archive, 실제 archive 경로와 동결 원문 보존 |
 | [phase.md](./phase.md) | 실행 순서, 선행 조건, 단계별 산출물과 완료 gate |
 | [01_experiment_design.md](./01_experiment_design.md) | 연구 목적, 가설, 해석 범위와 보고 원칙 |
 | [02_language_and_corpus.md](./02_language_and_corpus.md) | 언어 문법, 토큰 ID, 실행 의미, 생성·split·metadata 규격 |
@@ -102,8 +102,8 @@
 ## 9. 과거 버전·동결 증빙 보존
 
 - 사용자 승인 저장소 정리로 v1.0–v1.3 실험·코드·검증·데이터를 `archive/legacy/`에 모았다.
-  옛 경로의 상대 symlink는 frozen path와 Python import 호환을 위해 유지한다.
-  특히 `interp_v1_4`는 일부 `interp_v1_2` 모듈을 사용하므로 호환 링크를 제거하지 않는다.
+  최신 사용자 지시로 모든 바로가기를 제거했다. 실제 archive 경로를 사용한다.
+  `interp_v1_4`의 과거 모듈 의존성은 `archive.legacy.interp_v1_2` 직접 import로 연결한다.
 - 과거 감사에는 해당 버전의 원본 계약·코드·결과를 사용한다.
   당시 루트 01–03·phase·AGENTS·README는 `archive/specifications/pre_v1_4_integration/`에 보존한다.
   기존 manifest의 source_documents hash는 이 snapshot을 대상으로 검증한다.
@@ -111,3 +111,6 @@
   기존 config·manifest·증빙의 경로 문자열이나 hash를 새 경로로 재작성하지 않는다.
 - 과거 삭제 목록과 가용성은 `maintenance/disk_cleanup_20260921/REPORT.md`, `deleted.jsonl`을 따른다.
   삭제된 debug checkpoint를 필요하면 별도 경로에서 재생성하고 옛 성공 보고서를 수정하지 않는다.
+
+- 바로가기 제거 후 소스 경로 변경과 변경 전 원본은 `maintenance/remove_shortcuts_20260922/`에 기록했다.
+  기존 GPU smoke의 code hash를 현재 소스 승인으로 재사용하지 않는다. 이후 GPU 작업은 새 소스 hash로 별도 검증한다.

@@ -1,4 +1,4 @@
-"""Verify archive aliases and immutable inputs without running model inference.
+"""Verify archive paths and immutable inputs without running model inference.
 
 Use --full to rehash the pre-migration inventory (including local evidence).
 The default check only needs the tracked contracts and source-document snapshot.
@@ -26,13 +26,13 @@ def sha256(path):
 def verify(full=False):
     migration = json.loads((RECORD / 'migration.json').read_text())
     errors = []
-    checked = {'aliases': 0, 'snapshot_documents': 0, 'contract_hashes': 0,
+    checked = {'archive_paths': 0, 'snapshot_documents': 0, 'contract_hashes': 0,
                'local_links': 0, 'preserved_files': 0, 'preserved_bytes': 0}
     for original, archived in migration['moves'].items():
         old, new = ROOT / original, ROOT / archived
-        if not old.is_symlink() or not new.is_dir() or old.resolve() != new.resolve():
-            errors.append(f'Invalid compatibility alias: {original}')
-        checked['aliases'] += 1
+        if old.exists() or old.is_symlink() or not new.is_dir():
+            errors.append(f'Invalid archive-only layout: {original}')
+        checked['archive_paths'] += 1
     for original, record in migration['source_documents'].items():
         if sha256(ROOT / record['snapshot']) != record['sha256']:
             errors.append(f'Changed source snapshot: {original}')
@@ -60,10 +60,24 @@ def verify(full=False):
             if not (doc.parent / filename).exists():
                 errors.append(f'Broken local link: {doc.relative_to(ROOT)} -> {target}')
             checked['local_links'] += 1
+    revision = json.loads((ROOT / 'maintenance/remove_shortcuts_20260922/changes.json').read_text())
+    revised = {item['path']: item for item in revision['source_changes']}
+    for item in revision['removed_symlinks']:
+        path = ROOT / item['path']
+        if path.exists() or path.is_symlink():
+            errors.append(f'Removed shortcut returned: {item["path"]}')
+    for item in revised.values():
+        if sha256(ROOT / item['path']) != item['after_sha256'] or sha256(ROOT / item['snapshot']) != item['before_sha256']:
+            errors.append(f'Layout source revision mismatch: {item["path"]}')
     if full:
         for line in (RECORD / 'preserved_files.jsonl').read_text().splitlines():
             item = json.loads(line)
-            path = ROOT / item['path']
+            name = item['path']
+            for original, archived in migration['moves'].items():
+                if name.startswith(original + '/'):
+                    name = archived + name[len(original):]
+                    break
+            path = ROOT / (revised[item['path']]['snapshot'] if item['path'] in revised else name)
             if not path.is_file() or path.stat().st_size != item['bytes'] or sha256(path) != item['sha256']:
                 errors.append(f'Changed or missing preserved file: {item["path"]}')
             checked['preserved_files'] += 1

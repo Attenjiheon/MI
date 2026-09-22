@@ -28,7 +28,7 @@ def write(path,value):
 def prepare():
     assert sha(ROOT/FREEZE)==FREEZE_SHA
     freeze=json.loads((ROOT/FREEZE).read_text())
-    paths={ROOT/FREEZE,ROOT/'archive/legacy/experiment_v1_2/debug/sequences.json',FOLDER/'debug_pairs.jsonl.gz'}
+    paths={ROOT/FREEZE,ROOT/'experiment_v1_2/debug/sequences.json',FOLDER/'debug_pairs.jsonl.gz'}
     paths.update(ROOT/p for p in freeze['seeds'][1]['hashes']['code'])
     paths.update(ROOT/p for p in ('interp_v1_4/frozen_test.py','tests_v1_4/test_frozen_test.py',
                                   'scripts/build_v1_4_frozen_test.py','scripts/frozen_test_notebook.py'))

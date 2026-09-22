@@ -31,8 +31,8 @@ with zipfile.ZipFile(archive) as z:
     assert all(s[k] == v for k, v in dict(phase='v1.4-smoke', status='passed', scope='cuda',
         fixture_only=False, frozen_input_verified=True, debug_only=True, reuse_in_experiment=False).items())
     inputs = verify_inputs(ROOT)
-    inputs['debug'] = sha(ROOT / 'archive/legacy/experiment_v1_2/debug/sequences.json')
-    inputs['code'] = {str(p.relative_to(ROOT)): sha(p) for folder in ('interp_v1_4','archive/legacy/interp_v1_2','corpus')
+    inputs['debug'] = sha(ROOT / 'experiment_v1_2/debug/sequences.json')
+    inputs['code'] = {str(p.relative_to(ROOT)): sha(p) for folder in ('interp_v1_4','interp_v1_2','corpus')
                       for p in sorted((ROOT / folder).glob('*.py'))}
     assert inputs == s['input_hashes']
     env = s['environment']

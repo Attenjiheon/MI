@@ -7,7 +7,7 @@ import pytest
 import torch
 
 from corpus.v1_4 import cells, rng, sample_pair
-from archive.legacy.interp_v1_2.runtime import deterministic
+from interp_v1_2.runtime import deterministic
 from interp_v1_4.behavior import gate
 from interp_v1_4.model import ARCHITECTURES, Transformer, batch, parameter_count
 from interp_v1_4.training import Progress, learning_rate, loss_weights
@@ -20,7 +20,7 @@ def setup():
 
 
 def sequences():
-    records = json.loads(Path("archive/legacy/experiment_v1_2/debug/sequences.json").read_text())
+    records = json.loads(Path("experiment_v1_2/debug/sequences.json").read_text())
     return [record["token_ids"] for record in records]
 
 
@@ -234,7 +234,7 @@ def test_production_run_refuses_cpu_and_absent_gpu_smoke(tmp_path):
 
 def test_design_is_exactly_the_promoted_proposal_contract():
     design = json.loads(Path("experiment_v1_4/design_config.json").read_text())
-    proposal = json.loads(Path("archive/legacy/experiment_v1_3/results/next_architecture_proposal.json").read_text())
+    proposal = json.loads(Path("experiment_v1_3/results/next_architecture_proposal.json").read_text())
     architecture = proposal["architecture"]
     assert design["architecture"]["candidate_id"] == proposal["candidate_id"]
     assert design["architecture"]["blocks"] == architecture["blocks"]
@@ -320,7 +320,7 @@ def test_debug_lm_resume_is_bitwise_and_keeps_cursor(tmp_path):
 
 def test_interpretation_smoke_width256():
     from interp_v1_4.integration import check_interpretation
-    records = json.loads(Path("archive/legacy/experiment_v1_2/debug/sequences.json").read_text())
+    records = json.loads(Path("experiment_v1_2/debug/sequences.json").read_text())
     report = check_interpretation(Transformer(), records, 2)
     assert report["probe"]["status"] == "passed"
     for kind in ("sae", "transcoder"):

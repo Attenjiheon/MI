@@ -218,14 +218,14 @@ def build(revision, draft=False, cpu_report="experiment_v1_4/smoke/cpu_01/smoke.
             assert sha(ROOT / name) == expected, name
         data = ROOT / json.loads((folder / 'configs/run.json').read_text())['data_root']
         selected = list(data.rglob('*'))
-        for directory in ('corpus', 'archive/legacy/interp_v1_2', 'interp_v1_4', 'tests_v1_4'):
+        for directory in ('corpus', 'interp_v1_2', 'interp_v1_4', 'tests_v1_4'):
             selected += list((ROOT / directory).glob('*.py'))
         selected += list((folder / 'configs').glob('*.json'))
         selected += list(report_path.parent.glob('*.json'))
         selected += list(report_path.parent.glob('*.txt'))
         selected += [ROOT / name for name in (
-            'requirements-interp.txt', 'archive/legacy/experiment_v1_2/debug/sequences.json',
-            'archive/legacy/experiment_v1_3/results/next_architecture_proposal.json',
+            'requirements-interp.txt', 'experiment_v1_2/debug/sequences.json',
+            'experiment_v1_3/results/next_architecture_proposal.json',
             'experiment_v1_4/DESIGN.md', 'experiment_v1_4/design_config.json',
             'experiment_v1_4/design_manifest.json', 'experiment_v1_4/corpus_rebuild.json',
             'scripts/verify_v1_4_evidence.py',

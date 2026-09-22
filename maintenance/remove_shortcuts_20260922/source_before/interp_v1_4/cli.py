@@ -45,7 +45,7 @@ from .training import Progress, lm_optimizer, lm_update
 from .replication import replication_authorization, validate_seed
 
 EFFECTIVE_BATCH = 64
-CODE_FOLDERS = ("interp_v1_4", "archive/legacy/interp_v1_2", "corpus")
+CODE_FOLDERS = ("interp_v1_4", "interp_v1_2", "corpus")
 
 
 def split_cell(cell):
@@ -237,7 +237,7 @@ def run(a):
         raise ValueError("Architecture parameter count differs from the frozen contract")
     optimizer = lm_optimizer(model)
     state = Progress()
-    records = json.loads((root / "archive/legacy/experiment_v1_2/debug/sequences.json").read_text()) if a.debug else None
+    records = json.loads((root / "experiment_v1_2/debug/sequences.json").read_text()) if a.debug else None
     rows = (
         [record["token_ids"] for record in records]
         if a.debug

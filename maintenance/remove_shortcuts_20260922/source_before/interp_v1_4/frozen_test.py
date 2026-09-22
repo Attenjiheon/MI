@@ -165,7 +165,7 @@ def preflight(root,out,device):
     deterministic(31415);torch.set_num_threads(2)
     env=environment(out)
     model=Transformer('deepwide12').to(device)
-    records=json.loads((root/'archive/legacy/experiment_v1_2/debug/sequences.json').read_text())[:4]
+    records=json.loads((root/'experiment_v1_2/debug/sequences.json').read_text())[:4]
     raw=evaluate_records(model,records,microbatch=16)
     spec=dict(id='debug',kind='records',sequence_count=4,answer_count=len(raw['rows']),target_signature=target_signature(raw['rows']))
     summary=finalize(raw,spec)

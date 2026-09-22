@@ -186,13 +186,13 @@ def run(root, out, device, *, fixture_only=False):
     if device == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA GPU required")
     inputs = {"design": sha(root / "experiment_v1_4/design_config.json")} if fixture_only else verify_inputs(root)
-    debug_path = root / "archive/legacy/experiment_v1_2/debug/sequences.json"
+    debug_path = root / "experiment_v1_2/debug/sequences.json"
     records = json.loads(debug_path.read_text())
     sequences = [record["token_ids"] for record in records]
     inputs["debug"] = sha(debug_path)
     inputs["code"] = {
         str(p.relative_to(root)): sha(p)
-        for folder in ("interp_v1_4", "archive/legacy/interp_v1_2", "corpus")
+        for folder in ("interp_v1_4", "interp_v1_2", "corpus")
         for p in sorted((root / folder).glob("*.py"))
     }
     design = json.loads((root / "experiment_v1_4/design_config.json").read_text())
