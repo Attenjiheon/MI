@@ -1,7 +1,15 @@
-# v1.4 P4 — 세 seed validation gate 통과 · frozen test 대기
+# v1.4 P4 — 세 seed frozen test 반환 감사 완료
 
-2026-09-21. **P4 진행 중. seed 1·2 GPU 학습·gate 반환 검증 완료, 세 seed 선택 동결. Frozen test는 미실행이다.**
+2026-09-22. **P4 완료. 세 seed의 학습·validation 동결과 21개 frozen test 반환 감사를 마쳤다. P5 진입 조건을 충족하며 P5는 아직 미실행이다.**
 P3 seed 0의 감사된 gate 통과와 64M 예산 동결이 선행 증빙이다.
+
+현재 증빙은 [최종 분석](results/frozen_test_audit_20260922_01/REPORT.md),
+[완료 manifest](results/frozen_test_audit_20260922_01/completion.json),
+[동결 모델 목록](results/frozen_test_audit_20260922_01/frozen_lms.json)이다.
+일반 READ는 seed 0/1/2 각각 99.9410% / 99.9472% / 99.9659%, first macro는
+99.9442% / 99.9442% / 99.9628%, repeat는 모두 100%다.
+Validation gate로 확정한 세 모델을 모두 유지하며 test로 재선택하지 않았다.
+아래 2026-09-21 준비·반환 절은 단계별 이력이다.
 
 ## 실행 계약
 
@@ -51,8 +59,8 @@ P5는 P4 완료와 validation gate 최소 두 seed 통과가 모두 필요하다
 일반 READ는 seed 1 99.9217%, seed 2 99.9699%; first macro는 99.8884% / 100%다.
 Seed 2는 init checkpoint에서 재개했으며 최종 token/cursor 중복은 없다.
 로컬 Mac과 Colab 초기화에는 최대 약 5e-8의 FP32 차이가 있어 교차환경 검사로 별도 기록했다.
-위 실행 준비 절은 이전 전달 이력이며, 현재 다음 작업은 세 seed 전체의 one-time frozen test다.
-P4 전체 완료나 P5 진입으로 표시하지 않는다.
+이 반환 감사 당시 다음 작업은 세 seed 전체의 one-time frozen test였으며,
+2026-09-22 최종 반환 감사로 위 현재 상태에 갱신됐다.
 
 ## Frozen test 전용 전달물 (2026-09-21)
 
@@ -67,4 +75,4 @@ P4 전체 완료나 P5 진입으로 표시하지 않는다.
 - 6개 테스트와 미학습 모델 CPU preflight를 통과했다. Microbatch 16 / 길이 302 fixture도 확인했다.
 - 결과별 시작 기록과 원시 측정값을 Drive에 저장한다. 완료 결과는 재사용하며 저장된 raw는
   집계만 재개한다. 시작 기록만 남은 평가는 추론을 자동 반복하지 않고 부분 증빙을 반환한다.
-- 실제 GPU frozen test 및 반환 감사는 아직 미실행이다. P4 완료와 P5 진입은 계속 대기한다.
+- 이 전달 당시 실제 GPU frozen test 및 반환 감사는 미실행이었고, 2026-09-22 완료됐다.
