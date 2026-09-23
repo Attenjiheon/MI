@@ -8,7 +8,7 @@ SAE·Transcoder feature의 의미와 인과적 효과를 분석한다.
 
 | 문서 | 역할 |
 |---|---|
-| [AGENTS.md](AGENTS.md) | Codex 프로젝트 지침·세션 진입·단계별 필수 읽기·보존·실행 규칙 |
+| [AGENTS.md](AGENTS.md) | 세션 진입·단계별 필수 읽기·보존·실행 규칙 |
 | [실험 설계](01_experiment_design.md) | v1.4 연구 질문·범위·해석 한계 |
 | [언어·코퍼스](02_language_and_corpus.md) | 문법·metadata·split·누출 방지 |
 | [상세 명세](03_experiment_spec.md) | 모델·read4 학습·선택·gate·probe·SAE·TC·인과 평가 |
@@ -19,11 +19,6 @@ SAE·Transcoder feature의 의미와 인과적 효과를 분석한다.
 우선하며, 문서 통합으로 이미 수행한 실험을 변경하지 않는다.
 `experiment_v1_4/README.md`와 `DESIGN.md`는 hash가 동결된 **설계 당시 원문**이다.
 그 안의 과거 상태 대신 위 현재 안내와 단계 상태 문서를 읽는다.
-
-Codex에서 이 저장소를 열면 루트 `AGENTS.md`를 프로젝트 지침의 진입점으로 사용한다.
-Codex 작업 방식은 `AGENTS.md` §0, 단계별 필수 문서는 §1–3, 완료 후 commit·push는 §6을 따른다.
-현재 진행 상태는 `experiment_v1_4/CURRENT.md`와 해당 단계 상태·증빙에서 확인한다.
-기존 미커밋 작업은 보존하고 요청한 변경만 커밋한다. 과거 archive와 동결 계약은 지침 전환을 위해 수정하지 않는다.
 
 ## 2. 저장소 구조
 
