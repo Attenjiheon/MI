@@ -1,0 +1,143 @@
+{
+  "schema": "read-analysis-plan-v1.4-r2",
+  "status": "scope_fixed_execution_pending",
+  "date": "2026-09-25",
+  "executable": false,
+  "spec_version": "experiment-spec-v1.4-integrated-r2",
+  "scope_authority": "Current READ interpretation scope; LM and corpus execution inputs remain governed by their frozen contracts.",
+  "lm_seeds": [
+    0,
+    1,
+    2
+  ],
+  "position_type": "READ",
+  "layers": [
+    0,
+    3,
+    7,
+    11
+  ],
+  "diagnostic_layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "tools": [
+    "sae",
+    "transcoder"
+  ],
+  "k_values": [
+    4,
+    16
+  ],
+  "primary_sparse_seeds": [
+    0
+  ],
+  "repeat": {
+    "lm_seed": 0,
+    "layers": [
+      0,
+      3,
+      7,
+      11
+    ],
+    "tools": [
+      "sae",
+      "transcoder"
+    ],
+    "k_values": [
+      4,
+      16
+    ],
+    "sparse_seed": 1
+  },
+  "sae": {
+    "input": "h_l",
+    "target": "h_l",
+    "width": 512,
+    "residual_dimension": 256
+  },
+  "transcoder": {
+    "input": "u_l",
+    "target": "m_l",
+    "width": 512,
+    "residual_dimension": 256
+  },
+  "training": {
+    "updates_per_run": 5000,
+    "batch_positions": 512,
+    "validation_interval_updates": 250,
+    "checkpoint_rule": "minimum validation MSE; earliest update on tie",
+    "early_stopping": false,
+    "label_loss": false,
+    "dead_latent_reinitialization": false
+  },
+  "budget": {
+    "p6_sae_runs": 24,
+    "p8_transcoder_runs": 24,
+    "p9_repeat_runs": 16,
+    "total_runs": 64,
+    "total_updates": 320000,
+    "total_position_draws": 163840000
+  },
+  "data": {
+    "train_positions": 50000,
+    "val_positions": 10000,
+    "test_positions": 20000,
+    "share_position_keys_across_layers": true,
+    "p5_extraction_contract": "experiment_v1_4/p5_r2/contract.json",
+    "p5_cache_receipt_and_block0_preprocessing": "experiment_v1_4/results/p5_final_audit_20260925_01/p6_cache_manifest.json",
+    "p5_cache_receipt_scope": "240 verified READ cache files contain all 12 layers and h/u/m for trained and init checkpoints; the receipt's top-level layer=0 describes only its nine dictionary scalar preprocessing entries",
+    "p6_four_layer_input_manifest_status": "pending; verify source cache bytes and hashes, then record all 36 layer-specific train scalar statistics before production training",
+    "source_drive_path": "boolean_interp_v1_4/P5_r2",
+    "scalar_statistics_required": 36,
+    "scalar_statistics_verified_in_p5": 9,
+    "scalar_statistics_pending": 27
+  },
+  "evaluation": {
+    "all_runs": [
+      "semantic_single_and_up_to_four_features",
+      "full_coordinate_random_baselines",
+      "128_candidate_controls",
+      "fidelity",
+      "single_READ_replacement",
+      "causal_patching_and_all_controls"
+    ],
+    "one_layer_per_intervention": true,
+    "residual_before_final_layernorm": true,
+    "shared_READ_targets_and_causal_origins_across_layers": true,
+    "feature_selection_per_lm_layer_tool_k_sparse_seed": true,
+    "paired_cluster_bootstrap_for_layer_differences": true,
+    "layers_are_not_independent_model_replicates": true
+  },
+  "execution_prerequisites": [
+    "current code and input hashes",
+    "layer-specific scalar statistics",
+    "phase-specific execution config and derived RNG integers",
+    "four-layer debug and GPU smoke including resume",
+    "Colab notebook and checksum-verified input bundle"
+  ],
+  "evaluation_prerequisites": [
+    "layer-specific coordinate/random baselines and fixed 128-candidate subsets",
+    "frozen feature and threshold selection before corresponding test",
+    "validated intervention controls for every layer"
+  ],
+  "completion_requires_all_runs_and_evaluations": true,
+  "provenance": {
+    "decision_date": "2026-09-25",
+    "p5_test_results_already_observed": true,
+    "pre_registered_before_p5_test": false,
+    "reason": "Compare representation accessibility, sparse features and causal effects across model depth.",
+    "original_document_manifest": "maintenance/read_layers_20260925/originals.json",
+    "frozen_lm_design_sha256": "7f67f859522f42ff5242671c69f4e971cad8ccf760ac78248780282136f550f0"
+  }
+}

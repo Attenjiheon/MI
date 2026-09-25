@@ -1,7 +1,7 @@
 # 작은 프로그램 언어에서 SAE의 상태·연산 표현 평가
 
 작성일: 2026-09-09
-상태: v1.4 본 실험 통합 설계 (2026-09-25); P1–P5 완료, P6–P11 미완료
+상태: v1.4 본 실험 통합 설계 (2026-09-22); P4 완료, P5 이후 미실행
 기술 부록: [인공어 규칙 및 코퍼스 생성 알고리즘](./02_language_and_corpus.md)
 
 ## 초록
@@ -22,7 +22,6 @@
 2. 같은 값 또는 입력 관계를 서로 다른 연산·변수·문맥에 걸쳐 읽을 수 있는가?
 3. SAE는 변수별 상태, 전체 상태, 연산별 결합 특징 중 무엇을 포착하는가?
 4. 높은 reconstruction 성능과 높은 의미적 대응 및 인과 효과가 일치하는가?
-5. Block 0·3·7·11에서 정보 접근성, sparse feature의 분리도와 개입 효과는 어떻게 다른가?
 
 ## 2. 연구 배경과 설계 원칙
 
@@ -115,7 +114,7 @@ Seed 0 통과 후 같은 동결 설정·데이터·예산으로 fresh seed 1·2�
 학습한 모든 seed의 frozen test를 한 번 보고한다. Test는 추가 gate가 아니다.
 최소 두 seed가 validation gate를 통과해야 해석에 진입하며 모든 통과 seed를 포함한다.
 현재 세 seed 모두 통과하고 P4 반환 감사까지 완료했으므로 해석 대상 G=3이다.
-P5 전 층 cache·full probe와 독립 반환 감사는 완료됐고 P6 이후는 미실행이다. [실행 계획](phase.md)과
+P5 이후의 완료 증빙은 아직 없다. [실행 계획](phase.md)과
 [동결 모델 목록](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)을 따른다.
 
 ## 6. 데이터 및 평가 집합
@@ -159,7 +158,7 @@ P5 전 층 cache·full probe와 독립 반환 감사는 완료됐고 P6 이후�
 
 ### 8.1 READ 위치
 
-`READ A B1`에서 A 토큰을 처리한 직후, B1을 입력하기 전 activation을 사용한다. 필수 sparse 분석 층은 **block 0·3·7·11**이며 각 block의 residual output을 사용한다. 모든 block output은 해당 block residual 합 이후이며 final LayerNorm을 적용하지 않는다. 전체 12개 층의 full probe 진단을 포함한다. 네 층은 모델 깊이를 분산해 관찰하는 고정 지점이며 모든 통과 LM에 동일하게 적용하고, 점수에 따라 층을 제외하거나 교체하지 않는다.
+`READ A B1`에서 A 토큰을 처리한 직후, B1을 입력하기 전 activation을 사용한다. 주 sparse 분석 대상은 첫 transformer block의 residual output이며 둘째 block sparse 분석은 선택 범위다. 모든 block output은 해당 block residual 합 이후이며 final LayerNorm을 적용하지 않는다. 전체 12개 층의 full probe 진단을 포함하되, block 1의 sparse 분석·개입은 선택 분석이다.
 
 라벨:
 
@@ -198,7 +197,7 @@ READ 분석을 먼저 완결한 뒤 update 분석을 실행한다. Update 표현
 
 ### 9.1 최초 실행 범위
 
-Block 0·3·7·11 각각의 READ residual에서 TopK SAE dictionary width 512, k ∈ {4, 16} 두 설정을 비교한다. 세 통과 LM마다 sparse seed 0으로 독립 dictionary를 학습해 총 24 runs를 수행한다. 같은 네 층의 MLP 입력·출력에 TC를 24 runs 학습한다. READ SAE 뒤 READ Transcoder와 필수 sparse seed 반복을 완료한다. Update는 이후 선택 분석으로 별도 수행한다. 서로 다른 층·위치를 하나의 학습 pool에 섞지 않는다. 층별로 같은 READ key와 라벨을 사용하고 전처리·dictionary·probe·선택 feature는 별도로 관리한다.
+첫 층 READ residual에서 TopK SAE dictionary width 512, k ∈ {4, 16} 두 설정을 비교한다. 처음에는 LM seed 0, SAE seed 0으로 실행한다. READ SAE 뒤 READ Transcoder와 필수 sparse seed 반복을 완료한다. Update는 이후 선택 분석으로 별도 수행한다. 서로 다른 위치를 하나의 학습 pool에 섞지 않는다.
 
 SAE는 개념 라벨 없이 activation MSE로 학습한다. Encoder의 ReLU 출력 중 상위 k개를 유지하고 나머지는 0으로 한다. Decoder는 column norm을 1로 정규화한다. 기본 설정에서는 auxiliary loss, label loss, dead-latent 재초기화를 추가하지 않는다. dead-latent 비율을 보고한다.
 
@@ -246,7 +245,7 @@ x_patched = x_original + D[:, J] @ (z_counterfactual[J] - z_original[J])
 h_patched = μ + s * x_patched
 ```
 
-원래 activation에 decoder 차이만 더하므로 재구성 잔차는 보존된다. 모델의 나머지 계산은 다시 실행한다. Block 0·3·7·11 각각에서 READ 한 위치만 개입하고 모든 필수 대조군을 수행한다. 한 실행에서 여러 층을 동시에 패칭하지 않는다. 층별 효과를 비교할 때 같은 READ target과 causal origin을 사용한다.
+원래 activation에 decoder 차이만 더하므로 재구성 잔차는 보존된다. 모델의 나머지 계산은 다시 실행한다. 주 개입은 첫 층 READ 위치이고 다른 층은 보조 분석이다.
 
 ### 10.3 대조군과 해석
 
@@ -261,12 +260,12 @@ h_patched = μ + s * x_patched
 
 ## 11. 반복, 불확실성 및 예산
 
-- 주요 결과는 층별·LM seed별로 개별 표시하고 3개 seed의 평균/범위를 함께 제공한다. 3개로 정밀한 모집단 추정을 주장하지 않는다.
-- LM seed 0의 block 0·3·7·11 READ SAE와 TC는 두 k 각각 sparse seed 1을 추가해 학습 초기화 민감도를 확인한다. 반복 16 runs를 포함한 필수 dictionary는 총 64 runs, 320,000 updates, 163.84M position draws다.
+- 주요 결과는 LM seed별로 개별 표시하고 3개 seed의 평균/범위를 함께 제공한다. 3개로 정밀한 모집단 추정을 주장하지 않는다.
+- LM seed 0의 READ SAE와 TC는 두 k 각각 sparse seed 1을 추가해 학습 초기화 민감도를 확인한다.
 - 토큰들이 같은 시퀀스에 묶여 있으므로 bootstrap은 시퀀스 또는 counterfactual pair 단위로 수행한다. 1,000회 bootstrap을 기본으로 한다.
 - LM 학습 최대 예산은 3 seeds × 64M = 192M (마지막 완전 update 초과량 별도) 비패딩 예측 토큰이다. 이는 실제 GPU 시간 보장이 아니다.
 - SAE 학습, activation 추출 및 반복 validation 비용은 LM 학습 예산과 별도로 기록한다. 첫 파일럿 처리량으로 벽시계 시간을 추산한 뒤 다음 단계로 간다.
-- 필수 READ SAE → READ TC → sparse 초기화 반복을 완료한 뒤에만 update·필수 네 층 이외의 층 등 선택 분석을 시작한다. Crosscoder와 변수 8개 확장은 기본 범위 밖이다.
+- 필수 READ SAE → READ TC → sparse 초기화 반복을 완료한 뒤에만 update·block 1 등 선택 분석을 시작한다. Crosscoder와 변수 8개 확장은 기본 범위 밖이다.
 
 ## 12. 최종 산출물
 
@@ -276,7 +275,7 @@ h_patched = μ + s * x_patched
 4. 그림: 행동 학습 곡선과 조건별 성능; feature 접근성/분리도; reconstruction과 인과 개입 효과.
 5. 성공·실패를 모두 포함한 짧은 보고서 및 재현 명령.
 
-완료 조건은 행동 검증을 통과한 각 모델의 block 0·3·7·11 READ 위치에서 기준선·SAE 두 설정·reconstruction·인과 대조 실험을 재현 가능하게 보고하는 것이다. Update 분석은 계획된 2차 분석이며 자원 제한으로 생략하면 명시한다. 네 층 모두의 READ Transcoder 두 k와 LM seed 0의 SAE/TC sparse seed 1 반복은 필수 완료 조건이다. 결과는 층별로 보고하며 층을 독립 LM seed처럼 합산하지 않는다. Crosscoder는 기본 범위 밖이다.
+완료 조건은 행동 검증을 통과한 모델에 대해 READ 위치의 기준선·SAE 두 설정·reconstruction·인과 대조 실험을 재현 가능하게 보고하는 것이다. Update 분석은 계획된 2차 분석이며 자원 제한으로 생략하면 명시한다. READ Transcoder 두 k와 LM seed 0의 SAE/TC sparse seed 1 반복은 필수 완료 조건이다. Crosscoder는 기본 범위 밖이다.
 
 ## 13. 관련 연구와 본 실험의 위치
 
@@ -287,8 +286,3 @@ h_patched = μ + s * x_patched
 - [Sparse Crosscoders for Cross-Layer Features and Model Diffing](https://transformer-circuits.pub/2024/crosscoders/): 후속 층간 표현 비교를 위한 참고.
 
 본 문서는 독창성에 대한 전수 문헌 검토나 성공 결과를 주장하지 않는다. 위 논문을 배경으로, 작은 상태 갱신 과제에서 현재성·문맥 전이·인과 효과를 함께 평가하는 재현 가능한 학부 연구를 설계한다.
-
-## 변경 기록
-
-2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
-수정 전 원문: [보존본](maintenance/read_layers_20260925/originals/01_experiment_design.md).

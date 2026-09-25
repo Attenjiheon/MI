@@ -2,11 +2,7 @@
 
 **P5 완료.** 세 LM의 3,510 probe, 240 cache 파일, 9개 dictionary scalar 통계와 전 12층 진단을 검증했다.
 [최종 반환 감사](results/p5_final_audit_20260925_01/REPORT.md) · [완료 판정](results/p5_final_audit_20260925_01/completion.json).
-다음은 block 0·3·7·11 READ SAE의 P6이며 아직 실행하지 않았다. [P6 상태](P6_STATUS.md)를 따른다. 아래 준비·중간 snapshot 절은 당시 이력이다.
-
-## P6 입력 준비
-
-전 12층 cache·full probe는 검증 완료다. Dictionary scalar 통계 9개와 좌표/random·128후보 대조군의 검증 범위는 block 0이다. P6 본학습 전 block 3·7·11의 train scalar 통계 27개를 계산·검증해 네 층 총 36개를 확보한다. 해당 SAE/TC 평가 전에는 세 층의 좌표/random·128후보 대조군도 준비한다. 이 작업들의 완료 여부는 P6 이후 상태·manifest에 기록한다.
+다음은 P6 READ SAE이며 아직 실행하지 않았다. 아래 준비·중간 snapshot 절은 당시 이력이다.
 
 ## 실행 전달물
 
@@ -135,8 +131,3 @@ CPU probe 계산·결과 반환은 완료됐다. 원본 production NPZ는 로컬
 - [x] 최종 상태·registry·P6 cache manifest 작성.
 
 P5 완료 근거는 [최종 감사](results/p5_final_audit_20260925_01/REPORT.md)다. 원본 반환 completion의 `p5_complete:false`는 그대로 보존한다.
-
-## 변경 기록
-
-2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
-수정 전 원문: [보존본](../maintenance/read_layers_20260925/originals/experiment_v1_4/P5_STATUS.md).

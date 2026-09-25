@@ -1,6 +1,6 @@
 # v1.4 P4 — 세 seed frozen test 반환 감사 완료
 
-2026-09-22. **P4 완료. 세 seed의 학습·validation 동결과 21개 frozen test 반환 감사를 마쳤다. P5도 완료됐으며 다음은 block 0·3·7·11의 P6 READ SAE다. 현재 해석 상태는 [CURRENT](CURRENT.md)를 따른다.**
+2026-09-22. **P4 완료. 세 seed의 학습·validation 동결과 21개 frozen test 반환 감사를 마쳤다. P5 진입 조건을 충족하며 P5는 아직 미실행이다.**
 P3 seed 0의 감사된 gate 통과와 64M 예산 동결이 선행 증빙이다.
 
 현재 증빙은 [최종 분석](results/frozen_test_audit_20260922_01/REPORT.md),
@@ -76,8 +76,3 @@ Seed 2는 init checkpoint에서 재개했으며 최종 token/cursor 중복은 �
 - 결과별 시작 기록과 원시 측정값을 Drive에 저장한다. 완료 결과는 재사용하며 저장된 raw는
   집계만 재개한다. 시작 기록만 남은 평가는 추론을 자동 반복하지 않고 부분 증빙을 반환한다.
 - 이 전달 당시 실제 GPU frozen test 및 반환 감사는 미실행이었고, 2026-09-22 완료됐다.
-
-## 변경 기록
-
-2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
-수정 전 원문: [보존본](../maintenance/read_layers_20260925/originals/experiment_v1_4/P4_STATUS.md).

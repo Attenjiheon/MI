@@ -1,87 +1,73 @@
-# v1.4 P3 — deepwide12_read4 64M 사전 동결 설계
+# v1.4 — Boolean 프로그램의 READ 표현 분석 설계
 
-작성: 2026-09-20. 상태: **정식 설계 동결, 실행 전**.
+상태: 2026-09-25. **P1–P5 완료, block 0·3·7·11의 P6–P9 필수 해석 미실행.**
 
-이 버전은 `experiment_v1_3/results/next_architecture_proposal.json`을 실행 계약으로 승격한
-별도 실험이다. v1.3의 코드·데이터·checkpoint·평가 split을 덮어쓰지 않는다. 원 언어와
-IID 생성 분포는 유지하지만 아키텍처, 학습 예산, LR decay 경계, select pair quota를 함께
-바꾸므로 v1.3 대비 차이를 아키텍처만의 인과 효과로 해석하지 않는다.
+## 1. 연구 질문과 범위
 
-## 1. 진입 근거와 선행 조건
+Boolean 프로그램을 수행하는 동결 Transformer에서 READ 상태 정보의 선형 접근성,
+SAE feature의 분리도, TC의 MLP 계산 근사 및 feature 개입 효과를 비교한다.
+필수 sparse 분석 층은 **block 0·3·7·11**이다. 모든 통과 LM에 같은 네 층을 적용해
+모델 깊이에 따른 표현 차이를 평가하며, 전 12층 full probe 진단을 함께 보고한다.
 
-v1.3 `wide4_read4`, LM seed 0의 32M confirm 반환 ZIP은 SHA-256
-`c7cca1856c51cddcf778c50c946fad57ca68677a6dde660fdc4676cd204e57d9`이며 내부 감사가
-`passed`다. 선택 checkpoint는 update 4,249 / 32,004,917 prediction tokens,
-checkpoint SHA-256 `00303521…bb3`이다. Gate는 general 98.1534%, first 42-cell macro
-94.6801%, repeat 100%로 실패했다. 세 legacy 진단은 통과했고 frozen test는 열지 않았다.
+## 2. 모델·데이터 계약
 
-따라서 v1.3 seed 1·2 및 P5 이후를 실행하지 않고, 실패 결과를 보존한 채 v1.4를 새로 만든다.
-
-## 2. 이번 버전의 고정 변경
-
-| 항목 | v1.4 값 |
+| 항목 | 고정값 |
 |---|---|
-| 후보 | `deepwide12_read4` 하나 |
-| Transformer | 12 blocks, residual 256, 4 heads × 64, MLP 1024 |
+| 모델 | `deepwide12_read4`, 12 blocks, residual 256, 4 heads × 64, MLP 1024 |
 | 파라미터 | 9,485,312 |
-| 목적함수 | token-only `read4`; READ 답 weight 4, 기타 non-PAD weight 1 |
-| LM seed | 0; 통과 뒤에만 1·2 |
-| 명목 예산 | 64M prediction tokens, 최초 완전 update overshoot 포함 |
-| LR | 50k warmup, 57.6M까지 3e-4, 64M에서 3e-5로 선형 decay |
-| select pair | 42 cell × 64 independent origins |
-| gate pair | 42 cell × 64 independent origins |
-| test pair | 42 cell × 128 independent origins |
-| 필수 sparse 위치 | block 0 READ |
+| LM 목적함수 | token-only read4, READ 답 weight 4, 기타 non-PAD weight 1 |
+| LM seeds | 0·1·2, 세 seed 모두 validation gate 통과 |
+| 학습량 | seed당 64,005,751 prediction tokens / 8,399 updates |
+| 선택 checkpoint update | seed 0·1: 7,983; seed 2: 8,399 |
+| 활성 corpus | `data/language_v1_4/rebuild_01/` |
+| READ train/val/test | 동일 예약 위치 50k / 10k / 20k, 모든 층에 공유 |
 
-Embedding/unembedding은 untied이고, exact GELU, Pre-LN, RoPE base 10,000, dropout 0을
-유지한다. Linear/embedding은 `Normal(0, 0.02²)`, attention/MLP output weight는 추가로
-`1/sqrt(24)`를 곱한다. LM forward 입력은 token IDs와 padding mask뿐이다.
+LM 구조·학습·선택·gate는 [LM 계약](design_config.json)과 [동결 config](configs/config_set_manifest.json),
+데이터는 [corpus 계약](corpus_rebuild.json)을 따른다. 실제 모델 hash는
+[frozen_lms](results/frozen_test_audit_20260922_01/frozen_lms.json)에 있다.
+LM forward 입력은 token IDs와 padding mask이며 상태·정답 metadata는 해석에만 사용한다.
 
-## 3. 데이터와 누출 방지
+## 3. 필수 READ 분석
 
-새 root는 `data/language_v1_4/`, RNG namespace는
-`20260920|language-v1.4|<purpose>|<index>`다. 먼저 fresh select/gate/test,
-interpretation, causal split을 예약하고, 이후에 train을 확장한다. 새 sequence와 READ/causal
-prefix는 v1.0–v1.3 및 v1.4 예약 집합 전체와 충돌하면 거절한다.
+[READ 분석 계약](analysis_plan.json)과 [상세 명세](../03_experiment_spec.md)가 실행 기준이다.
 
-v1.3 train 68 shards / 271,936 sequences / 32,004,917 prediction tokens는 파일별로
-byte-identical하게 복사한다. 그 뒤 같은 IID 분포에서 64M을 처음 넘는 완전 64-sequence
-update까지 확장한다. shuffle과 sequence 반복은 없고 모든 LM seed가 같은 순서를 한 번씩
-소비한다. 상태·정답 metadata는 평가와 해석에만 쓰며 LM 입력이나 auxiliary loss로 넣지 않는다.
+| 단계 | 범위 | 실행 수 |
+|---|---|---:|
+| P6 SAE | 3 LM × block 0·3·7·11 × k=4/16, sparse seed 0 | 24 |
+| P7 SAE 평가 | 네 층별 의미·fidelity·대체·인과 대조 | P6의 모든 모델 |
+| P8 TC | 같은 네 층의 u_l→m_l, 같은 k와 평가 | 24 |
+| P9 초기화 반복 | LM seed 0, 네 층 × SAE/TC × k=4/16, sparse seed 1 | 16 |
 
-## 4. 선택과 행동 gate
+Dictionary는 층별 독립 256→512→256 구조이며 run마다 batch 512, 5,000 updates를 수행한다.
+매 250 updates 평가·저장하고 validation MSE 최소 checkpoint를 선택한다.
+필수 학습 합계는 64 runs, 320,000 updates, 163.84M position draws다.
+Label loss, early stopping, dead-latent 재초기화는 사용하지 않는다.
 
-Checkpoint 후보 경계는 1M, 3M, 8M, 16M, 24M, 32M, 48M, 57.6M, 60.8M, 64M이다.
-Select first-member 42-cell macro answer CE의 전역 최소를 기준으로 하고, 최소와 `1e-4` nats
-이내 후보는 select/general answer CE, 이른 update 순으로 고른다. Gate는 이 checkpoint에서
-seed당 한 번만 열며 재선택하지 않는다.
+## 4. 비교와 개입
 
-통과에는 다음 전부가 필요하다.
+같은 LM·층·READ 위치에서 full probe, 좌표, random 방향, SAE/TC latent를 비교한다.
+단일·최대 4 feature와 128후보 일치 대조를 네 층 모두 수행한다.
+전처리·ranking·선택은 train/validation만 사용하고 최종 test로 재선택하지 않는다.
+Dictionary scalar 통계는 각 LM·layer·hook의 train에서 계산하고 validation/test에 고정 적용한다.
 
-1. General READ full-vocabulary accuracy ≥99%.
-2. 세 legacy diagnostic 각각 ≥95%.
-3. First 42-cell macro ≥95%.
-4. First의 연산별, depth-bin별, answer별 accuracy 각각 ≥95%.
-5. Repeat 42-cell macro ≥95%, 모든 quota와 coverage 100%.
+근사 대체와 반사실적 패칭은 해당 한 층의 READ 한 위치에 적용한다.
+다른 층은 원래 연산을 수행하며 downstream을 다시 계산한다. Block 11 residual은 final LayerNorm 이전을 사용한다.
+같은 READ target·causal origin을 네 층에 공유하고 층별 결과와 paired 차이를 보고한다.
+Feature ID는 dictionary 간 같은 의미를 보장하지 않으며 층을 독립 LM 반복으로 세지 않는다.
 
-개별 42 cell은 count와 CI를 보고하지만 추가 gate로 사용하지 않는다. Seed 0이 실패하면
-v1.4를 중단하고 seed 1·2, frozen test, P5 이후를 실행하지 않는다. Seed 0이 통과하면 같은
-설정으로 seed 1·2를 실행하고 최소 두 seed가 통과해야 표현 분석에 진입한다. 모든 학습·validation
-결정이 동결된 뒤에만 test를 한 번 연다.
+## 5. 실행 준비와 완료 조건
 
-## 5. 실행·재개·증빙
+P5는 전 12층 cache·full probe와 block 0의 scalar 통계·좌표/random 대조군을 검증했다.
+P6 학습 전에 네 층 h/u/m scalar 통계 총 36개를 검증하고 config·hash·smoke·재개 절차를 고정한다.
+네 층의 좌표/random·128후보 대조군은 해당 SAE/TC 평가 전에 확보한다.
+실행 상태와 누락 증빙은 [P6 상태](P6_STATUS.md), 전체 순서는 [phase](../phase.md)를 따른다.
 
-본학습 전 새 코드와 새 데이터로 CPU 및 Colab GPU smoke를 모두 통과한다. GPU smoke에서
-microbatch를 16→8→4→2→1 순으로 줄일 수 있으며 선택된 값을 checkpoint에 저장한다.
-Effective batch 64는 바꾸지 않는다. FP32, deterministic algorithms, AMP/TF32/compile 비활성이다.
+64개 필수 dictionary run과 각 run의 평가·개입·재현 증빙이 모두 있어야 필수 해석을 완료한다.
+오류·자원 중단·support 부족·미매칭은 사유와 함께 보고한다.
+Update, 필수 네 층 이외의 층, 길이 평가, m→m SAE는 P9 이후 선택 분석이다.
 
-Checkpoint는 init, 모든 milestone, 15분 경과 뒤 완전 update 경계, last를 영속 저장한다.
-모델·optimizer·RNG·cursor·다음 milestone·config/data/code hash·환경 ID를 포함한다. 복구는
-마지막 완전 index에서만 허용하며 실제 토큰 수, overshoot, 첫 50 update 처리량, peak VRAM,
-평가·저장 시간을 기록한다.
+## 변경 기록
 
-## 6. 현재 완료 판정
-
-설계와 파라미터 산식만 동결됐다. 새 corpus 생성·독립 감사, v1.4 실행기와 test, CPU/GPU smoke,
-Colab notebook/input bundle, seed 0 64M 학습은 별도 증빙이 있어야 완료다. 로컬 준비가 끝나도
-GPU smoke와 학습 반환물을 검증하기 전에는 P3 또는 행동 gate를 완료로 표시하지 않는다.
+2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
+수정 전 원문: [보존본](../maintenance/read_layers_20260925/originals/experiment_v1_4/DESIGN.md).
+동결 DESIGN/README의 기존 manifest hash는 [원본 경로·hash 목록](../maintenance/read_layers_20260925/originals.json)의 snapshot에서 검증한다.

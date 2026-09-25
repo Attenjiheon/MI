@@ -1,7 +1,7 @@
 # 인공어 규칙 및 코퍼스 생성 알고리즘
 
 작성일: 2026-09-09
-상태: v1.4 본 실험 코퍼스 통합 규격 (2026-09-25)
+상태: v1.4 본 실험 코퍼스 통합 규격 (2026-09-22)
 관련 문서: [전체 실험 설계서](./01_experiment_design.md)
 
 ## 1. 목적과 적용 범위
@@ -314,8 +314,6 @@ loss = sum(weight[t] * cross_entropy(logits[t], labels[t])) / sum(weight)
 
 원본 위치 j의 정답을 예측하는 logit/activation은 j−1, 즉 READ 직후 변수 위치다.
 
-필수 READ 해석은 block 0·3·7·11에서 동일한 예약 위치·라벨·split을 사용한다. READ train/validation/test quota 50k/10k/20k는 층마다 공유하는 위치 수이며, 네 층의 activation을 네 배의 독립 표본으로 세지 않는다. Cache key에 layer와 hook을 포함해 각 층의 activation을 같은 sequence/token key에 결합한다. 상태·정답 metadata는 probe·평가에만 사용하고 SAE·TC loss에는 넣지 않는다.
-
 - 정답 입력 이후 activation을 정답의 사전 표현으로 분석하지 않는다.
 - 상태 라벨은 실행 도중 snapshot으로 만들고 미래 상태를 참조하지 않는다.
 - 상태·holdout 라벨·answer mask를 embedding 입력에 넣지 않는다.
@@ -360,8 +358,3 @@ Manifest에는 schema/version, 토큰 표, 분포, holdout 정의, master/파생
 CPU 사전 생성은 seed·shard·생성 예제 수·RNG state와 hash를 기록한다. LM은 동결 shard cursor와 완전 update 경계로 재개하여 중복·누락을 검출한다. 위 tree는 역할별 개념도이며 실제 파일 경로는 활성 manifest를 따른다.
 
 Corpus 통계는 길이, 명령, 변수별 0/1, READ 정답 비율, 진리표 coverage, 구조 깊이, 첫 READ 비율, 정답 위치율을 포함한다. 이 통계와 CPU 검증을 확인한 뒤 LM 학습을 시작한다.
-
-## 변경 기록
-
-2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
-수정 전 원문: [보존본](maintenance/read_layers_20260925/originals/02_language_and_corpus.md).

@@ -13,7 +13,6 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / 'maintenance/repository_cleanup_20260922'
-DOCUMENT_ORIGINALS = ROOT / 'maintenance/read_layers_20260925/originals.json'
 
 
 def sha256(path):
@@ -26,14 +25,6 @@ def sha256(path):
 
 def verify(full=False):
     migration = json.loads((RECORD / 'migration.json').read_text())
-    document_originals = json.loads(DOCUMENT_ORIGINALS.read_text())['files']
-
-    def preserved_path(filename, expected):
-        original = document_originals.get(filename)
-        if original is not None and original['sha256'] == expected:
-            return ROOT / original['snapshot']
-        return ROOT / filename
-
     errors = []
     checked = {'archive_paths': 0, 'snapshot_documents': 0, 'contract_hashes': 0,
                'local_links': 0, 'preserved_files': 0, 'preserved_bytes': 0}
@@ -52,7 +43,7 @@ def verify(full=False):
         for group, use_snapshot in groups:
             for filename, expected in manifest.get(group, {}).items():
                 target = (ROOT / migration['source_documents'][filename]['snapshot']
-                          if use_snapshot else preserved_path(filename, expected))
+                          if use_snapshot else ROOT / filename)
                 if sha256(target) != expected:
                     errors.append(f'Contract hash mismatch: {filename}')
                 checked['contract_hashes'] += 1
@@ -86,8 +77,7 @@ def verify(full=False):
                 if name.startswith(original + '/'):
                     name = archived + name[len(original):]
                     break
-            path = (ROOT / revised[item['path']]['snapshot'] if item['path'] in revised
-                    else preserved_path(name, item['sha256']))
+            path = ROOT / (revised[item['path']]['snapshot'] if item['path'] in revised else name)
             if not path.is_file() or path.stat().st_size != item['bytes'] or sha256(path) != item['sha256']:
                 errors.append(f'Changed or missing preserved file: {item["path"]}')
             checked['preserved_files'] += 1

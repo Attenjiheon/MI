@@ -47,7 +47,7 @@
 | P7 SAE 평가·개입 | 03 §7–8, §10–14; 01 §8–10; P6 선택 checkpoint |
 | P8 READ TC | 03 §7, §9–14; 01 §8–10; P5 cache와 P7 평가 절차 |
 | P9 sparse seed 반복 | 03 §7–11, §13–14; P6–P8의 확정 config·선택 규칙·결과 schema |
-| P10 선택 분석 | phase P10에서 실제 선택한 분석을 먼저 확정한 뒤, update는 02 §4·§10 및 03 §2·§6–11, 필수 집합 이외의 층은 03 §2·§6–11, length는 02 §5·§12 및 03 §4–5·§10, `m→m` SAE는 03 §8–10을 읽는다 |
+| P10 선택 분석 | phase P10에서 실제 선택한 분석을 먼저 확정한 뒤, update는 02 §4·§10 및 03 §2·§6–11, block 1은 03 §2·§6–11, length는 02 §5·§12 및 03 §4–5·§10, `m→m` SAE는 03 §8–10을 읽는다 |
 | P11 최종 집계 | 03 §10–14; 01 §11–13; 모든 status/manifest/registry와 결과 schema |
 
 ## 4. 모든 단계에서 지킬 핵심 규칙
@@ -56,7 +56,7 @@
 2. **누출 방지:** 상태·정답 metadata는 분석에만 사용한다. LM forward에는 token ID와 padding mask만 넣고, LM/SAE/TC loss에 상태 라벨을 넣지 않는다. TC supervision은 원래 MLP 출력이다.
 3. **선택 분리:** train은 fitting, validation은 사전 정의된 선택, test는 동결된 절차의 최종 보고에만 사용한다. Test 결과로 checkpoint, feature, threshold, `k`, matching 규칙을 다시 고르지 않는다.
 4. **동결과 실패 보존:** 행동 gate 뒤 LM·데이터·예산을 동결한다. SAE/TC 결과가 나쁘다는 이유로 이를 바꾸지 않으며 실패 seed를 대체하거나 숨기지 않는다.
-5. **범위:** 필수 범위는 gate 통과 LM의 block 0·3·7·11 READ probe·SAE·TC와 전 층 full probe 진단, `k={4,16}`, 후보 수 대조, 근사 대체와 인과 평가이며 LM seed 0의 네 층 sparse seed 1 반복을 포함한다. Update, 필수 집합 이외의 층, length GPU 평가, `m→m` SAE는 P10 선택 분석이다. Crosscoder와 변수 8개 확장은 기본 범위 밖이다.
+5. **범위:** 필수 범위는 gate 통과 LM의 block 0 READ probe·SAE·TC와 전 층 full probe 진단, `k={4,16}`, 후보 수 대조, 근사 대체와 인과 평가이며 LM seed 0의 sparse seed 1 반복을 포함한다. Update, block 1, length GPU 평가, `m→m` SAE는 P10 선택 분석이다. Crosscoder와 변수 8개 확장은 기본 범위 밖이다.
 6. **규격 변경:** 미정 선택은 관련 test를 보기 전에 config에 고정한다. 예산·분포·quota·평가법을 바꾸면 이유, 영향, 새 버전, config/hash를 남기고 기존 실험과 구분한다.
 7. **증빙 우선:** 검증 명령, 실제 표본/token/draw 수, seed와 RNG state, 환경 ID, config/code/data/checkpoint hash, 선택 checkpoint, 실패·생략 사유를 남긴다. 체크박스는 이 증빙을 확인한 뒤에만 갱신한다.
 8. **재개와 보존:** 기존 데이터와 결과를 덮어쓰지 않는다. checkpoint의 cursor·optimizer·RNG·평가 경계를 확인해 마지막 완전 저장 update부터 재개하고, 환경이 달라지면 별도 환경 ID로 기록한다.
@@ -66,7 +66,7 @@
 - 단계의 완료는 [phase.md](./phase.md)의 해당 완료 조건과 [03_experiment_spec.md](./03_experiment_spec.md)의 gate를 모두 만족해야 한다.
 - 행동 gate 실패, quota 미달, 수치 오류, 자원 중단은 성공이 아니다. 원문에 정한 분기대로 중단·재개 대기·별도 버전으로 표시한다.
 - 행동 gate 통과 모델이 없으면 행동 학습 단계에서 종료 보고만 작성하고 SAE/TC 가설을 검증했다고 쓰지 않는다.
-- 네 층 중 하나라도 필수 SAE·TC 평가 또는 sparse 초기화 반복이 남아 있으면 전체 실험 완료로 표시하지 않는다.
+- 필수 TC 또는 sparse 초기화 반복이 남아 있으면 전체 실험 완료로 표시하지 않는다.
 - 최종 해석은 probe의 선형 접근성, sparse feature의 사후 감독 성능, 지정 위치 패칭의 개입 증거 범위를 넘어서 주장하지 않는다.
 
 ## 6. 단계 완료 후 Git 업데이트
@@ -94,14 +94,12 @@
   `REPORT.md`, `completion.json`, `frozen_lms.json`이다.
 - P5 완료: 3,510개 probe와 원본 cache·전처리·예측·AUROC/CI 독립 검산을 마쳤다.
   근거는 `experiment_v1_4/results/p5_final_audit_20260925_01/`의 `REPORT.md`, `completion.json`, `p6_cache_manifest.json`이다.
-- 다음은 P6 block 0·3·7·11 READ SAE, 세 LM × 네 층 × k=4/16의 24 runs다. 아직 미실행이다.
-  P8 TC 24 runs, P9 LM seed 0의 네 층 초기화 반복 16 runs를 포함해 총 64 runs, 320k updates, 163.84M draws다.
-  [READ 분석 계약](experiment_v1_4/analysis_plan.json)과 [P6 상태](experiment_v1_4/P6_STATUS.md)를 따른다.
-  P6 본학습 전 네 층의 scalar 통계 36개를 검증하고, 각 평가 전 층별 좌표/random·128후보 대조를 준비한다.
+- 다음은 P6 block 0 READ SAE, 세 LM × k=4/16이다. 아직 미실행이다.
   구현·검증은 `interp_v1_4/`, `tests_v1_4/`를 사용하고 P6 config를 실행 전에 고정한다.
 - 활성 corpus는 `corpus_rebuild.json`에 지정된 `data/language_v1_4/rebuild_01/`이다.
   최초 거부 root를 학습하거나 완료한 gate/test를 다시 열지 않는다.
-- `experiment_v1_4/DESIGN.md`와 `README.md`는 현재 설계·실행 안내다. 현재 해석 범위는 `analysis_plan.json`, LM 동결 입력은 `design_config.json`과 `configs/`를 따른다. 현재 실행 상태는 `CURRENT.md`다.
+- `experiment_v1_4/DESIGN.md`, `README.md`, `design_config.json`은 동결 당시의 불변 기록이다.
+  그 안의 readiness/미실행 문구를 현재 상태로 읽지 않는다. 현재 안내는 `CURRENT.md`다.
 
 ## 9. 과거 버전·동결 증빙 보존
 
@@ -118,9 +116,3 @@
 
 - 바로가기 제거 후 소스 경로 변경과 변경 전 원본은 `maintenance/remove_shortcuts_20260922/`에 기록했다.
   기존 GPU smoke의 code hash를 현재 소스 승인으로 재사용하지 않는다. 이후 GPU 작업은 새 소스 hash로 별도 검증한다.
-
-## 변경 기록
-
-2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
-수정 전 원문: [보존본](maintenance/read_layers_20260925/originals/AGENTS.md).
-동결 DESIGN/README의 기존 manifest hash는 [원본 경로·hash 목록](maintenance/read_layers_20260925/originals.json)의 snapshot에서 검증한다.

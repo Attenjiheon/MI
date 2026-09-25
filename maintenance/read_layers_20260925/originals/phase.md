@@ -8,7 +8,7 @@
 
 ## 현재 활성 버전 — v1.4 (2026-09-25)
 
-**P5 완료. 다음 단계는 P6 — 세 동결 LM의 block 0·3·7·11 READ SAE다.**
+**P5 완료. 다음 단계는 P6 — 세 동결 LM의 block 0 READ SAE다.**
 Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 frozen test 반환 감사를 마쳤다.
 세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. P6 이후 필수 해석 단계가 남아 전체 실험은 미완료다.
 
@@ -19,9 +19,9 @@ Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 froz
 | P3 | **완료·passed** | [seed 0 반환 감사](experiment_v1_4/results/p3_audit_20260921_01/completion.json) |
 | P4 | **완료·passed** | [최종 반환 감사](experiment_v1_4/results/frozen_test_audit_20260922_01/completion.json), [P4 상태](experiment_v1_4/P4_STATUS.md) |
 | P5 | **완료·passed** | [독립 감사 완료](experiment_v1_4/results/p5_final_audit_20260925_01/completion.json), [상세 보고](experiment_v1_4/results/p5_final_audit_20260925_01/REPORT.md) |
-| P6–P7 | 미실행·P6 진입 가능 | 세 LM × 네 층 × k=4/16의 READ SAE 학습 24 runs 및 의미·fidelity·인과 평가 |
-| P8 | 미실행·P7 대기 | 같은 세 LM × 네 층 × k=4/16의 필수 READ TC 학습 24 runs 및 동일 평가 |
-| P9 | 미실행·P8 대기 | LM seed 0에서 네 층 × SAE/TC × k=4/16, sparse seed 1의 16 runs 및 전체 평가 |
+| P6–P7 | 미실행·P6 진입 가능 | 세 LM × k=4/16의 READ SAE 학습 6 runs 및 의미·fidelity·인과 평가 |
+| P8 | 미실행·P7 대기 | 같은 세 LM × k=4/16의 필수 READ TC 학습 6 runs 및 동일 평가 |
+| P9 | 미실행·P8 대기 | LM seed 0에서 SAE/TC × k=4/16, sparse seed 1의 4 runs 및 전체 평가 |
 | P10 | 미실행·선택 분석 | 필수 READ 분석 및 sparse 초기화 반복 완료 후 결정 |
 | P11 | 최종 집계 미완료 | 단계별 기록은 누적하며 전체 필수 분석은 아직 남아 있음 |
 
@@ -33,16 +33,16 @@ P3에서 행동 gate에 실패하면 동결된 중단 절차로 분기한다. �
 
 | 범위 | 우선순위 |
 |---|---|
-| 통과 LM별 block 0·3·7·11 READ probe·SAE·TC, k=4/16, fidelity·의미·인과 대조 | 필수 |
-| LM seed 0의 네 층 READ 두 도구·두 k, sparse seed 1 | 필수 초기화 반복 |
-| Update, 필수 집합 이외의 층, 길이 외삽 GPU 평가, m→m SAE | 자원 확인 후 별도 실험 |
+| 통과 LM별 block 0 READ probe·SAE·TC, k=4/16, fidelity·의미·인과 대조 | 필수 |
+| LM seed 0 READ의 두 도구·두 k, sparse seed 1 | 필수 초기화 반복 |
+| Update, block 1, 길이 외삽 GPU 평가, m→m SAE | 자원 확인 후 별도 실험 |
 | Crosscoder, 변수 8개, 대규모 모델/seed sweep | 기본 범위 제외 |
 
 ## 2. P0 — 규격과 현재 산출물 정리
 
 현재 본 실험은 v1.4다. 루트 01–03은 v1.4 계약을 통합했으며 과거 실행 규격과
 체크박스는 [원문 snapshot](archive/specifications/pre_v1_4_integration/phase.md)에 보존했다.
-현재 READ 분석 계약·LM 동결 config·corpus·완료 증빙이 기준이며 P6 이후 실행 config는 착수 시 별도로 고정한다.
+동결 설계·config·corpus·완료 증빙이 기준이며 미실행 P5 이후 config는 착수 시 별도로 고정한다.
 문서 통합 자체를 새로운 실험 단계 통과로 세지 않는다.
 
 ## 3. P1 — CPU 생성기·코퍼스 검증 (완료)
@@ -150,10 +150,10 @@ P4 완료 커밋은 `6f7d2e9`이며 원격 main 반영을 확인했다.
 
 **v1.4 현재 상태:** seed 0·1·2, G=3의 P5 완료. [최종 감사](experiment_v1_4/results/p5_final_audit_20260925_01/REPORT.md)를 근거로 아래 조건을 확인했다.
 
-1. 통과 LM을 동결해 interp train/val/test의 고정 READ 위치에서 block 0..11 `h,u,m`을 수집한다.
+1. 통과 LM을 동결해 interp train/val/test의 고정 READ 위치에서 block 0 `h,u,m`을 수집한다.
 2. Cache key와 라벨 join, answer 이전 위치, shape/dtype, missing/class support를 검증한다.
-3. 해당 train만으로 전처리 통계를 구한다. P5에서 검증한 dictionary scalar 통계는 block 0의 9개이며, 전 층 probe 차원별 통계와 구분한다.
-4. 전 층 full h/u/m probe, block 0 좌표/random 기준선과 학습 전 LM·token/position·shuffled-label 대조군을 실행한다.
+3. 해당 train만으로 전처리 통계를 구한다. Dictionary scalar 통계와 probe 차원별 통계를 구분해 저장한다.
+4. Full h/u/m probe 및 좌표/random 기준선을 fit하고 학습 전 LM·token/position·shuffled-label 대조군을 실행한다.
 5. IID, 현재≠과거, READ 변수 전이를 평가할 선택 절차를 고정한다. Test를 통한 수정은 하지 않는다.
 
 - [x] READ train/val/test 각 50k/10k/20k 위치 또는 실제 부족 사유가 기록되었다.
@@ -164,7 +164,7 @@ P4 완료 커밋은 `6f7d2e9`이며 원격 main 반영을 확인했다.
 
 **완료 조건:** 의미 평가와 dictionary가 동일한 검증된 위치를 사용한다. Update 분석은 아직 시작하지 않는다.
 
-### 7.1 P5 — 전 층 READ cache·full probe (완료)
+### 7.1 P5 — block 0 READ cache·probe (완료)
 
 **선행 조건:** P4 완료 및 최소 두 LM seed의 validation gate 통과. 세 seed 모두 충족했다.
 상세 실행 규격은 03 §2·§6–7·§10·§12–14, 01 §8, 02 §10·§14를 읽고 적용한다.
@@ -180,7 +180,7 @@ P4 완료 커밋은 `6f7d2e9`이며 원격 main 반영을 확인했다.
    v1.4 폭·hook·전처리·선택 규칙에 맞는 P5 config와 실행/반환 schema를 실행 전에 고정한다.
 4. 별도 debug 입력으로 key/label join, 정답 이전 위치, shape/dtype, 누출 방지,
    support·전처리 및 저장/재개를 검증한다. Colab 작업은 전용 `.ipynb`와 입력 번들로 전달한다.
-5. 검증된 실행기로 세 LM의 block 0..11 READ `h,u,m` cache를 추출하고,
+5. 검증된 실행기로 세 LM의 block 0 READ `h,u,m` cache를 추출하고,
    이 절의 full probe·좌표/random 및 필수 대조군을 수행한다. 전처리 fitting은 해당 train만 사용한다.
 6. 실제 반환 cache·probe 결과·선택 기록을 감사한 뒤 P5 상태와 registry를 갱신한다.
    P5 완료 전 P6 SAE 본학습을 시작하지 않는다.
@@ -195,33 +195,27 @@ P4 완료 커밋은 `6f7d2e9`이며 원격 main 반영을 확인했다.
 P2 debug smoke와 P4 행동 평가 통과를 P5 완료로 대신하지 않는다.
 
 전체 12개 층 full probe 진단은 동결 설계의 필수 진단이다. 필요한 hook·cache 범위를
-P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한다. 네 층의 dictionary 전처리 준비는 P6에서, 좌표/random 대조군의 준비·검증은 해당 SAE/TC 평가 전에 완료한다.
+P5 config에 고정한다. Block 1 sparse 학습·개입의 P10 선택 범위와 구분한다.
 
 ## 8. P6 — READ SAE 학습
 
-**선행 조건:** P5 완료 및 네 층 입력·전처리·실행 config 검증. **장소:** 준비 CPU, 학습 GPU.
+**선행 조건:** P5. **장소:** GPU.
 
-필수 층은 L={0,3,7,11}이다. [READ 분석 계약](experiment_v1_4/analysis_plan.json)과 [P6 상태](experiment_v1_4/P6_STATUS.md)를 따른다.
-
-0. P5의 검증된 전 층 cache hash·READ key를 확인한다. LM·layer·hook별 train scalar 통계 총 36개 중 검증된 9개를 재사용하고 27개를 계산·검증한다. 네 층의 smoke·재개 검증과 P6 config·hash 고정 후 본학습한다. 이후 평가용 좌표/random 및 128후보 RNG·subset ID도 해당 평가 전에 고정한다.
-
-1. 각 통과 LM의 block 0·3·7·11 READ h에 sparse seed 0, k=4/16을 각각 학습한다.
+1. 각 통과 LM의 block 0 READ h에 sparse seed 0, k=4/16을 각각 학습한다.
 2. 최초 본실험 dictionary 100 updates에서 seconds/update·peak VRAM을 측정한다. 측정 구간은 5,000 updates에 포함한다.
 3. Decoder gradient 투영 → clipping → optimizer → unit norm 순서를 적용하고 매 250 updates 저장·평가한다.
 4. 5,000 updates를 완료한 뒤 k별 최소 val MSE checkpoint를 선택한다.
 
-- [ ] 세 LM × 네 층 × 두 k의 24 runs를 모두 완료했고 label loss·early stopping·dead 재초기화를 추가하지 않았다.
+- [ ] 두 k를 모두 완료했고 label loss·early stopping·dead 재초기화를 추가하지 않았다.
 - [ ] Mu/s, 초기화·sampler RNG, checkpoint, 실제 positions/draws/시간이 저장되었다.
 
-**산출물:** G×4×2 SAE runs (G=3: 24 runs), 학습 곡선, best/last checkpoint·manifest.
+**산출물:** G×2 SAE runs, 학습 곡선, best/last checkpoint·manifest.
 
-**완료 조건:** 필수 24 runs 모두 수치 오류 없이 5,000 updates와 validation checkpoint 선택을 마치고 반환 증빙을 검증했다. 오류·자원 중단은 사유와 재개 지점을 기록하며 P6 완료로 집계하지 않는다.
+**완료 조건:** 수치 오류 없이 명세 학습을 마쳤거나 오류·자원 중단이 명시되어 있다. 중단 run은 완료로 집계하지 않는다.
 
 ## 9. P7 — READ SAE 의미·fidelity·인과 평가
 
 **선행 조건:** P6 완료. **장소:** probe/집계 CPU, 대체·개입 GPU.
-
-세 LM의 네 층·두 k 각각에서 아래 평가를 수행한다. Full probe와 검증된 대조군을 재사용하고, block 3·7·11의 좌표/random 및 128후보 대조군을 같은 규격으로 계산·검증한다. 층별 전처리·선택 feature·계수를 독립 저장한다.
 
 1. Train ANOVA ranking과 val 선택으로 latent 단일/≤4 probe를 fit한다. Full/좌표/random과 비교하고 128후보 일치 분석도 수행한다.
 2. NMSE/R2/EV, L0 분포, train 전체 재인코딩 dead 비율과 의미 지표를 계산한다.
@@ -230,7 +224,7 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 5. Changed/unchanged causal test에서 선택·identity·평균·전체 근사·full donor·random latent·좌표·random 방향 대조를 양방향으로 실행한다.
 6. 전체 pair와 양쪽 원래 정답 subset, matched/unmatched 결과·coverage, 기억/합성 조건을 분리해 집계한다.
 
-- [ ] 세 LM의 네 층·두 k, 두 feature 규모, 후보 수 대조와 모든 필수 인과 대조가 있다.
+- [ ] 두 k, 두 feature 규모, 후보 수 대조와 모든 필수 인과 대조가 있다.
 - [ ] Feature·bin·후보를 test 효과로 다시 선택하지 않았다.
 - [ ] READ SAE의 핵심 표·그림과 실패/NA 사유가 확보되었다.
 
@@ -242,16 +236,16 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 
 **선행 조건:** P7. **장소:** 학습·패칭 GPU, probe·집계 CPU.
 
-1. 각 LM의 block 0·3·7·11에서 같은 READ 위치의 u_l→m_l에 sparse seed 0, k=4/16을 각각 학습한다. 입력/출력 통계와 encoder/decoder 초기화를 분리한다.
+1. 같은 READ 위치의 u_0→m_0에 sparse seed 0, k=4/16을 각각 학습한다. 입력/출력 통계와 encoder/decoder 초기화를 분리한다.
 2. 대응 SAE와 같은 position draw 순서를 사용하며 5,000 updates·val MSE checkpoint 규칙을 적용한다.
 3. Full u/full m, m 좌표/random, TC latent를 비교하고 단일/≤4·128후보 분석을 수행한다.
 4. TC fidelity와 m_hat 한 위치 대체를 평가한다. SAE의 h 복원과 TC의 m 예측 target을 그림·표에 표시한다.
 5. P7과 같은 feature 동결·causal val matching·test 대조를 수행한다. 패칭은 `m_o+s_m*D_tc*delta_z`, residual skip은 원본 유지다.
 
 - [ ] 입력 scale s_u를 출력 patch에 곱하지 않았다.
-- [ ] 세 LM의 네 층·두 k의 의미·대체·인과 결과와 u/m 기준선이 모두 있다.
+- [ ] 두 k의 의미·대체·인과 결과와 u/m 기준선이 모두 있다.
 
-**산출물:** G×4×2 TC runs (G=3: 24 runs)와 semantic/fidelity/causal 결과, READ SAE/TC 비교 그림.
+**산출물:** G×2 TC runs와 semantic/fidelity/causal 결과, READ SAE/TC 비교 그림.
 
 **완료 조건:** 필수 TC 평가까지 완료했다. TC가 남은 상태에서 전체 실험 완료를 선언하지 않는다.
 
@@ -259,11 +253,11 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 
 **선행 조건:** P8. **장소:** GPU + CPU.
 
-1. LM seed 0의 block 0·3·7·11 READ cache에서 sparse seed 1로 SAE/TC 각각 k=4/16, 총 16 runs를 추가한다.
+1. LM seed 0의 같은 READ cache에서 sparse seed 1로 SAE/TC 각각 k=4/16, 총 4 runs를 추가한다.
 2. 각 run에 학습·probe 선택·후보 수 대조·fidelity·근사 대체·인과 평가 절차를 동일하게 적용한다.
 3. Sparse 초기화 반복과 LM seed 반복을 구분해 결과를 비교한다.
 
-- [ ] 16개 추가 run의 성공/실패와 전체 평가가 기록되었다.
+- [ ] 4개 추가 run의 성공/실패와 전체 평가가 기록되었다.
 - [ ] 다른 dictionary의 동일 latent ID를 동일 feature로 간주하지 않았다.
 
 **산출물:** 초기화 민감도 표·그림, 추가 run manifest.
@@ -274,10 +268,10 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 
 **선행 조건:** P9 및 남은 자원 확인. 기본 READ보다 우선하지 않는다.
 
-권장 순서는 update → 필수 집합 이외의 층 → 길이 평가다. 각 분석의 실행/생략 결정을 기록한다.
+권장 순서는 update → block 1 → 길이 평가다. 각 분석의 실행/생략 결정을 기록한다.
 
 - [ ] Update: 초기화 제외 update 위치의 별도 cache/전처리/SAE/TC와 입력·관계·결과 라벨 분석. AND/OR→XOR probe 전이 포함.
-- [ ] 필수 집합 이외의 층: {1,2,4,5,6,8,9,10} 중 실행할 층·위치·예산을 config에 고정하고 별도 dictionary·hook·실험 ID로 실행한다. Residual은 final LN 이전 값을 사용한다.
+- [ ] Block 1: 선택 위치별 별도 dictionary·hook·실험 ID로 실행하고 final LN 이전 residual을 사용한다.
 - [ ] Length: CPU에서 예약한 33~48블록 test를 기존 RoPE 설정으로 평가한다. 결과를 gate나 모델 재선택에 사용하지 않는다.
 - [ ] 필요 시 m→m SAE를 별도 실험으로 추가하고 동일 target 조건의 TC 비교임을 표시한다.
 
@@ -290,7 +284,7 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 **선행 조건:** 정상 경로는 P9 및 P10 결정 완료. 조기 중단 경로도 여기서 보고서를 남긴다.
 
 1. Run registry를 대조해 실패 seed, 누락 필수 run, support 부족, 미매칭, 자원 중단을 확인한다.
-2. Block 0·3·7·11 각각에서 LM seed별 값과 평균/최소/최대, sparse seed별 변동을 집계한다. 같은 sequence/origin의 paired bootstrap으로 층간 차이를 보고하며 층을 독립 seed로 세지 않는다.
+2. LM seed별 값과 평균/최소/최대, sparse seed별 변동을 집계한다.
 3. Sequence/origin cluster bootstrap 1,000회로 percentile 95% CI를 계산한다. Quota는 조건 내 재표집, 불가능 draw는 유효 수를 보고한다.
 4. 아래 필수 표·그림과 재현 명령을 작성한다.
 
@@ -300,7 +294,7 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 | `semantic_metrics.csv` | full/좌표/random/SAE/TC, 단일/≤4, 후보 128/256/512, support·전이 |
 | `fidelity_metrics.csv` | target 명시, NMSE/R2/EV–L0, dead 비율, 한 위치 대체 전후 행동 |
 | `causal_metrics.csv` | changed margin/flip, unchanged 오류, 대조군, norm·matching coverage |
-| `figures/` | 네 층별 위 4종 비교, 깊이에 따른 차이와 LM/sparse seed·현재≠과거·전이 분포 |
+| `figures/` | 위 4종 비교와 LM/sparse seed·현재≠과거·전이 분포 |
 | `run_registry.csv`, `report.md` | 모든 run 상태, 실패/생략, 해석 한계, CI, 환경/hash/명령 |
 
 - [ ] 원본 config·환경 lock·코드/data/checkpoint hash와 실제 재현 명령이 연결된다.
@@ -314,16 +308,16 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 v1.4는 seed당 명목 64M,
 실제 64,005,751 tokens / 8,399 updates이며 **세 seed 합계 192,017,253 training tokens를
 이미 소비했다.** 각 seed가 동일한 동결 stream을 한 번씩 소비했고 추가 LM 학습은 계획하지 않는다.
-필수 sparse 예산은 block 0·3·7·11 각각의 SAE·TC와 초기화 반복을 포함한다.
+Sparse 예산은 별도 변경 없이 해당 동결 규격을 따른다.
 
 | 작업 | v1.4 확정 범위·예산 및 상태 |
 |---|---|
 | LM | 완료: 3 seeds × 64,005,751 tokens = 192,017,253 tokens; 각 8,399 updates |
 | Frozen behavior test | 완료: 3 seeds × 7 suites = 21개 평가; 총 153,510 READ targets. 기록된 평가 시간 합계 215.32초이며 학습 예산과 별도 |
-| READ SAE+TC, sparse seed 0 | 미실행: G=3 × 4층 × 2도구 × 2k = 48 runs |
-| LM seed 0 READ, sparse seed 1 | 미실행: 4층 × 2도구 × 2k = 16 runs 추가 |
-| G=3 전체 필수 dictionary | 미실행: 64 runs × 5k = 320k updates, 163.84M position draws |
-| Update 선택 분석 | 선택한 층마다 12 runs; 필수 집합 이외의 층도 층·위치별 별도 계상 |
+| READ SAE+TC, sparse seed 0 | 미실행: G=3 × 2도구 × 2k = 12 runs |
+| LM seed 0 READ, sparse seed 1 | 미실행: 2도구 × 2k = 4 runs 추가 |
+| G=3 전체 필수 dictionary | 미실행: 16 runs × 5k = 80k updates, 40.96M position draws |
+| Update 선택 분석 | 최대 12 runs 추가; block 1은 위치별 별도 계상 |
 
 예상 시간은 고정된 일수가 아니라 측정 처리량으로 갱신한다. LM은 `남은 토큰/tokens_per_second + 평가·저장 시간`, dictionary는 `남은 updates*seconds_per_update + 평가 시간`으로 산정한다. CPU, GPU 학습, activation 추출, validation, probe, bootstrap, patching 비용은 각각 기록한다.
 
@@ -338,8 +332,3 @@ phase / run_id / status(pending|running|passed|failed|paused|skipped)
 ```
 
 자원이 부족하면 영속 checkpoint에서 재개한다. Width/k/token budget을 줄여 완료 처리하지 않는다. 필수 READ 결과가 끝난 뒤에만 선택 분석에 예산을 배정한다.
-
-## 변경 기록
-
-2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
-수정 전 원문: [보존본](maintenance/read_layers_20260925/originals/phase.md).
