@@ -1,6 +1,6 @@
 # experiment_v1_4
 
-**P1–P5 완료. 다음 단계는 block 0·3·7·11 READ SAE 학습(P6)이다.**
+**P1–P6 완료. 다음 단계는 block 0·3·7·11 READ SAE 평가·개입(P7)이다.**
 
 12-block × 256-width Transformer 세 seed를 동결해 READ 표현을 분석한다.
 활성 corpus는 `data/language_v1_4/rebuild_01/`이며 세 LM 모두 validation gate를 통과했다.
@@ -18,20 +18,19 @@
 | P3 seed 0 LM | 완료 | [P3 상태](P3_STATUS.md) |
 | P4 seed 1·2 및 frozen test | 완료 | [P4 상태](P4_STATUS.md), [동결 모델](results/frozen_test_audit_20260922_01/frozen_lms.json) |
 | P5 cache·probe | 완료 | 전 12층 cache·full probe 및 [독립 감사](results/p5_final_audit_20260925_01/REPORT.md) |
-| P6 SAE | 미실행 | 3 LM × 4층 × 2 k = 24 runs |
+| P6 SAE | 완료 | 24 runs·120k updates·[전체 반환 감사](results/p6_final_audit_20260925/REPORT.md) |
 | P7 SAE 평가·개입 | 미실행 | 네 층 모두 의미·후보 수 대조·fidelity·인과 평가 |
 | P8 TC 학습·평가·개입 | 미실행 | 24 runs 및 네 층의 동일 평가 |
 | P9 초기화 반복 | 미실행 | LM seed 0, 네 층 × 2도구 × 2 k = 16 runs |
 | P10 선택 분석 | 미실행 | Update, 필수 집합 이외의 층, 길이 평가, m→m SAE |
 | P11 최종 집계 | 미완료 | 네 층·LM seed·sparse seed별 결과 및 실패·미완료 기록 |
 
-## 실행 준비
+## 다음 단계
 
-P5의 동일 READ 위치·cache를 사용해 네 층의 scalar 통계와 입력 hash를 검증한다.
-P6 실행 config와 네 층의 debug/GPU smoke·재개 검증을 준비하고 Colab `.ipynb` 및 입력 번들로 전달한다.
-SAE·TC는 run마다 5,000 updates를 완료한 뒤 validation MSE로 checkpoint를 선택한다.
-총 필수 dictionary 예산은 64 runs, 320,000 updates, 163.84M position draws다.
-각 평가 전에 층별 좌표/random·128후보 대조군을 준비한다. 실제 Colab 반환 증빙을 검증한 뒤에만 단계를 완료 처리한다.
+P6의 [선택 checkpoint 24개](results/p6_final_audit_20260925/selected_sae_manifest.json)와
+검증된 P5 cache/36개 scalar 통계를 사용한다. P7에서 층별 좌표/random·128후보 기준선,
+사후 감독 의미 평가, fidelity·근사 대체 및 모든 필수 인과 대조를 수행한다.
+P8 TC 24 runs와 P9 초기화 반복 16 runs가 남아 있으며 전체 실험은 미완료다.
 
 ## 변경 기록
 

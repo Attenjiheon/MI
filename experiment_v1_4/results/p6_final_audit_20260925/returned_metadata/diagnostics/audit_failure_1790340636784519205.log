@@ -1,0 +1,24 @@
+{
+  "python": "3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]",
+  "executable": "/usr/bin/python3",
+  "run_results_present": 24,
+  "run_results_expected": 24,
+  "missing_runs": [],
+  "contract_file_mismatches": [],
+  "input_manifest_exists": true,
+  "training_complete_exists": true
+}
+COMMAND ["/usr/bin/python3", "-u", "/content/MI_P6_r1/scripts/verify_v1_4_p6_return.py", "--root", "/content/MI_P6_r1", "--output", "/content/drive/MyDrive/boolean_interp_v1_4/P6_r1", "--device", "cuda"]
+audited seed0_l0_sae_k4_s0
+audited seed0_l0_sae_k16_s0
+audited seed0_l3_sae_k4_s0
+Traceback (most recent call last):
+  File "/content/MI_P6_r1/scripts/verify_v1_4_p6_return.py", line 77, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--root',default='.');p.add_argument('--output',required=True);p.add_argument('--device',default='cpu');a=p.parse_args();print(audit(a.root,a.output,a.device))
+                                                                                                                                                                              ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/content/MI_P6_r1/scripts/verify_v1_4_p6_return.py", line 64, in audit
+    assert np.isclose(score,saved,atol=1e-7,rtol=1e-6),(run['name'],step,score,saved)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('seed0_l3_sae_k16_s0', 250, 0.03099766511893298, 0.030997336196491705)
+
+RETURN CODE: 1

@@ -8,9 +8,9 @@
 
 ## 현재 활성 버전 — v1.4 (2026-09-25)
 
-**P5 완료. 다음 단계는 P6 — 세 동결 LM의 block 0·3·7·11 READ SAE다.**
+**P6 완료. 다음 단계는 P7 — 세 동결 LM의 block 0·3·7·11 READ SAE 평가·개입이다.**
 Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 frozen test 반환 감사를 마쳤다.
-세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. P6 이후 필수 해석 단계가 남아 전체 실험은 미완료다.
+세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. P7 이후 필수 해석 단계가 남아 전체 실험은 미완료다.
 
 | 단계 | v1.4 현재 상태 | 근거 또는 다음 조건 |
 |---|---|---|
@@ -19,7 +19,8 @@ Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 froz
 | P3 | **완료·passed** | [seed 0 반환 감사](experiment_v1_4/results/p3_audit_20260921_01/completion.json) |
 | P4 | **완료·passed** | [최종 반환 감사](experiment_v1_4/results/frozen_test_audit_20260922_01/completion.json), [P4 상태](experiment_v1_4/P4_STATUS.md) |
 | P5 | **완료·passed** | [독립 감사 완료](experiment_v1_4/results/p5_final_audit_20260925_01/completion.json), [상세 보고](experiment_v1_4/results/p5_final_audit_20260925_01/REPORT.md) |
-| P6–P7 | 미실행·P6 진입 가능 | 세 LM × 네 층 × k=4/16의 READ SAE 학습 24 runs 및 의미·fidelity·인과 평가 |
+| P6 | 완료 | [24 SAE runs 전체 반환 감사](experiment_v1_4/results/p6_final_audit_20260925/REPORT.md) |
+| P7 | 미실행·진입 가능 | 선택 SAE 24개의 의미·fidelity·인과 평가 |
 | P8 | 미실행·P7 대기 | 같은 세 LM × 네 층 × k=4/16의 필수 READ TC 학습 24 runs 및 동일 평가 |
 | P9 | 미실행·P8 대기 | LM seed 0에서 네 층 × SAE/TC × k=4/16, sparse seed 1의 16 runs 및 전체 평가 |
 | P10 | 미실행·선택 분석 | 필수 READ 분석 및 sparse 초기화 반복 완료 후 결정 |
@@ -210,8 +211,10 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 3. Decoder gradient 투영 → clipping → optimizer → unit norm 순서를 적용하고 매 250 updates 저장·평가한다.
 4. 5,000 updates를 완료한 뒤 k별 최소 val MSE checkpoint를 선택한다.
 
-- [ ] 세 LM × 네 층 × 두 k의 24 runs를 모두 완료했고 label loss·early stopping·dead 재초기화를 추가하지 않았다.
-- [ ] Mu/s, 초기화·sampler RNG, checkpoint, 실제 positions/draws/시간이 저장되었다.
+- [x] 세 LM × 네 층 × 두 k의 24 runs를 모두 완료했고 label loss·early stopping·dead 재초기화를 추가하지 않았다.
+- [x] Mu/s, 초기화·sampler RNG, checkpoint, 실제 positions/draws/시간이 저장되었다.
+
+**완료 증빙:** [P6 전체 반환 감사](experiment_v1_4/results/p6_final_audit_20260925/completion.json).
 
 **산출물:** G×4×2 SAE runs (G=3: 24 runs), 학습 곡선, best/last checkpoint·manifest.
 
@@ -320,9 +323,9 @@ v1.4는 seed당 명목 64M,
 |---|---|
 | LM | 완료: 3 seeds × 64,005,751 tokens = 192,017,253 tokens; 각 8,399 updates |
 | Frozen behavior test | 완료: 3 seeds × 7 suites = 21개 평가; 총 153,510 READ targets. 기록된 평가 시간 합계 215.32초이며 학습 예산과 별도 |
-| READ SAE+TC, sparse seed 0 | 미실행: G=3 × 4층 × 2도구 × 2k = 48 runs |
+| READ SAE+TC, sparse seed 0 | SAE 24 runs 완료, TC 24 runs 미실행 |
 | LM seed 0 READ, sparse seed 1 | 미실행: 4층 × 2도구 × 2k = 16 runs 추가 |
-| G=3 전체 필수 dictionary | 미실행: 64 runs × 5k = 320k updates, 163.84M position draws |
+| G=3 전체 필수 dictionary | 총 64 runs 중 24 완료. 120k updates/61.44M draws 소비, 40 runs/200k updates/102.4M draws 남음 |
 | Update 선택 분석 | 선택한 층마다 12 runs; 필수 집합 이외의 층도 층·위치별 별도 계상 |
 
 예상 시간은 고정된 일수가 아니라 측정 처리량으로 갱신한다. LM은 `남은 토큰/tokens_per_second + 평가·저장 시간`, dictionary는 `남은 updates*seconds_per_update + 평가 시간`으로 산정한다. CPU, GPU 학습, activation 추출, validation, probe, bootstrap, patching 비용은 각각 기록한다.
