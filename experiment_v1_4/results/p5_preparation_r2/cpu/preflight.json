@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "scope": "debug_only",
+  "device": "cpu",
+  "environment_id": "d28f9bd0ac7f68ad",
+  "contract_sha256": "8490365f3dc46ef1d10a899cfac3cd844c18616c6f20bb8a3b0b93e78563fd83",
+  "positions": 80,
+  "layers": 12,
+  "hooks": {
+    "h": "resid_post",
+    "u": "mlp_in",
+    "m": "mlp_out"
+  },
+  "checks": [
+    "metadata join",
+    "all-layer batched versus single",
+    "pre-answer causality",
+    "atomic cache roundtrip/resume checksum"
+  ],
+  "p5_complete": false
+}

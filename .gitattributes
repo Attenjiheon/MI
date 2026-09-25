@@ -32,3 +32,11 @@ archive/legacy/experiment_v1_3/bundles/v1_3_confirm_wide4_read4_seed0_support_v2
 
 # Immutable Markdown snapshots retain their original two-space line breaks.
 archive/specifications/pre_v1_4_integration/*.md whitespace=-blank-at-eol
+
+# P5 immutable delivery and original-init checkpoints.
+experiment_v1_4/bundles/v1_4_p5_bundle_r2.zip filter=lfs diff=lfs merge=lfs -text
+experiment_v1_4/bundles/v1_4_p5_independent_audit_r1.zip filter=lfs diff=lfs merge=lfs -text
+experiment_v1_4/p5_r*/checkpoints/*.pt filter=lfs diff=lfs merge=lfs -text
+# Preserve byte-identical returned GPU logs and generated CSV evidence.
+experiment_v1_4/results/p5_metadata_audit_*/returned/**/nvidia-smi.txt whitespace=-blank-at-eol
+experiment_v1_4/results/p5_metadata_audit_*/semantic_snapshot.csv whitespace=cr-at-eol

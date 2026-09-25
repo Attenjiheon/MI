@@ -2,7 +2,7 @@
 
 Boolean 상태 추적 언어를 학습한 Transformer에서 READ 표현의 선형 접근성,
 SAE·Transcoder feature의 의미와 인과적 효과를 분석한다.
-**현재 P4 완료, 다음은 P5 READ cache·probe다. 전체 해석 실험은 아직 미완료다.**
+**현재 P5 완료, 다음은 P6 READ SAE다. 전체 해석 실험은 아직 미완료다.**
 
 ## 1. 시작할 문서
 
@@ -50,7 +50,7 @@ MI/
 | v1.1 | 4-block, 3M | [행동 gate 실패](archive/legacy/experiment_v1_1/results/p3_stop_report.md) |
 | v1.2 | 4-block, 16M | [행동 gate 실패](archive/legacy/experiment_v1_2/results/p3_stop_report.md) |
 | v1.3 | 6-cell pilot, 32M confirm | [Confirm gate 실패](archive/legacy/experiment_v1_3/P3_STATUS.md) |
-| **v1.4** | **12×256, read4, 64M/seed** | [세 seed P4 완료](experiment_v1_4/P4_STATUS.md), P5 미실행 |
+| **v1.4** | **12×256, read4, 64M/seed** | [세 seed P5 완료](experiment_v1_4/P5_STATUS.md), P6 미실행 |
 
 Seed 0/1/2 일반 READ test는 99.9410% / 99.9472% / 99.9659%이며,
 선택 update는 7,983 / 7,983 / 8,399다. 세 seed 모두 해석 대상이다.

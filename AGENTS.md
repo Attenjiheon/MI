@@ -85,15 +85,17 @@
 - 노트북에는 입력 업로드·checksum 검증, 의존성 설치·환경 기록, 실행·저장·재개, 결과 다운로드 절차를 포함한다. 필요한 입력 번들도 함께 제공한다.
 - 노트북 준비·로컬 검증과 Colab 실제 실행을 구분하고, 내려받은 실행 증빙을 검증하기 전에는 해당 phase를 완료 처리하지 않는다.
 
-## 8. 현재 본 실험과 다음 단계 (2026-09-22)
+## 8. 현재 본 실험과 다음 단계 (2026-09-25)
 
 - 본 실험은 **v1.4**다. [현재 안내](experiment_v1_4/CURRENT.md),
-  [통합 실행 계획](phase.md), `experiment_v1_4/P1_STATUS.md`–`P4_STATUS.md`를 따른다.
+  [통합 실행 계획](phase.md), `experiment_v1_4/P1_STATUS.md`–`P5_STATUS.md`를 따른다.
 - P1–P4 완료. Seed 0·1·2 모두 validation gate 통과, 전체 학습·선택 결정과 frozen test 반환 감사 완료.
   현재 근거는 `experiment_v1_4/results/frozen_test_audit_20260922_01/`의
   `REPORT.md`, `completion.json`, `frozen_lms.json`이다.
-- 다음은 P5 block 0 READ cache·probe 및 전체 12개 층 full probe 진단이다. 아직 미실행이다.
-  구현·검증은 `interp_v1_4/`, `tests_v1_4/`를 사용하고 P5 config를 실행 전에 고정한다.
+- P5 완료: 3,510개 probe와 원본 cache·전처리·예측·AUROC/CI 독립 검산을 마쳤다.
+  근거는 `experiment_v1_4/results/p5_final_audit_20260925_01/`의 `REPORT.md`, `completion.json`, `p6_cache_manifest.json`이다.
+- 다음은 P6 block 0 READ SAE, 세 LM × k=4/16이다. 아직 미실행이다.
+  구현·검증은 `interp_v1_4/`, `tests_v1_4/`를 사용하고 P6 config를 실행 전에 고정한다.
 - 활성 corpus는 `corpus_rebuild.json`에 지정된 `data/language_v1_4/rebuild_01/`이다.
   최초 거부 root를 학습하거나 완료한 gate/test를 다시 열지 않는다.
 - `experiment_v1_4/DESIGN.md`, `README.md`, `design_config.json`은 동결 당시의 불변 기록이다.

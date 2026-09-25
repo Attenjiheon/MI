@@ -1,0 +1,20 @@
+{
+  "status": "passed_independent_numeric_audit",
+  "audit_id": "cfe6bff83400856dc9eb0cbd03ed3b65ccdb332a65dfacb5bbeadfaca36fe94e",
+  "contract_sha256": "8490365f3dc46ef1d10a899cfac3cd844c18616c6f20bb8a3b0b93e78563fd83",
+  "tasks": 3510,
+  "cache_groups": 6,
+  "policy": {
+    "version": "p5-independent-audit-r1",
+    "atol": 1e-09,
+    "rtol": 1e-08,
+    "bootstrap_draws": 1000,
+    "probability_digest": "little-endian float64"
+  },
+  "p5_complete": false,
+  "limitations": [
+    "No LM inference or checkpoint reselection. Activation extraction is byte/row/tensor audited, not independently re-extracted.",
+    "Saved selected coefficients are evaluated; optimizer fitting is not repeated. Unselected lambda/prefix coefficients were not saved, so their validation values are checked by frozen trace only.",
+    "P5 completion requires local review of these returned audit receipts and phase records."
+  ]
+}
