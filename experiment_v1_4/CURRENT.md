@@ -1,6 +1,6 @@
 # v1.4 현재 안내
 
-2026-09-25. **P1–P5 완료. 다음은 block 0·3·7·11 READ SAE의 P6 준비·학습이다. P6–P9는 미실행이다.**
+2026-09-25. **P1–P6 완료. 다음은 P7 — 네 층 SAE 의미·fidelity·인과 평가다. P7–P9는 미실행이다.**
 
 현재 규격은 [연구 설계](../01_experiment_design.md), [언어·코퍼스](../02_language_and_corpus.md),
 [상세 명세](../03_experiment_spec.md), [실행 계획](../phase.md)을 따른다.
@@ -26,15 +26,15 @@
 - 네 층의 같은 READ 위치·라벨·causal origin을 사용하고 층별 전처리·dictionary·feature 선택을 별도 저장한다.
 - 한 번에 한 층·한 READ 위치를 개입하고 층별 결과와 층간 차이를 보고한다.
 
-## 현재 증빙과 P6 준비
+## 현재 증빙과 다음 단계
 
-P5는 3,510 probe·240 cache 파일·9개 dictionary scalar 통계와 전 12층 full probe 진단의 독립 검산을 완료했다.
-원본 cache는 Drive `boolean_interp_v1_4/P5_r2`에 보존한다.
-P5의 `p6_cache_manifest.json`은 전 층을 담은 240개 cache 파일의 receipt와 block 0 전처리 9개를 함께 기록한다. 최상위 `layer: 0`을 네 층 전처리 완료로 해석하지 않는다.
-P6에서는 block 0·3·7·11의 h/u/m train scalar 통계 총 36개를 확보·검증한다.
-검증된 block 0 통계 9개는 재사용하고 block 3·7·11 통계 27개는 train cache에서 계산한다.
-좌표/random·128후보 대조군도 네 층 각각에 필요하며 해당 SAE/TC 평가 전에 준비·검증한다.
-P6 실행 config·source hash·Colab 노트북·입력 번들·GPU smoke·실행 증빙은 아직 준비·검증이 필요하다.
+P6의 24 SAE runs/120,000 updates/61.44M draws를 완료하고 전체 checkpoint 반환 감사를 통과했다.
+[완료 판정](results/p6_final_audit_20260925/completion.json), [감사 보고](results/p6_final_audit_20260925/REPORT.md),
+[선택 checkpoint manifest](results/p6_final_audit_20260925/selected_sae_manifest.json)를 따른다.
+36개 scalar 통계·GPU smoke·504개 checkpoint·480개 validation MSE/선택 검증이 확인됐다.
+원본 cache는 Drive `boolean_interp_v1_4/P5_r2`, 전체 학습 결과는 `P6_r1`과 로컬 원본 ZIP에 보존한다.
+다음 P7에서 네 층의 좌표/random·128후보 대조를 준비하고 의미·fidelity·인과 평가를 수행한다.
+P6 학습 완료를 전체 해석 실험 완료로 간주하지 않는다.
 
 네 층의 필수 SAE·TC·인과 평가·초기화 반복이 모두 완료되어야 전체 실험을 완료로 판정한다.
 

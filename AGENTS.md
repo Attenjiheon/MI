@@ -94,11 +94,13 @@
   `REPORT.md`, `completion.json`, `frozen_lms.json`이다.
 - P5 완료: 3,510개 probe와 원본 cache·전처리·예측·AUROC/CI 독립 검산을 마쳤다.
   근거는 `experiment_v1_4/results/p5_final_audit_20260925_01/`의 `REPORT.md`, `completion.json`, `p6_cache_manifest.json`이다.
-- 다음은 P6 block 0·3·7·11 READ SAE, 세 LM × 네 층 × k=4/16의 24 runs다. 아직 미실행이다.
-  P8 TC 24 runs, P9 LM seed 0의 네 층 초기화 반복 16 runs를 포함해 총 64 runs, 320k updates, 163.84M draws다.
+- P6 완료: block 0·3·7·11 READ SAE 24 runs, 120,000 updates, 61.44M draws와 전체 반환 감사를 마쳤다.
+  근거는 `experiment_v1_4/results/p6_final_audit_20260925/`의 `completion.json`, `REPORT.md`, `selected_sae_manifest.json`이다.
+  36개 scalar 통계, 504개 checkpoint, 480개 validation MSE/선택, GPU smoke·재개 증빙을 확인했다.
+- 다음은 P7: 선택 SAE 24개의 의미·fidelity·인과 평가다. 각 평가 전 네 층의 좌표/random·128후보 대조를 준비한다.
+  P8 TC 24 runs와 P9 sparse seed1 반복 16 runs는 아직 미실행이다. 필수 dictionary 64 runs 중 24 완료, 40 runs가 남았다.
   [READ 분석 계약](experiment_v1_4/analysis_plan.json)과 [P6 상태](experiment_v1_4/P6_STATUS.md)를 따른다.
-  P6 본학습 전 네 층의 scalar 통계 36개를 검증하고, 각 평가 전 층별 좌표/random·128후보 대조를 준비한다.
-  구현·검증은 `interp_v1_4/`, `tests_v1_4/`를 사용하고 P6 config를 실행 전에 고정한다.
+  구현·검증은 `interp_v1_4/`, `tests_v1_4/`를 사용하고 P7 평가 선택 규칙을 실행 전에 고정한다.
 - 활성 corpus는 `corpus_rebuild.json`에 지정된 `data/language_v1_4/rebuild_01/`이다.
   최초 거부 root를 학습하거나 완료한 gate/test를 다시 열지 않는다.
 - `experiment_v1_4/DESIGN.md`와 `README.md`는 현재 설계·실행 안내다. 현재 해석 범위는 `analysis_plan.json`, LM 동결 입력은 `design_config.json`과 `configs/`를 따른다. 현재 실행 상태는 `CURRENT.md`다.

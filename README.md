@@ -2,7 +2,7 @@
 
 Boolean 상태 추적 언어를 학습한 Transformer에서 READ 표현의 선형 접근성,
 **block 0·3·7·11** SAE·Transcoder feature의 의미와 인과적 효과를 분석한다.
-**현재 P5 완료, 다음은 P6 READ SAE다. 전체 해석 실험은 아직 미완료다.**
+**P1–P6 완료. 다음은 P7 READ SAE 의미·fidelity·인과 평가다. 전체 해석 실험은 아직 미완료다.**
 
 ## 1. 시작할 문서
 
@@ -49,14 +49,14 @@ MI/
 | v1.1 | 4-block, 3M | [행동 gate 실패](archive/legacy/experiment_v1_1/results/p3_stop_report.md) |
 | v1.2 | 4-block, 16M | [행동 gate 실패](archive/legacy/experiment_v1_2/results/p3_stop_report.md) |
 | v1.3 | 6-cell pilot, 32M confirm | [Confirm gate 실패](archive/legacy/experiment_v1_3/P3_STATUS.md) |
-| **v1.4** | **12×256, read4, 64M/seed** | [세 seed P5 완료](experiment_v1_4/P5_STATUS.md), P6 미실행 |
+| **v1.4** | **12×256, read4, 64M/seed** | [P6 완료·선택 SAE 24개](experiment_v1_4/P6_STATUS.md), P7 평가 대기 |
 
 Seed 0/1/2 일반 READ test는 99.9410% / 99.9472% / 99.9659%이며,
 선택 update는 7,983 / 7,983 / 8,399다. 세 seed 모두 해석 대상이다.
 [동결 모델 목록](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)을 따른다.
 네 층 각각의 SAE·TC·인과 평가·sparse seed 반복까지 마쳐야 전체 실험 완료다.
 P6 SAE 24 runs, P8 TC 24 runs, P9 초기화 반복 16 runs로 총 64 dictionary runs를 수행한다.
-학습 예산은 320,000 updates, 163.84M position draws이며 [P6 준비 상태](experiment_v1_4/P6_STATUS.md)를 따른다.
+학습 예산은 320,000 updates, 163.84M position draws이며 [P6 완료 상태](experiment_v1_4/P6_STATUS.md)를 따른다.
 
 ## 4. 원본 보존과 검증
 

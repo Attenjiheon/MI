@@ -1,0 +1,30 @@
+{
+  "status": "correction_prepared_gpu_reaudit_pending",
+  "p6_complete": false,
+  "original_log_sha256": "db6c12ad042626644b53657eadfff6a4ea3aca1448ba61e9222960574bfb9ae2",
+  "observed": {
+    "run": "seed0_l3_sae_k16_s0",
+    "update": 250,
+    "saved_mse": 0.030997336196491705,
+    "legacy_mse": 0.03099766511893298,
+    "absolute_error": 3.2892244127349923e-07,
+    "run_result_files_present": 24,
+    "original_contract_file_mismatches": 0
+  },
+  "change": "Match F.linear and float32 tensor scale; retain legacy numeric and TopK diagnostics",
+  "tolerance_unchanged": {
+    "atol": 1e-07,
+    "rtol": 1e-06
+  },
+  "production_unchanged": true,
+  "tests_passed": 8,
+  "isolated_bundle_check": "passed",
+  "files": {
+    "scripts/verify_v1_4_p6_return_r2.py": "6ab2eaa59d7827b0dbcd0374d4f4dccba48cf0f6e5d5ef3d9a19be048e2fc976",
+    "tests_v1_4/test_p6_audit_r2.py": "de171caf03a4d434c58278087b8cc440e54fe247cd69d80cadcb292760055f64",
+    "scripts/build_v1_4_p6_audit_r2.py": "4b8cdb8269dd4c055e5ef0bae12536d0aa1e12afc70abbdac5f38e53d4375a23",
+    "experiment_v1_4/bundles/P6/v1_4_p6_audit_r2.zip": "7542f5db6397628d449d32745176ab0508eb21222b34030ddc0c9bcf9501a5a0",
+    "experiment_v1_4/notebooks/P6/P6_completed_run_audit_r2.ipynb": "29dcb8a3d43196f1bb73666ddbe6b14f59b4cf7af20e0d8122733259eaf639fb"
+  },
+  "limitation": "CPU tests confirm reproduction of the production arithmetic. Actual failed GPU checkpoint is not available locally; root cause and all 24 runs require r2 returned evidence."
+}
