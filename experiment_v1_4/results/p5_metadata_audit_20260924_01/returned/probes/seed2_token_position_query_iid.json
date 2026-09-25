@@ -1,0 +1,300 @@
+{
+  "config_sha256": "8490365f3dc46ef1d10a899cfac3cd844c18616c6f20bb8a3b0b93e78563fd83",
+  "task_key": "v1.4|lm_seed=2|token_position|READ|query|iid",
+  "bootstrap_seed": 15953014127683065152,
+  "environment_id": "1c6b450a7927d03a",
+  "elapsed_seconds": 3.3033728350001184,
+  "result": {
+    "status": "passed",
+    "support": {
+      "train": [
+        {
+          "class_id": 0,
+          "positions": 12455,
+          "sequences": 3064
+        },
+        {
+          "class_id": 1,
+          "positions": 12609,
+          "sequences": 3061
+        },
+        {
+          "class_id": 2,
+          "positions": 12594,
+          "sequences": 3058
+        },
+        {
+          "class_id": 3,
+          "positions": 12342,
+          "sequences": 3067
+        }
+      ],
+      "val": [
+        {
+          "class_id": 0,
+          "positions": 2549,
+          "sequences": 618
+        },
+        {
+          "class_id": 1,
+          "positions": 2473,
+          "sequences": 621
+        },
+        {
+          "class_id": 2,
+          "positions": 2472,
+          "sequences": 611
+        },
+        {
+          "class_id": 3,
+          "positions": 2506,
+          "sequences": 617
+        }
+      ]
+    },
+    "ranking": null,
+    "candidate_count": 17,
+    "trace": [
+      {
+        "columns": [
+          9,
+          10,
+          11,
+          12,
+          15,
+          16
+        ],
+        "lam": 0.01,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 13,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": null,
+        "validation_balanced_accuracy": 1.0,
+        "validation_ce": 0.02682025652807531
+      },
+      {
+        "columns": [
+          9,
+          10,
+          11,
+          12,
+          15,
+          16
+        ],
+        "lam": 0.1,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 11,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": null,
+        "validation_balanced_accuracy": 1.0,
+        "validation_ce": 0.17026254544444008
+      },
+      {
+        "columns": [
+          9,
+          10,
+          11,
+          12,
+          15,
+          16
+        ],
+        "lam": 1.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 9,
+            "success": true,
+            "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH"
+          }
+        ],
+        "threshold": null,
+        "validation_balanced_accuracy": 1.0,
+        "validation_ce": 0.768507879458366
+      },
+      {
+        "columns": [
+          9,
+          10,
+          11,
+          12,
+          15,
+          16
+        ],
+        "lam": 10.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 13,
+            "success": true,
+            "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH"
+          }
+        ],
+        "threshold": null,
+        "validation_balanced_accuracy": 1.0,
+        "validation_ce": 1.291318285151573
+      }
+    ],
+    "selected": {
+      "full": {
+        "classes": 4,
+        "columns": [
+          9,
+          10,
+          11,
+          12,
+          15,
+          16
+        ],
+        "mean": [
+          0.2491,
+          0.25218,
+          0.25188,
+          0.24684,
+          0.09726748370273794,
+          0.01176602526989286
+        ],
+        "std": [
+          0.43249183807327507,
+          0.4342640298251745,
+          0.43409269240566584,
+          0.4311728358790707,
+          0.048011060017775775,
+          0.010731884725584376
+        ],
+        "coefficients": [
+          1.5271894369948007,
+          -0.50934966914578,
+          -0.5091770540333398,
+          -0.5062347864217187,
+          -0.00027296768200917374,
+          -0.0007625241412442307,
+          -0.006228116880926122,
+          -0.5114367913768346,
+          1.5286728668758487,
+          -0.5130632170415713,
+          -0.5100933777164947,
+          -0.0010866266640091435,
+          -0.0008101012746447427,
+          0.015179199507947482,
+          -0.511061745755888,
+          -0.5128607844090703,
+          1.5285266369332757,
+          -0.5097148989555058,
+          -0.0018150619263046883,
+          -0.001726415173694346,
+          0.013092717488524882,
+          -0.5046908998620785,
+          -0.5064624133209981,
+          -0.5062863658583643,
+          1.5260430630937194,
+          0.003174656272323643,
+          0.0032990405895839178,
+          -0.022043800115568113
+        ],
+        "lam": 0.01,
+        "removed_constant_columns": 11,
+        "threshold": null,
+        "validation_balanced_accuracy": 1.0,
+        "validation_ce": 0.02682025652807531
+      }
+    },
+    "test_support": [
+      {
+        "class_id": 0,
+        "positions": 5004,
+        "sequences": 1229
+      },
+      {
+        "class_id": 1,
+        "positions": 4999,
+        "sequences": 1232
+      },
+      {
+        "class_id": 2,
+        "positions": 5018,
+        "sequences": 1225
+      },
+      {
+        "class_id": 3,
+        "positions": 4979,
+        "sequences": 1231
+      }
+    ],
+    "evaluation": {
+      "full": {
+        "balanced_accuracy": 1.0,
+        "macro_f1": 1.0,
+        "observed_class_balanced_accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            5004,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            4999,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            5018,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            4979
+          ]
+        ],
+        "positions": 20000,
+        "class_counts": [
+          5004,
+          4999,
+          5018,
+          4979
+        ],
+        "binary_auroc": null,
+        "cluster_bootstrap": {
+          "seed": 15953014127683065152,
+          "requested": 1000,
+          "clusters": 1255,
+          "metrics": {
+            "balanced_accuracy": {
+              "valid": 1000,
+              "ci95": [
+                1.0,
+                1.0
+              ]
+            },
+            "macro_f1": {
+              "valid": 1000,
+              "ci95": [
+                1.0,
+                1.0
+              ]
+            },
+            "binary_auroc": {
+              "valid": 0,
+              "ci95": null
+            }
+          }
+        }
+      }
+    }
+  }
+}

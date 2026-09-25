@@ -1,17 +1,16 @@
 # 실험 실행 계획서
 
-작성일: 2026-09-10 · 최종 갱신: 2026-09-22
+작성일: 2026-09-10 · 최종 갱신: 2026-09-25
 기준: [01_experiment_design.md](./01_experiment_design.md), [03_experiment_spec.md](./03_experiment_spec.md)  
 실행 규칙: [AGENTS.md](./AGENTS.md)
 
 이 문서는 어떤 작업을 어떤 순서로 수행하고, 어떤 증빙이 있어야 다음 단계로 넘어갈지를 정한다. 체크박스는 실행 결과를 확인한 후에만 표시한다. 문서 작성 자체로 실험을 수행하거나 기존 코드·데이터의 검증 완료를 선언하지 않는다.
 
-## 현재 활성 버전 — v1.4 (2026-09-22)
+## 현재 활성 버전 — v1.4 (2026-09-25)
 
-**P4 완료. 다음 단계는 P5 — 세 동결 LM의 block 0 READ activation cache·probe다.**
+**P5 완료. 다음 단계는 P6 — 세 동결 LM의 block 0 READ SAE다.**
 Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 frozen test 반환 감사를 마쳤다.
-세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 진입 조건은 충족했지만,
-P5 실행 준비·cache 추출·probe fitting의 완료 증빙은 아직 없다. 전체 실험은 미완료다.
+세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. P6 이후 필수 해석 단계가 남아 전체 실험은 미완료다.
 
 | 단계 | v1.4 현재 상태 | 근거 또는 다음 조건 |
 |---|---|---|
@@ -19,8 +18,8 @@ P5 실행 준비·cache 추출·probe fitting의 완료 증빙은 아직 없다.
 | P2 | 완료 | [CPU/GPU smoke 상태](experiment_v1_4/P2_STATUS.md), [r3 GPU 반환 검증](experiment_v1_4/results/p3_audit_20260921_01/gpu_smoke/verification.json) |
 | P3 | **완료·passed** | [seed 0 반환 감사](experiment_v1_4/results/p3_audit_20260921_01/completion.json) |
 | P4 | **완료·passed** | [최종 반환 감사](experiment_v1_4/results/frozen_test_audit_20260922_01/completion.json), [P4 상태](experiment_v1_4/P4_STATUS.md) |
-| P5 | **다음 단계·진입 가능·미실행** | [동결 모델 3개](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)의 block 0 READ cache·full probe·기준선. 구체적 착수 순서는 §7.1 |
-| P6–P7 | 미실행·P5 대기 | 세 LM × k=4/16의 READ SAE 학습 6 runs 및 의미·fidelity·인과 평가 |
+| P5 | **완료·passed** | [독립 감사 완료](experiment_v1_4/results/p5_final_audit_20260925_01/completion.json), [상세 보고](experiment_v1_4/results/p5_final_audit_20260925_01/REPORT.md) |
+| P6–P7 | 미실행·P6 진입 가능 | 세 LM × k=4/16의 READ SAE 학습 6 runs 및 의미·fidelity·인과 평가 |
 | P8 | 미실행·P7 대기 | 같은 세 LM × k=4/16의 필수 READ TC 학습 6 runs 및 동일 평가 |
 | P9 | 미실행·P8 대기 | LM seed 0에서 SAE/TC × k=4/16, sparse seed 1의 4 runs 및 전체 평가 |
 | P10 | 미실행·선택 분석 | 필수 READ 분석 및 sparse 초기화 반복 완료 후 결정 |
@@ -128,7 +127,7 @@ P3 완료 커밋은 `d6b91ae`이며 원격 main 반영을 확인했다.
 Test 점수가 높다는 이유만으로 P4를 완료 처리하지 않는다.
 
 **P5 진입 조건:** P4 완료에 더해 **LM seed 0·1·2 중 최소 2개가 validation gate를 통과**해야 한다.
-현재 seed 0·1·2가 모두 통과했으며, [최종 test 반환 감사](experiment_v1_4/results/frozen_test_audit_20260922_01/REPORT.md)까지 완료해 P5 진입 조건을 충족했다. P5 자체는 아직 미실행이다. P4를 완료해도 전체 실험 완료는 아니며 필수 READ probe·SAE·TC·인과 평가와
+현재 seed 0·1·2가 모두 통과했으며, [최종 test 반환 감사](experiment_v1_4/results/frozen_test_audit_20260922_01/REPORT.md)까지 완료해 P5 진입 조건을 충족했다. P5도 아래 최종 반환 감사를 완료했다. P4를 완료해도 전체 실험 완료는 아니며 필수 READ probe·SAE·TC·인과 평가와
 LM seed 0의 sparse seed 1 반복이 남는다.
 
 **최종 행동 결과:** 정확도 %, first/repeat는 42-cell macro다. Test로 모델을 재선택하지 않는다.
@@ -149,8 +148,7 @@ P4 완료 커밋은 `6f7d2e9`이며 원격 main 반영을 확인했다.
 
 **선행 조건:** P4. v1.4는 LM seed 최소 2개의 validation gate 통과도 필요하다. **장소:** 추출 GPU, probe CPU.
 
-**v1.4 현재 상태:** 선행 조건 충족, 대상 seed 0·1·2, G=3. P5 자체는 미실행이며
-아래 완료 체크박스는 유지한다. 동결 입력과 준비 순서는 §18.3을 따른다.
+**v1.4 현재 상태:** seed 0·1·2, G=3의 P5 완료. [최종 감사](experiment_v1_4/results/p5_final_audit_20260925_01/REPORT.md)를 근거로 아래 조건을 확인했다.
 
 1. 통과 LM을 동결해 interp train/val/test의 고정 READ 위치에서 block 0 `h,u,m`을 수집한다.
 2. Cache key와 라벨 join, answer 이전 위치, shape/dtype, missing/class support를 검증한다.
@@ -158,19 +156,19 @@ P4 완료 커밋은 `6f7d2e9`이며 원격 main 반영을 확인했다.
 4. Full h/u/m probe 및 좌표/random 기준선을 fit하고 학습 전 LM·token/position·shuffled-label 대조군을 실행한다.
 5. IID, 현재≠과거, READ 변수 전이를 평가할 선택 절차를 고정한다. Test를 통한 수정은 하지 않는다.
 
-- [ ] READ train/val/test 각 50k/10k/20k 위치 또는 실제 부족 사유가 기록되었다.
-- [ ] Class support 미달 분석은 fitting하지 않고 NA/사유로 표시했다.
-- [ ] Random 방향과 128후보 subset seed, probe lambda/threshold/tie-break가 저장되었다.
+- [x] READ train/val/test 각 50k/10k/20k 위치 또는 실제 부족 사유가 기록되었다.
+- [x] Class support 미달 분석은 fitting하지 않고 NA/사유로 표시했다.
+- [x] Random 방향과 128후보 subset seed, probe lambda/threshold/tie-break가 저장되었다.
 
 **산출물:** cache·라벨·전처리, full probe/기준선 계수와 선택 기록, support 표.
 
 **완료 조건:** 의미 평가와 dictionary가 동일한 검증된 위치를 사용한다. Update 분석은 아직 시작하지 않는다.
 
-### 7.1 P5 — 다음 착수 단계: block 0 READ cache·probe (미실행)
+### 7.1 P5 — block 0 READ cache·probe (완료)
 
 **선행 조건:** P4 완료 및 최소 두 LM seed의 validation gate 통과. 세 seed 모두 충족했다.
 상세 실행 규격은 03 §2·§6–7·§10·§12–14, 01 §8, 02 §10·§14를 읽고 적용한다.
-아래 항목은 준비·실행 계획이며 완료 증빙을 대신하지 않는다.
+아래 실행 절차의 최종 증빙은 [완료 판정](experiment_v1_4/results/p5_final_audit_20260925_01/completion.json)이다.
 
 1. [동결 모델 목록](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)의
    seed 0·1·2 checkpoint와 hash를 확인한다. 입력 파일은
@@ -187,13 +185,13 @@ P4 완료 커밋은 `6f7d2e9`이며 원격 main 반영을 확인했다.
 6. 실제 반환 cache·probe 결과·선택 기록을 감사한 뒤 P5 상태와 registry를 갱신한다.
    P5 완료 전 P6 SAE 본학습을 시작하지 않는다.
 
-- [ ] P5 상태 문서·동결 config·실행/반환 계약과 debug 검증을 준비했다.
-- [ ] Colab 노트북·입력 번들과 실제 GPU 실행 증빙을 확보했다.
-- [ ] 세 LM의 READ cache·metadata join·quota·class support·train 전처리를 검증했다.
-- [ ] Full probe·기준선·대조군·validation 선택 및 이 절의 완료 조건을 검증했다.
-- [ ] 전체 12개 층 full probe 진단과 층별 support·결과·실패 사유를 보고했다.
+- [x] P5 상태 문서·동결 config·실행/반환 계약과 debug 검증을 준비했다. [r2 증빙](experiment_v1_4/results/p5_preparation_r2/verification.json).
+- [x] Colab 노트북·입력 번들과 실제 GPU 실행 증빙을 확보했다.
+- [x] 세 LM의 READ cache·metadata join·quota·class support·train 전처리를 검증했다.
+- [x] Full probe·기준선·대조군·validation 선택 및 이 절의 완료 조건을 검증했다.
+- [x] 전체 12개 층 full probe 진단과 층별 support·결과·실패 사유를 보고했다.
 
-**현재 없는 증빙:** 위 P5 전용 준비 기록, 본 cache, 본 probe 결과와 반환 감사.
+**완료 증빙:** 실제 GPU smoke·원본 cache·본 probe 결과와 독립 수치 감사 반환 검증. [P5 상태](experiment_v1_4/P5_STATUS.md)를 따른다. 원본 cache는 Drive에 보존하고 P6에서 동일 위치·전처리를 재사용한다.
 P2 debug smoke와 P4 행동 평가 통과를 P5 완료로 대신하지 않는다.
 
 전체 12개 층 full probe 진단은 동결 설계의 필수 진단이다. 필요한 hook·cache 범위를

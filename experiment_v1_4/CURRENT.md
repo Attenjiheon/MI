@@ -1,6 +1,6 @@
 # v1.4 현재 안내
 
-2026-09-22. **본 실험 v1.4, P1–P4 완료. P5 진입 가능·미실행.**
+2026-09-25. **본 실험 v1.4, P1–P5 완료. 다음은 P6 READ SAE(미실행).**
 
 현재 규격은 루트 [연구 설계](../01_experiment_design.md),
 [언어·코퍼스](../02_language_and_corpus.md), [상세 명세](../03_experiment_spec.md)에 통합했다.
@@ -21,6 +21,12 @@
 완료 보고서의 준비 단계 설명도 당시 이력이며 현재 상태를 덮어쓰지 않는다.
 과거 규격 source hash는 [통합 전 원문](../archive/specifications/pre_v1_4_integration/03_experiment_spec.md)에서 확인한다.
 
-다음은 seed 0·1·2의 block 0 READ `h/u/m` cache·probe 및 전체 층 full probe 진단이다.
-P5 전용 config·노트북·반환 검증을 준비하고 실제 결과를 확인한 뒤 완료 처리한다.
-기존 행동 gate/test를 다시 채점하거나 checkpoint를 재선택하지 않는다.
+다음은 세 동결 LM의 block 0 READ SAE, k=4/16이다. P6는 아직 실행하지 않았다.
+P5의 검증된 위치·scalar 전처리와 [cache manifest](results/p5_final_audit_20260925_01/p6_cache_manifest.json)를 재사용한다.
+기존 행동 gate/test와 probe 선택 규칙을 다시 열지 않는다.
+
+## P5 완료 (2026-09-25)
+
+[P5 상태](P5_STATUS.md) · [최종 감사](results/p5_final_audit_20260925_01/REPORT.md) · [완료 증빙](results/p5_final_audit_20260925_01/completion.json).
+3,510 task·240 cache·9개 scalar 통계 검증, 선택 모델 3,750개와 subset 포함 5,250개 평가의 독립 수치 재현 완료.
+SAE·TC·인과 평가·sparse seed 반복은 남아 있어 전체 실험 완료는 아니다.
