@@ -1,6 +1,6 @@
 # v1.4 현재 안내
 
-2026-09-25. **P1–P6 완료. 다음은 P7 — 네 층 SAE 의미·fidelity·인과 평가다. P7–P9는 미실행이다.**
+2026-09-28. **P1–P7 완료. 다음은 P8 READ Transcoder다. P8·P9는 미실행이다.**
 
 현재 규격은 [연구 설계](../01_experiment_design.md), [언어·코퍼스](../02_language_and_corpus.md),
 [상세 명세](../03_experiment_spec.md), [실행 계획](../phase.md)을 따른다.
@@ -43,3 +43,18 @@ P6 학습 완료를 전체 해석 실험 완료로 간주하지 않는다.
 2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
 수정 전 원문: [보존본](../maintenance/read_layers_20260925/originals/experiment_v1_4/CURRENT.md).
 동결 DESIGN/README의 기존 manifest hash는 [원본 경로·hash 목록](../maintenance/read_layers_20260925/originals.json)의 snapshot에서 검증한다.
+
+## 2026-09-26 P7 실행 준비
+
+P7 평가 계약·노트북·입력 번들의 로컬 검증을 마쳤다. GPU 본평가 0/24와 반환 감사는 대기다.
+[상태 및 실행 파일](P7_STATUS.md)을 따른다. P8은 아직 시작하지 않는다.
+
+## 2026-09-27 P7 GPU 결과 반환
+
+P7 24/24 평가 결과를 반환받았다. 원본 P5 cache를 사용하는 재현 감사가 남아 P7 완료 판정은 보류한다.
+[P7 상태와 추가 감사 노트북](P7_STATUS.md)을 따른다. P8은 아직 시작하지 않는다.
+
+## 2026-09-28 P7 완료
+
+[최종 감사 및 결과](results/p7_final_audit_20260928_01/REPORT.md), [완료 판정](results/p7_final_audit_20260928_01/completion.json)을 확인했다.
+24개 SAE의 모든 필수 평가와 원본 재현 감사를 마쳤다. 다음은 P8 TC 24 runs 및 동일 평가이며 P9 반복 16 runs도 남아 있다. 위 준비·대기 절은 당시 기록이다.

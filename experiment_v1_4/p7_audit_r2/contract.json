@@ -1,0 +1,21 @@
+{
+  "schema": "p7-source-return-audit-v1.4-r2",
+  "date": "2026-09-27",
+  "original_contract_sha256": "9fb4688636cea7c338fbc0da1292477915dd7fd9c1d45a76d981a6d85c0ca2b0",
+  "return_zip_sha256": "2d8d65b3bca7b6a0ec09d6f524d78c3495239ee2cf4a96fbc59a5187bf943449",
+  "scope": "Original cache checksum and labels; all novel refits; every test prediction and semantic CI; full train/val/test fidelity; full causal val bins; fixed first pair per test suite and first 16 reconstruction targets per run; all summary CIs and layer contrasts.",
+  "changes_to_experiment": "none: audit only; no new feature/checkpoint/threshold selection applied",
+  "numeric_tolerance": {
+    "metrics_atol": 2e-06,
+    "metrics_rtol": 2e-05,
+    "logits_atol": 1e-05,
+    "logits_rtol": 0.0001
+  },
+  "replay_sampling": "first frozen corpus order, never selected by effect",
+  "files": {
+    "scripts/audit_v1_4_p7_sources.py": "c765a1265fe88c75a5062e75b30da3487d72d76174eb0ebb892d4ef9aaceed8d",
+    "scripts/build_v1_4_p7_audit_r2.py": "568900028588db04cd7aa8a3d8d435dddba525918baded342cebc02e115df939",
+    "tests_v1_4/test_p7_source_audit.py": "8dc16f00fea24ff24a5de939497e614079a3c62b9f185deb5d10a58a84d3c769",
+    "experiment_v1_4/p7_audit_r2/return_manifest.json": "9441b98c0cb64e1ba2fd3205b61480b6714d3977c1bbc1f93a53297f22a8f154"
+  }
+}

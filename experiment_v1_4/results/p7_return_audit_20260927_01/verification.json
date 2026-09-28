@@ -1,0 +1,58 @@
+{
+  "status": "local_return_checks_passed_source_reproduction_pending",
+  "p7_complete": false,
+  "p8_eligible": false,
+  "returned_evaluation_runs": 24,
+  "local_checked_runs": 24,
+  "archive_sha256": "2d8d65b3bca7b6a0ec09d6f524d78c3495239ee2cf4a96fbc59a5187bf943449",
+  "verified_archive_members": 56919,
+  "config_sha256": "9fb4688636cea7c338fbc0da1292477915dd7fd9c1d45a76d981a6d85c0ca2b0",
+  "gpu_environment_id": "f8912b7ab0ca620d",
+  "counts": {
+    "selection_tasks": 1680,
+    "paired_causal_units": 49152,
+    "causal_rows": 4061712,
+    "summary_point_estimates": 57024,
+    "replacement_targets": 49152,
+    "semantic_reports": 3120
+  },
+  "phase_seconds": {
+    "select": 10763.807052066,
+    "semantic": 2818.075812002,
+    "patch": 20235.643686690004
+  },
+  "p6_validation_mse_max_relative_difference": 2.2021638896401102e-08,
+  "checks_passed": [
+    "archive and every member checksum",
+    "original contract and 582 input identities",
+    "T4 GPU smoke, lock and 24-run stage evidence",
+    "all validation trace choices, cumulative prefixes, candidate counts and P5 reused coefficients",
+    "all probe point metrics and every replacement CE from saved predictions/logits",
+    "all causal logits, margins, flips, candidate RNG and bin memberships",
+    "original-correct and both-correct subsets derived directly from original 15-token logits",
+    "all coverage and 57024 independently aggregated causal point estimates",
+    "P6 selected-validation MSE cross-check"
+  ],
+  "not_yet_verified": [
+    "full P5 cache-based probe refits and all predictions",
+    "full-pool independent fidelity and dead counts",
+    "full semantic/causal/replacement and layer-difference CI reproduction",
+    "source-based validation norm bins and fixed GPU replay samples"
+  ],
+  "next_notebook": "experiment_v1_4/notebooks/P7/P7_source_return_audit_r2.ipynb",
+  "next_bundle": "experiment_v1_4/bundles/P7/v1_4_p7_source_audit_r2.zip",
+  "evidence_sha256": {
+    "archive_verification.json": "1dae070393c78de260d1eeb41e954e133c0970ea66cf08fdf0214a317fa9d9f8",
+    "metadata_verification.json": "e54e2ef74c94b975f5e77be45fb96daf47500f5994d9d2fb169083b5c146f956",
+    "metadata_verification_r2.json": "5023fd16060d1c72c9c6475c1b26849c5955eb1d50e22d9e439ee6b891e853e6",
+    "p6_mse_crosscheck.json": "6121dd76ca874334efaaed62c26e0ab13e7ce81ba031fdb833a114b99ecf110d",
+    "raw_verification.log": "2decaaf5d50809d3d22332bbed2cdea30b0648126ff40330cc1d770d5e490366",
+    "metadata_verification_r2.log": "6682750569844a09fd8319116e2d0b84b12c3d5d4171216b33245e4a7c1ed97f",
+    "verify_archive.py": "aa0f1876d60dda7ce2c578d27d05da20a7a04d7a35954e880d727d91f9e1020d"
+  },
+  "audit_code_sha256": {
+    "scripts/verify_v1_4_p7_return.py": "341b55139bb14d006679c646c90f33560c9df9815bd52ff8f57dda0cb800eb15",
+    "scripts/audit_v1_4_p7_metadata.py": "c59c2d4522a46f7c3ef279519baf929f5464bc86fa0e73942c262a8c4934c715",
+    "scripts/audit_v1_4_p7_sources.py": "c765a1265fe88c75a5062e75b30da3487d72d76174eb0ebb892d4ef9aaceed8d"
+  }
+}

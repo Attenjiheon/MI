@@ -8,9 +8,9 @@
 
 ## 현재 활성 버전 — v1.4 (2026-09-25)
 
-**P6 완료. 다음 단계는 P7 — 세 동결 LM의 block 0·3·7·11 READ SAE 평가·개입이다.**
+**P7 완료. 다음 단계는 P8 — 세 동결 LM의 block 0·3·7·11 READ Transcoder 학습·평가다.**
 Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 frozen test 반환 감사를 마쳤다.
-세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. P7 이후 필수 해석 단계가 남아 전체 실험은 미완료다.
+세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. P8 이후 필수 해석 단계가 남아 전체 실험은 미완료다.
 
 | 단계 | v1.4 현재 상태 | 근거 또는 다음 조건 |
 |---|---|---|
@@ -20,8 +20,8 @@ Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 froz
 | P4 | **완료·passed** | [최종 반환 감사](experiment_v1_4/results/frozen_test_audit_20260922_01/completion.json), [P4 상태](experiment_v1_4/P4_STATUS.md) |
 | P5 | **완료·passed** | [독립 감사 완료](experiment_v1_4/results/p5_final_audit_20260925_01/completion.json), [상세 보고](experiment_v1_4/results/p5_final_audit_20260925_01/REPORT.md) |
 | P6 | 완료 | [24 SAE runs 전체 반환 감사](experiment_v1_4/results/p6_final_audit_20260925/REPORT.md) |
-| P7 | 미실행·진입 가능 | 선택 SAE 24개의 의미·fidelity·인과 평가 |
-| P8 | 미실행·P7 대기 | 같은 세 LM × 네 층 × k=4/16의 필수 READ TC 학습 24 runs 및 동일 평가 |
+| P7 | 완료 | [24개 평가·원본 재현 최종 감사](experiment_v1_4/results/p7_final_audit_20260928_01/completion.json) |
+| P8 | 미실행·진입 가능 | 같은 세 LM × 네 층 × k=4/16의 필수 READ TC 학습 24 runs 및 동일 평가 |
 | P9 | 미실행·P8 대기 | LM seed 0에서 네 층 × SAE/TC × k=4/16, sparse seed 1의 16 runs 및 전체 평가 |
 | P10 | 미실행·선택 분석 | 필수 READ 분석 및 sparse 초기화 반복 완료 후 결정 |
 | P11 | 최종 집계 미완료 | 단계별 기록은 누적하며 전체 필수 분석은 아직 남아 있음 |
@@ -233,13 +233,15 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 5. Changed/unchanged causal test에서 선택·identity·평균·전체 근사·full donor·random latent·좌표·random 방향 대조를 양방향으로 실행한다.
 6. 전체 pair와 양쪽 원래 정답 subset, matched/unmatched 결과·coverage, 기억/합성 조건을 분리해 집계한다.
 
-- [ ] 세 LM의 네 층·두 k, 두 feature 규모, 후보 수 대조와 모든 필수 인과 대조가 있다.
-- [ ] Feature·bin·후보를 test 효과로 다시 선택하지 않았다.
-- [ ] READ SAE의 핵심 표·그림과 실패/NA 사유가 확보되었다.
+- [x] 세 LM의 네 층·두 k, 두 feature 규모, 후보 수 대조와 모든 필수 인과 대조가 있다.
+- [x] Feature·bin·후보를 test 효과로 다시 선택하지 않았다.
+- [x] READ SAE의 핵심 표·그림과 실패/NA 사유가 확보되었다.
 
 **산출물:** SAE semantic/fidelity/causal 결과, 선택 feature/계수, bin·patch norm·coverage, READ SAE 그림.
 
 **완료 조건:** SAE 학습만이 아니라 의미·대체·인과 평가까지 끝난 후 P8로 진행한다.
+
+**완료 증빙:** [P7 최종 감사](experiment_v1_4/results/p7_final_audit_20260928_01/completion.json).
 
 ## 10. P8 — READ Transcoder 학습과 동일 평가
 
