@@ -127,3 +127,22 @@
 2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
 수정 전 원문: [보존본](maintenance/read_layers_20260925/originals/AGENTS.md).
 동결 DESIGN/README의 기존 manifest hash는 [원본 경로·hash 목록](maintenance/read_layers_20260925/originals.json)의 snapshot에서 검증한다.
+
+## 2026-09-29 P8 학습 반환 감사
+
+P8 TC 24 runs 학습 및 504 checkpoint·480 validation 수치 검산 반환 감사를 통과했다.
+근거는 `experiment_v1_4/results/p8_training_audit_20260929_01/completion.json`과 `selected_tc_manifest.json`이다.
+다음은 `P8_STATUS.md`의 TC 평가 노트북이다. 실제 의미·fidelity·대체·인과 평가는 0/24로 P8은 미완료다.
+필수 dictionary 64 runs 중 48 학습 완료, P9 반복 16 runs 학습이 남았다. 학습 완료와 평가 완료를 구분한다.
+
+## 2026-09-29 P8 평가 반환
+
+P8 TC 평가 24/24 반환의 파일 hash·선택·원시 지표·대조군·집계 로컬 감사가 통과했다.
+`experiment_v1_4/results/p8_return_audit_20260929_01/status.json`과 `P8_STATUS.md`의 추가 감사 노트북을 따른다.
+원본 P5 cache refit·예측/fidelity/CI 재현 감사의 실제 반환 확인 전까지 P8은 미완료이며 P9는 대기다.
+
+## 2026-09-30 P8 완료
+
+P8 TC 24 runs의 학습·전체 필수 평가·원본 cache 재현 반환 감사가 통과했다.
+현재 근거는 `experiment_v1_4/results/p8_final_audit_20260930_01/completion.json`과 `REPORT.md`다.
+필수 dictionary 64개 중 48개 학습·평가 완료. 다음은 P9 LM seed 0·block 0/3/7/11·SAE/TC·k=4/16·sparse seed 1 반복 16개와 동일 평가다. P9는 아직 미실행이며 전체 실험은 미완료다. 앞선 P8 대기 절은 당시 이력이다.

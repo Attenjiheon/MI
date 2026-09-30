@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Users/jangjiheon/Desktop/MI/scripts/audit_v1_4_p8_return_tail.py", line 39, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/Users/jangjiheon/Desktop/MI/scripts/audit_v1_4_p8_return_tail.py", line 32, in main
+    raw=raw_audit(ROOT,tmp,[name]);meta=metadata_audit(tmp,OUT,[name])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jangjiheon/Desktop/MI/scripts/audit_v1_4_p8_raw.py", line 94, in audit
+    rows = [r for r in saved['rows'] if r['size']==size and r['direction']==direction]
+                       ~~~~~^^^^^^^^
+IndexError: only integers, slices (`:`), ellipsis (`...`), numpy.newaxis (`None`) and integer or boolean arrays are valid indices
