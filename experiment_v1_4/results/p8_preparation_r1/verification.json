@@ -1,0 +1,56 @@
+{
+  "status": "passed_training_preparation_only",
+  "p8_complete": false,
+  "p9_eligible": false,
+  "production_runs_completed": 0,
+  "required_training_runs": 24,
+  "required_evaluations_completed": 0,
+  "config_sha256": "0c8307bc44083a6fb9c49830e2265e3437eab1d6a439dedba24468a3ca7b4633",
+  "source_files_verified": 117,
+  "bundle_members": 118,
+  "bundle_sha256": "791c41d2bb5133455f845dd3b18a1d1799af95cdf3042146fae71fa584d43bd9",
+  "bundle_bytes": 929531,
+  "notebook_sha256": "af19bfc6357d57252e8cb0253bf0bc82ad173fdafc5953354832aca383b55c71",
+  "notebook_schema": "nbformat validated",
+  "code_cells": "all compiled",
+  "local_tests": {
+    "passed": 15,
+    "seconds": 5.32
+  },
+  "standalone_bundle_tests": {
+    "passed": 15,
+    "seconds": 6.43
+  },
+  "cpu_smoke": {
+    "path": "experiment_v1_4/smoke/p8_cpu_r1/smoke.json",
+    "sha256": "425b5b3abe247586ab78e72687a5c198c2a28936b48f03c4d574aaf97e982d0e",
+    "environment_id": "92a9339c663b9cd7",
+    "elapsed_seconds": 31.192091941833496,
+    "layers": [
+      0,
+      3,
+      7,
+      11
+    ],
+    "resume_combinations": 8,
+    "model_optimizer_sampler_resume": "bitwise"
+  },
+  "prerequisites": "P5/P6/P7 completion-linked evidence hashes and all 36 P6 scalar-statistic files verified",
+  "paired_position_draws": "all 24 TC run draw keys/seeds equal audited SAE contract; 100x512 draws per pair tested",
+  "training_target": "u input normalized with u statistics; m target normalized with m statistics; independent MSE and two-update replay passed",
+  "patch_checks": "s_m output scaling, identity logits and original residual skip verified at all four layers",
+  "evaluation_rules": "frozen before TC training; full u/full m, m coordinates/random, TC latent, all/128 candidates, P7 shared reconstruction targets and causal quotas",
+  "pending": [
+    "Colab source-cache byte verification and preparation",
+    "Current-environment CUDA smoke",
+    "24 TC production runs and 504 checkpoint/480 validation numerical audit",
+    "Returned training evidence audit and selected TC checkpoint binding",
+    "Semantic/fidelity/replacement/causal evaluation implementation and GPU/CPU execution",
+    "Required SAE/TC figures and final independent evidence audit"
+  ],
+  "commands": [
+    "/opt/anaconda3/bin/python scripts/build_v1_4_p8.py",
+    "/opt/anaconda3/bin/python -m pytest tests_v1_4/test_p8.py -q",
+    "/opt/anaconda3/bin/python -m interp_v1_4.p8 smoke --root . --output experiment_v1_4/smoke/p8_cpu_r1 --device cpu"
+  ]
+}

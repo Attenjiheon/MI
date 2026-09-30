@@ -1,6 +1,6 @@
 # experiment_v1_4
 
-**P1–P7 완료. 다음 단계는 block 0·3·7·11 READ Transcoder(P8)다.**
+**P1–P8 완료. 다음 단계는 P9 sparse seed 1 반복 16 runs와 전체 평가다.**
 
 12-block × 256-width Transformer 세 seed를 동결해 READ 표현을 분석한다.
 활성 corpus는 `data/language_v1_4/rebuild_01/`이며 세 LM 모두 validation gate를 통과했다.
@@ -20,7 +20,7 @@
 | P5 cache·probe | 완료 | 전 12층 cache·full probe 및 [독립 감사](results/p5_final_audit_20260925_01/REPORT.md) |
 | P6 SAE | 완료 | 24 runs·120k updates·[전체 반환 감사](results/p6_final_audit_20260925/REPORT.md) |
 | P7 SAE 평가·개입 | 완료 | [24개 평가와 원본 재현 반환 감사](results/p7_final_audit_20260928_01/REPORT.md) |
-| P8 TC 학습·평가·개입 | 미실행 | 24 runs 및 네 층의 동일 평가 |
+| P8 TC 학습·평가·개입 | 완료 | [24 runs 최종 감사](results/p8_final_audit_20260930_01/completion.json) |
 | P9 초기화 반복 | 미실행 | LM seed 0, 네 층 × 2도구 × 2 k = 16 runs |
 | P10 선택 분석 | 미실행 | Update, 필수 집합 이외의 층, 길이 평가, m→m SAE |
 | P11 최종 집계 | 미완료 | 네 층·LM seed·sparse seed별 결과 및 실패·미완료 기록 |
@@ -30,7 +30,7 @@
 P6의 [선택 checkpoint 24개](results/p6_final_audit_20260925/selected_sae_manifest.json)와
 검증된 P5 cache/36개 scalar 통계를 사용한다. P7에서 층별 좌표/random·128후보 기준선,
 사후 감독 의미 평가, fidelity·근사 대체 및 모든 필수 인과 대조를 수행한다.
-P8 TC 24 runs와 P9 초기화 반복 16 runs가 남아 있으며 전체 실험은 미완료다.
+P8 TC 24 runs와 전체 평가를 완료했다. P9 초기화 반복 16 runs가 남아 전체 실험은 미완료다.
 
 ## 변경 기록
 
@@ -52,3 +52,26 @@ P7 24/24 평가 결과를 반환받았다. 원본 P5 cache를 사용하는 재�
 
 [최종 감사 및 결과](results/p7_final_audit_20260928_01/REPORT.md), [완료 판정](results/p7_final_audit_20260928_01/completion.json)을 확인했다.
 24개 SAE의 모든 필수 평가와 원본 재현 감사를 마쳤다. 다음은 P8 TC 24 runs 및 동일 평가이며 P9 반복 16 runs도 남아 있다. 위 준비·대기 절은 당시 기록이다.
+
+## 2026-09-29 P8 첫 학습 전달물 준비
+
+P8 TC 24 runs의 학습 계약·평가 규칙과 Colab 노트북·입력 번들을 준비하고 로컬 검증을 마쳤다.
+실제 CUDA 학습 0/24, 평가 0/24로 P8은 미완료다. [P8 상태와 실행 파일](P8_STATUS.md)을 따른다.
+학습 반환 감사 후 선택 checkpoint를 연결한 의미·대체·인과 평가를 이어간다.
+
+## 2026-09-29 P8 학습 감사 완료·TC 평가 준비
+
+TC 24/24 학습과 504 checkpoint·480 validation 검산 반환 감사를 통과했다.
+의미·fidelity·대체·인과 평가 노트북·입력 번들의 로컬 검증을 마쳤다. 실제 평가 0/24이며 P8 전체는 미완료다.
+[P8 상태와 다음 실행 파일](P8_STATUS.md), [학습 감사](results/p8_training_audit_20260929_01/REPORT.md)를 따른다.
+
+## 2026-09-29 P8 평가 반환
+
+24 TC 평가 결과의 전체 파일 hash·선택·원시 지표·대조군·집계 로컬 감사가 통과했다.
+P5 원본 cache 재현 감사는 아직 대기로 P8 미완료다. [P8 상태와 추가 감사 파일](P8_STATUS.md)을 따른다.
+
+## 2026-09-30 P8 완료
+
+[최종 보고서](results/p8_final_audit_20260930_01/REPORT.md), [완료 판정](results/p8_final_audit_20260930_01/completion.json)을 확인했다.
+24 TC의 전체 필수 평가와 원본 재현 반환 감사가 통과했다. 840개 고유 refit, 1,920 probe 작업, 3,360 의미 보고와 fidelity/CI 재현 기록을 검증했다.
+필수 dictionary 64개 중 48개 학습·평가 완료, P9 sparse seed 1 반복 16개는 미실행이다. 전체 실험은 미완료다. 앞선 대기·실행 안내는 당시 이력이다.
