@@ -1,6 +1,6 @@
 # v1.4 현재 안내
 
-2026-09-30. **P1–P8 완료. 다음은 P9 sparse seed 1 반복 16 runs와 전체 평가다.**
+2026-09-30. **P1–P9 완료. 다음은 P10 선택 분석 결정과 P11 최종 집계다.**
 
 현재 규격은 [연구 설계](../01_experiment_design.md), [언어·코퍼스](../02_language_and_corpus.md),
 [상세 명세](../03_experiment_spec.md), [실행 계획](../phase.md)을 따른다.
@@ -44,6 +44,10 @@ P6 학습 완료를 전체 해석 실험 완료로 간주하지 않는다.
 수정 전 원문: [보존본](../maintenance/read_layers_20260925/originals/experiment_v1_4/CURRENT.md).
 동결 DESIGN/README의 기존 manifest hash는 [원본 경로·hash 목록](../maintenance/read_layers_20260925/originals.json)의 snapshot에서 검증한다.
 
+## 로컬 파일 가용성
+
+[2026-09-25 용량 정리](../maintenance/disk_cleanup_20260925/REPORT.md)를 따른다. 완료 단계 ZIP과 과거 corpus는 요약·삭제했고 활성 corpus·동결 LM·P5 최종 증빙·P6 입력 및 소형 반환 ZIP은 보존했다. P6 전체 반환 ZIP은 정리 이전부터 로컬에 없었다. 위의 과거 준비 문구는 당시 이력이며 현재 감사 상태는 [P6 상태의 최신 절](P6_STATUS.md#r2-수치-검산-반환-확인)을 따른다.
+
 ## 2026-09-26 P7 실행 준비
 
 P7 평가 계약·노트북·입력 번들의 로컬 검증을 마쳤다. GPU 본평가 0/24와 반환 감사는 대기다.
@@ -81,3 +85,29 @@ P5 원본 cache 재현 감사는 아직 대기로 P8 미완료다. [P8 상태와
 [최종 보고서](results/p8_final_audit_20260930_01/REPORT.md), [완료 판정](results/p8_final_audit_20260930_01/completion.json)을 확인했다.
 24 TC의 전체 필수 평가와 원본 재현 반환 감사가 통과했다. 840개 고유 refit, 1,920 probe 작업, 3,360 의미 보고와 fidelity/CI 재현 기록을 검증했다.
 필수 dictionary 64개 중 48개 학습·평가 완료, P9 sparse seed 1 반복 16개는 미실행이다. 전체 실험은 미완료다. 앞선 대기·실행 안내는 당시 이력이다.
+
+## 2026-09-30 P9 학습 전달물
+
+LM seed 0의 sparse seed 1 SAE/TC 16 runs를 위한 학습·검산 노트북과 입력 번들을 준비했다.
+[실행 파일과 상태](P9_STATUS.md)를 따른다. CUDA 학습 0/16, 전체 평가 0/16으로 P9는 미완료다.
+학습 반환 감사 후 선택 checkpoint를 연결한 전체 평가를 진행한다.
+
+## 2026-09-30 P9 학습 감사 완료·평가 준비
+
+16/16 sparse seed 1 학습과 336 checkpoint·320 validation 검산 반환 감사를 통과했다.
+[학습 감사](results/p9_training_audit_20260930_01/REPORT.md), [P9 평가 실행 파일](P9_STATUS.md)을 따른다.
+64개 필수 dictionaries 학습은 완료했으며 48개 평가 완료·P9 16개 평가 대기다. P9와 전체 실험은 미완료다.
+
+
+## 2026-10-01 P9 평가 반환·원본 재현 감사 준비
+
+P9 SAE 8개·TC 8개 전체 평가 반환의 로컬 감사가 통과했다. 38,080 파일 hash, causal pairs 32,768개, READ 대체 targets 32,768개, probe tasks 1,200개와 초기화 비교 44,880행을 확인했다. 원본 cache refit·예측/fidelity/CI 재현 및 고정 GPU replay 감사가 남아 P9와 전체 실험은 미완료이며 P10은 대기다.
+
+[P9 상태·감사 노트북·입력 ZIP](P9_STATUS.md)을 따른다.
+
+
+## 2026-10-02 P9 완료
+
+16개 sparse seed 1 SAE/TC의 학습·전체 평가·원본 cache 재현 반환 감사를 통과했다. 필수 dictionary 64개 모두 학습·평가·감사 완료다. P10 선택 분석 결정과 P11 최종 집계는 남아 전체 실험은 미완료다. 앞선 P9 대기 안내는 당시 이력이다.
+
+[최종 감사](results/p9_final_audit_20261002_01/REPORT.md), [완료 판정](results/p9_final_audit_20261002_01/completion.json)을 따른다.

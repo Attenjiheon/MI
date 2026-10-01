@@ -64,3 +64,15 @@ experiment_v1_4/results/p8*/**/nvidia-smi.txt whitespace=-blank-at-eol
 experiment_v1_4/smoke/p8*/**/nvidia-smi.txt whitespace=-blank-at-eol
 # Preserve the exact audited helper bytes.
 scripts/audit_v1_4_p8_metadata.py whitespace=-blank-at-eof
+
+# P9 immutable deliveries, returns, and selected sparse dictionaries.
+experiment_v1_4/bundles/P9/*.zip filter=lfs diff=lfs merge=lfs -text
+experiment_v1_4/evidence/P9/*.zip filter=lfs diff=lfs merge=lfs -text
+experiment_v1_4/p9_selected/**/*.pt filter=lfs diff=lfs merge=lfs -text
+experiment_v1_4/results/p9*/**/*.csv whitespace=cr-at-eol
+experiment_v1_4/results/p9*/**/nvidia-smi.txt whitespace=-blank-at-eol
+experiment_v1_4/smoke/p9*/**/nvidia-smi.txt whitespace=-blank-at-eol
+# Preserve audited P9 helper bytes.
+scripts/audit_v1_4_p9_metadata.py whitespace=-blank-at-eof
+scripts/audit_v1_4_p9_sae_sources.py whitespace=-blank-at-eof
+scripts/audit_v1_4_p9_tc_sources.py whitespace=-blank-at-eof
