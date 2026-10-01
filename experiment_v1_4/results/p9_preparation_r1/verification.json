@@ -1,0 +1,53 @@
+{
+  "status": "passed_training_preparation_only",
+  "p9_complete": false,
+  "whole_experiment_complete": false,
+  "required_training_runs": 16,
+  "production_runs_completed": 0,
+  "required_evaluations_completed": 0,
+  "config_sha256": "157d80521319f0e8e8c20ee59e67d8ebb8b10df74370049c128db5061b179720",
+  "source_files_verified": 106,
+  "bundle_members": 107,
+  "bundle_sha256": "9cda14b9e58bf6ff41f88501799007fce1e9e49824ac9f9155c18b027905048d",
+  "bundle_bytes": 848983,
+  "notebook_sha256": "ec7db7aeee67a91b992d2fa24db34cf64aabaa3d4bdb467ef910b7685ae62be3",
+  "notebook_schema": "nbformat validated; all code cells compiled",
+  "local_tests": {
+    "passed": 19,
+    "seconds": 5.74
+  },
+  "standalone_bundle_tests": {
+    "path": "/var/folders/m4/tbjv0v953236k3zhqsds9m840000gn/T/p9-standalone-b2wzzwxi",
+    "test_stdout": "...................                                                      [100%]\n19 passed in 5.97s\n",
+    "returncode": 0,
+    "notebook_valid": true
+  },
+  "cpu_smoke": {
+    "path": "experiment_v1_4/smoke/p9_cpu_r1_verified/smoke.json",
+    "sha256": "5e9468a3a0b82003c9f857ae0164db3e05022545072f397ed4e0fbe8b0464954",
+    "environment_id": "92a9339c663b9cd7",
+    "elapsed_seconds": 26.420704126358032,
+    "layers": [
+      0,
+      3,
+      7,
+      11
+    ],
+    "resume_combinations": 16,
+    "resume": "bitwise model/optimizer/sampler"
+  },
+  "prerequisites": "P6/P7/P8 linked completion evidence hashes and 12 seed0 scalar statistics verified",
+  "pending": [
+    "Original P5 cache verification on Drive",
+    "Current-environment CUDA smoke",
+    "16 production runs; 336 checkpoint and 320 validation numerical audit",
+    "Returned training evidence audit and selected checkpoint binding",
+    "All semantic/fidelity/replacement/causal evaluation and source reproduction audit",
+    "Sparse initialization comparison tables and figures"
+  ],
+  "commands": [
+    "/opt/anaconda3/bin/python scripts/build_v1_4_p9.py",
+    "/opt/anaconda3/bin/python -m pytest tests_v1_4/test_p9.py -q",
+    "/opt/anaconda3/bin/python -m interp_v1_4.p9 smoke --root . --output experiment_v1_4/smoke/p9_cpu_r1_verified --device cpu"
+  ]
+}

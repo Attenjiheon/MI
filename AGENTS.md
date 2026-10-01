@@ -146,3 +146,24 @@ P8 TC 평가 24/24 반환의 파일 hash·선택·원시 지표·대조군·집�
 P8 TC 24 runs의 학습·전체 필수 평가·원본 cache 재현 반환 감사가 통과했다.
 현재 근거는 `experiment_v1_4/results/p8_final_audit_20260930_01/completion.json`과 `REPORT.md`다.
 필수 dictionary 64개 중 48개 학습·평가 완료. 다음은 P9 LM seed 0·block 0/3/7/11·SAE/TC·k=4/16·sparse seed 1 반복 16개와 동일 평가다. P9는 아직 미실행이며 전체 실험은 미완료다. 앞선 P8 대기 절은 당시 이력이다.
+
+## 2026-10-01 P9 학습 감사·평가 준비
+
+P9 sparse seed 1 SAE/TC 16 runs의 학습·336 checkpoint·320 validation 수치 검산 반환 감사가 통과했다.
+근거는 `experiment_v1_4/results/p9_training_audit_20260930_01/completion.json`과 `selected_dictionary_manifest.json`이다.
+학습은 다시 실행하지 않는다. 다음은 `P9_STATUS.md`의 전체 평가 노트북과 입력 ZIP이다.
+필수 64 dictionaries 학습 완료·48개 전체 평가 완료·P9 16개 전체 평가 대기이며 P9와 전체 실험은 미완료다.
+
+
+## 2026-10-01 P9 평가 반환·원본 재현 감사 준비
+
+P9 SAE 8개·TC 8개 전체 평가 반환의 로컬 감사가 통과했다. 38,080 파일 hash, causal pairs 32,768개, READ 대체 targets 32,768개, probe tasks 1,200개와 초기화 비교 44,880행을 확인했다. 원본 cache refit·예측/fidelity/CI 재현 및 고정 GPU replay 감사가 남아 P9와 전체 실험은 미완료이며 P10은 대기다.
+
+근거는 `experiment_v1_4/results/p9_return_audit_20261001_01/status.json`이다. `P9_STATUS.md`의 원본 재현 감사 노트북·입력 ZIP을 따른다. 앞선 P9 미실행·평가 대기 절은 당시 이력이다.
+
+
+## 2026-10-02 P9 완료
+
+16개 sparse seed 1 SAE/TC의 학습·전체 평가·원본 cache 재현 반환 감사를 통과했다. 필수 dictionary 64개 모두 학습·평가·감사 완료다. P10 선택 분석 결정과 P11 최종 집계는 남아 전체 실험은 미완료다. 앞선 P9 대기 안내는 당시 이력이다.
+
+근거는 `experiment_v1_4/results/p9_final_audit_20261002_01/completion.json`과 `REPORT.md`다. P9 학습·본평가를 다시 실행하지 않는다.

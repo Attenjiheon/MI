@@ -1,0 +1,32 @@
+{
+  "schema": "p9-source-return-audit-v1.4-r1",
+  "date": "2026-10-01",
+  "original_contract_sha256": {
+    "sae": "9e172a2dc3914e7881d7d3f1c3e1647bd4956d25a895d816fea4ac74a3dc2fbc",
+    "tc": "6ab23de4c19ffd756bfcd408b5b3f1fb5e3a067ddc3960050412bedab9930efc"
+  },
+  "return_zip_sha256": "7900644540f916183eaa30b957e2e8f62bfa9972c700364887dc9eff391b77a1",
+  "scope": "All novel refits; all test probabilities, semantic metrics/CI; full train/val/test fidelity/dead rates; full causal validation bins; first frozen pair per test suite and first 16 reconstruction targets per run; all summary CI, layer contrasts and sparse seed comparison.",
+  "runs": 16,
+  "novel_refits_expected": 560,
+  "probe_tasks_expected": 1200,
+  "fidelity_positions_per_run": 80000,
+  "causal_replayed_pairs_per_run": 4,
+  "replacement_replayed_targets_per_run": 16,
+  "numeric_tolerance": {
+    "metrics_atol": 2e-06,
+    "metrics_rtol": 2e-05,
+    "logits_atol": 1e-05,
+    "logits_rtol": 0.0001
+  },
+  "replay_sampling": "fixed original corpus order, independent of effects",
+  "changes_to_experiment": "none; audit does not change model/feature/threshold/candidates/bins",
+  "files": {
+    "scripts/audit_v1_4_p9_sources.py": "39154fa6bc1b646260c966c36731fe0ac8ea0747f49c79f95d7b9ec6c587e855",
+    "scripts/audit_v1_4_p9_sae_sources.py": "055c07bca92f6d43a98be54d3b58b54ce0d75cd6fcc78d7ba4f680c60d869752",
+    "scripts/audit_v1_4_p9_tc_sources.py": "45ec65bffe413bb0043a96cdce93341feb2bb442ac0c52686f612632d3355ac8",
+    "scripts/build_v1_4_p9_audit_r1.py": "b55fa6d9dac92a7c744fc6751425c4f8836a24965f82180efb2ad511dcbe1e1f",
+    "tests_v1_4/test_p9_source_audit.py": "bcaafa0303879b1c97eb822a33f25d0b65529a49a42d0831f3750624ba99da6b",
+    "experiment_v1_4/p9_audit_r1/return_manifest.json": "52156eec4ef52947b180dab3fe823ce0e9f0531f03ff1ceebea20821abba2231"
+  }
+}

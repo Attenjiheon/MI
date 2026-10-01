@@ -1,6 +1,6 @@
 # experiment_v1_4
 
-**P1–P8 완료. 다음 단계는 P9 sparse seed 1 반복 16 runs와 전체 평가다.**
+**P1–P9 완료. 다음은 P10 선택 분석 결정과 P11 최종 집계다.**
 
 12-block × 256-width Transformer 세 seed를 동결해 READ 표현을 분석한다.
 활성 corpus는 `data/language_v1_4/rebuild_01/`이며 세 LM 모두 validation gate를 통과했다.
@@ -21,7 +21,7 @@
 | P6 SAE | 완료 | 24 runs·120k updates·[전체 반환 감사](results/p6_final_audit_20260925/REPORT.md) |
 | P7 SAE 평가·개입 | 완료 | [24개 평가와 원본 재현 반환 감사](results/p7_final_audit_20260928_01/REPORT.md) |
 | P8 TC 학습·평가·개입 | 완료 | [24 runs 최종 감사](results/p8_final_audit_20260930_01/completion.json) |
-| P9 초기화 반복 | 미실행 | LM seed 0, 네 층 × 2도구 × 2 k = 16 runs |
+| P9 초기화 반복 | 완료: 16/16 학습·평가·원본 재현 감사 통과 | [P9 실행 파일과 상태](P9_STATUS.md) |
 | P10 선택 분석 | 미실행 | Update, 필수 집합 이외의 층, 길이 평가, m→m SAE |
 | P11 최종 집계 | 미완료 | 네 층·LM seed·sparse seed별 결과 및 실패·미완료 기록 |
 
@@ -30,7 +30,7 @@
 P6의 [선택 checkpoint 24개](results/p6_final_audit_20260925/selected_sae_manifest.json)와
 검증된 P5 cache/36개 scalar 통계를 사용한다. P7에서 층별 좌표/random·128후보 기준선,
 사후 감독 의미 평가, fidelity·근사 대체 및 모든 필수 인과 대조를 수행한다.
-P8 TC 24 runs와 전체 평가를 완료했다. P9 초기화 반복 16 runs가 남아 전체 실험은 미완료다.
+P9 초기화 반복까지 필수 64개 dictionary 분석을 완료했다. P10 결정·P11 최종 집계가 남아 전체 실험은 미완료다.
 
 ## 변경 기록
 
@@ -75,3 +75,21 @@ P5 원본 cache 재현 감사는 아직 대기로 P8 미완료다. [P8 상태와
 [최종 보고서](results/p8_final_audit_20260930_01/REPORT.md), [완료 판정](results/p8_final_audit_20260930_01/completion.json)을 확인했다.
 24 TC의 전체 필수 평가와 원본 재현 반환 감사가 통과했다. 840개 고유 refit, 1,920 probe 작업, 3,360 의미 보고와 fidelity/CI 재현 기록을 검증했다.
 필수 dictionary 64개 중 48개 학습·평가 완료, P9 sparse seed 1 반복 16개는 미실행이다. 전체 실험은 미완료다. 앞선 대기·실행 안내는 당시 이력이다.
+
+## 2026-10-01 P9 평가 전달물
+
+16개 초기화 반복의 학습 반환 감사를 통과했다. [P9 평가 노트북·입력 ZIP](P9_STATUS.md)을 준비하고 로컬 검증을 마쳤다. 실제 전체 평가 0/16으로 P9와 전체 실험은 미완료다.
+
+
+## 2026-10-01 P9 평가 반환·원본 재현 감사 준비
+
+P9 SAE 8개·TC 8개 전체 평가 반환의 로컬 감사가 통과했다. 38,080 파일 hash, causal pairs 32,768개, READ 대체 targets 32,768개, probe tasks 1,200개와 초기화 비교 44,880행을 확인했다. 원본 cache refit·예측/fidelity/CI 재현 및 고정 GPU replay 감사가 남아 P9와 전체 실험은 미완료이며 P10은 대기다.
+
+[P9 상태·감사 노트북·입력 ZIP](P9_STATUS.md)을 따른다.
+
+
+## 2026-10-02 P9 완료
+
+16개 sparse seed 1 SAE/TC의 학습·전체 평가·원본 cache 재현 반환 감사를 통과했다. 필수 dictionary 64개 모두 학습·평가·감사 완료다. P10 선택 분석 결정과 P11 최종 집계는 남아 전체 실험은 미완료다. 앞선 P9 대기 안내는 당시 이력이다.
+
+[최종 감사](results/p9_final_audit_20261002_01/REPORT.md), [완료 판정](results/p9_final_audit_20261002_01/completion.json)을 따른다.

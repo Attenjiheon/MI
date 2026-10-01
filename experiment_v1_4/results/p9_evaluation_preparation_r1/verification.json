@@ -1,0 +1,59 @@
+{
+  "status": "passed_evaluation_preparation_only",
+  "p9_training_complete": true,
+  "p9_complete": false,
+  "whole_experiment_complete": false,
+  "required_evaluations": 16,
+  "production_evaluations_completed": 0,
+  "bundle_sha256": "3ce8f0f01b54930ffcad9a4c56c5f2f601e31ebad86de21fafe7b08bbfcacbad",
+  "bundle_bytes": 178895632,
+  "bundle_members": 332,
+  "notebook_sha256": "46f1a1156267ccddfa196ac79503b164417c66a3cffc912154767d57a07610b5",
+  "notebook_schema": "validated; all code cells compiled",
+  "contracts": {
+    "sae": "9e172a2dc3914e7881d7d3f1c3e1647bd4956d25a895d816fea4ac74a3dc2fbc",
+    "tc": "6ab23de4c19ffd756bfcd408b5b3f1fb5e3a067ddc3960050412bedab9930efc"
+  },
+  "comparison_contract_sha256": "c07cbfdb330c66de780ffc3a516a424d0adad9aea451fd8c54c46f58e6d011c3",
+  "local_tests": {
+    "passed": 24,
+    "seconds": 23.18,
+    "stdout": "........................                                                 [100%]\n24 passed in 23.18s\n"
+  },
+  "standalone_bundle_tests": {
+    "path": "/var/folders/m4/tbjv0v953236k3zhqsds9m840000gn/T/p9-eval-standalone-ww_dezl8",
+    "stdout": "........................                                                 [100%]\n24 passed in 10.31s\n",
+    "stderr": "",
+    "returncode": 0
+  },
+  "cpu_smoke": {
+    "sae": {
+      "path": "experiment_v1_4/smoke/p9_sae_eval_cpu_r1/smoke.json",
+      "sha256": "0adebf540dea6863d00a257fb90e570061b853b204a8dc797bdfcb2a0f6f210e",
+      "environment_id": "92a9339c663b9cd7",
+      "elapsed_seconds": 50.33052754099481,
+      "layer_k_checks": 8
+    },
+    "tc": {
+      "path": "experiment_v1_4/smoke/p9_tc_eval_cpu_r1/smoke.json",
+      "sha256": "d2bf2aa176225899c64573c51a24ccbe2785bed2bef494f117d26fe0296bf65f",
+      "environment_id": "92a9339c663b9cd7",
+      "elapsed_seconds": 50.27959195803851,
+      "layer_k_checks": 8
+    }
+  },
+  "training_evidence": "experiment_v1_4/results/p9_training_audit_20260930_01/completion.json",
+  "source_policy": "Frozen P7/P8 procedures copied to isolated P9 modules; SAE reads nested h statistics; LM0 only; P9 contracts/output; CSV newline resume fix; separate initialization comparison",
+  "pending": [
+    "Actual Colab source cache verification and CUDA smoke",
+    "All 16 semantic/fidelity/replacement/causal evaluations",
+    "Returned raw audit and original-cache reproduction",
+    "Initialization sensitivity interpretation and final P9 gate"
+  ],
+  "commands": [
+    "/opt/anaconda3/bin/python scripts/build_v1_4_p9_evaluation.py",
+    "/opt/anaconda3/bin/python -m pytest tests_v1_4/test_p9_sae_evaluation.py tests_v1_4/test_p9_tc_evaluation.py tests_v1_4/test_p9_evaluation_contract.py -q",
+    "/opt/anaconda3/bin/python -m interp_v1_4.p9_sae_runner smoke --root . --output experiment_v1_4/smoke/p9_sae_eval_cpu_r1 --device cpu",
+    "/opt/anaconda3/bin/python -m interp_v1_4.p9_tc_runner smoke --root . --output experiment_v1_4/smoke/p9_tc_eval_cpu_r1 --device cpu"
+  ]
+}
