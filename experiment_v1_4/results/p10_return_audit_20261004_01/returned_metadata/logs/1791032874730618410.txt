@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/content/MI_P10_evaluation_r1/interp_v1_4/p10_evaluation.py", line 298, in <module>
+    if __name__=='__main__':main()
+                            ~~~~^^
+  File "/content/MI_P10_evaluation_r1/interp_v1_4/p10_evaluation.py", line 295, in main
+    elif a.action=='evaluate':evaluate(a.root,a.output,a.max_seconds)
+                              ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/content/MI_P10_evaluation_r1/interp_v1_4/p10_evaluation.py", line 236, in evaluate
+    selected=read(out/'selection_complete.json')
+  File "/content/MI_P10_evaluation_r1/interp_v1_4/p5.py", line 44, in read
+    return json.loads(Path(path).read_text())
+                      ~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/content/drive/MyDrive/boolean_interp_v1_4/P10_update_evaluation_r1/selection_complete.json'

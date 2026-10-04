@@ -1,0 +1,187 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "selection_sha256": "33e22072a3543e5d7a284ad3018604ae098be8de6edc3f6c68780e75424ba63c",
+  "task": {
+    "id": "seed1_coordinate_h__all__input_disagreement__all",
+    "lm_seed": 1,
+    "representation": "coordinate",
+    "hook": "h",
+    "label": "input_disagreement",
+    "domain": "all",
+    "prefixes": true,
+    "candidates": null,
+    "candidate_limit": "all",
+    "shuffle_seed": 2307015635797526774,
+    "bootstrap_seed": 8392325605947143749,
+    "full_references": [
+      "seed1_full_h__all__input_disagreement__all"
+    ]
+  },
+  "status": "passed",
+  "test_support": [
+    {
+      "class_id": 0,
+      "positions": 5403,
+      "sequences": 1223
+    },
+    {
+      "class_id": 1,
+      "positions": 4759,
+      "sequences": 1213
+    }
+  ],
+  "reports": {
+    "up_to_four": {
+      "balanced_accuracy": 0.5574532947052172,
+      "macro_f1": 0.46800267512143523,
+      "observed_class_balanced_accuracy": 0.5574532947052172,
+      "confusion_matrix": [
+        [
+          5354,
+          49
+        ],
+        [
+          4169,
+          590
+        ]
+      ],
+      "positions": 10162,
+      "class_counts": [
+        5403,
+        4759
+      ],
+      "binary_auroc": 0.5258271954554132,
+      "cluster_bootstrap": {
+        "seed": 8392325605947143749,
+        "requested": 1000,
+        "clusters": 1255,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.5525900786397581,
+              0.5622085546599478
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.4584825245949158,
+              0.4769414192309214
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.5153645897726432,
+              0.5366805927431587
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {
+        "seed1_full_h__all__input_disagreement__all": {
+          "balanced_accuracy": {
+            "difference": -0.16495818418141217,
+            "ci95": [
+              -0.17418661963594315,
+              -0.155820475067945
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 8392325605947143749
+          },
+          "macro_f1": {
+            "difference": -0.25508674853240176,
+            "ci95": [
+              -0.2670032058876587,
+              -0.24412257647849722
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 8392325605947143749
+          }
+        }
+      }
+    },
+    "single": {
+      "balanced_accuracy": 0.5481056631663582,
+      "macro_f1": 0.5169310310456063,
+      "observed_class_balanced_accuracy": 0.5481056631663582,
+      "confusion_matrix": [
+        [
+          4498,
+          905
+        ],
+        [
+          3504,
+          1255
+        ]
+      ],
+      "positions": 10162,
+      "class_counts": [
+        5403,
+        4759
+      ],
+      "binary_auroc": 0.5393604340735578,
+      "cluster_bootstrap": {
+        "seed": 8392325605947143749,
+        "requested": 1000,
+        "clusters": 1255,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.5401086853206872,
+              0.5558243014821487
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.5073030980807599,
+              0.5264896882688863
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.5290714283798865,
+              0.5501884219702706
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {
+        "seed1_full_h__all__input_disagreement__all": {
+          "balanced_accuracy": {
+            "difference": -0.17430581572027115,
+            "ci95": [
+              -0.18549982904917933,
+              -0.16341554634343414
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 8392325605947143749
+          },
+          "macro_f1": {
+            "difference": -0.20615839260823066,
+            "ci95": [
+              -0.2183908109765807,
+              -0.19519379460164335
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 8392325605947143749
+          }
+        }
+      }
+    }
+  },
+  "predictions": {
+    "predictions/seed1_coordinate_h__all__input_disagreement__all/up_to_four.npy": "62aade863572dab31b239c1a41b34177c03b0f7e776d196395c65e309321757f",
+    "predictions/seed1_coordinate_h__all__input_disagreement__all/single.npy": "96d0c7135cf998e3c8cac779335f57e2a4b88d4953d0c6e2e4e1b701a52af8b2"
+  },
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 1.7990901110001687
+}

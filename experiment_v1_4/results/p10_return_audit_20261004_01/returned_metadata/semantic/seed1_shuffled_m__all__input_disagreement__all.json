@@ -1,0 +1,88 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "selection_sha256": "33e22072a3543e5d7a284ad3018604ae098be8de6edc3f6c68780e75424ba63c",
+  "task": {
+    "id": "seed1_shuffled_m__all__input_disagreement__all",
+    "lm_seed": 1,
+    "representation": "shuffled",
+    "hook": "m",
+    "label": "input_disagreement",
+    "domain": "all",
+    "prefixes": false,
+    "candidates": null,
+    "candidate_limit": "all",
+    "shuffle_seed": 15221646972318412531,
+    "bootstrap_seed": 18140639701082705625,
+    "full_references": []
+  },
+  "status": "passed",
+  "test_support": [
+    {
+      "class_id": 0,
+      "positions": 5403,
+      "sequences": 1223
+    },
+    {
+      "class_id": 1,
+      "positions": 4759,
+      "sequences": 1213
+    }
+  ],
+  "reports": {
+    "full": {
+      "balanced_accuracy": 0.5,
+      "macro_f1": 0.3471249598458079,
+      "observed_class_balanced_accuracy": 0.5,
+      "confusion_matrix": [
+        [
+          5403,
+          0
+        ],
+        [
+          4759,
+          0
+        ]
+      ],
+      "positions": 10162,
+      "class_counts": [
+        5403,
+        4759
+      ],
+      "binary_auroc": 0.5372795117403626,
+      "cluster_bootstrap": {
+        "seed": 18140639701082705625,
+        "requested": 1000,
+        "clusters": 1255,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.5,
+              0.5
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.34270398925227935,
+              0.35175312751965326
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.5255107049925025,
+              0.5491036795181445
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {}
+    }
+  },
+  "predictions": {
+    "predictions/seed1_shuffled_m__all__input_disagreement__all/full.npy": "6a39bfc4adfd4fc38872a410e299ade8d79e1a5b96f05aecfaaf6ef33ca3e4f3"
+  },
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 0.9318030869999347
+}

@@ -1,0 +1,42 @@
+{
+  "status": "passed_preparation_only",
+  "p10_complete": false,
+  "production_training_runs": 0,
+  "production_evaluated_runs": 0,
+  "cuda_smoke_status": "pending",
+  "required_training_runs": 12,
+  "bundle_members_verified": 91,
+  "notebook_code_cells": 8,
+  "standalone_tests_passed": 8,
+  "input_quotas_verified": {
+    "train": 50000,
+    "val": 10000,
+    "test": 20000
+  },
+  "train_val_insufficient_support": [],
+  "environment_id": "d73a7ea2f2143f05",
+  "elapsed_seconds": 11.994266082998365,
+  "evidence_sha256": {
+    "experiment_v1_4/p10_update_r1/contract.json": "37b041021e5be8082f435ff41e1e9f6696416e94170137e3b9ad29104ce24ec6",
+    "experiment_v1_4/p10_update_r1/evaluation_rules.json": "816f1fca5523d361dd0025ce7d014b5e560dd582f83f7b1762d67d59c8b1eee8",
+    "experiment_v1_4/notebooks/P10/P10_colab_update_training_r1.ipynb": "8a77e7740179a4aa983fc94e7584ebdddae3cedb50270e03fc87de997e5367ea",
+    "experiment_v1_4/bundles/P10/v1_4_p10_update_training_r1.zip": "58be7323e59474e659cf350034900c6e3eaf7692fd884462c3c4cddbc8bdbdf9",
+    "experiment_v1_4/bundles/P10/v1_4_p10_update_training_r1.sha256.json": "11857796e3a315ef023f994498e9d844f3da868d1bb6ebae3862b3b85a417d56",
+    "experiment_v1_4/results/p10_preparation_r1/preflight.json": "7d4d98938248cf789f6d5c1fa0729167395255ee94afb4d0e59840d0d3ac4d8b",
+    "experiment_v1_4/results/p10_preparation_r1/standalone_tests.txt": "9fada4e31d220038d5536b124f8745a06e7bdce20283fa3d15619f4e53c366ce",
+    "experiment_v1_4/smoke/p10_cpu_r1/smoke.json": "60e2a0b413ecda560ee87b468722f4b6e8f1b3b3d3e4e1f1de0465f420141166",
+    "scripts/check_v1_4_p10_delivery.py": "a191470129987127dec02d0d405cf11af4aa3df2ee4d43984a63c800d96e0cc1"
+  },
+  "commands": [
+    "/opt/anaconda3/bin/python scripts/build_v1_4_p10.py",
+    "/opt/anaconda3/bin/python -m interp_v1_4.p10 preflight --root . --output experiment_v1_4/results/p10_preparation_r1",
+    "/opt/anaconda3/bin/python -m interp_v1_4.p10 smoke --root . --output experiment_v1_4/smoke/p10_cpu_r1 --device cpu",
+    "/opt/anaconda3/bin/python scripts/check_v1_4_p10_delivery.py"
+  ],
+  "limitations": [
+    "No production GPU execution performed locally",
+    "24.59 CU is user-reported; no verified CU/hour conversion",
+    "Update intervention, additional layers, length, m-to-m SAE skipped in this scope",
+    "Semantic/fidelity/transfer evaluation delivery follows independent training return audit"
+  ]
+}

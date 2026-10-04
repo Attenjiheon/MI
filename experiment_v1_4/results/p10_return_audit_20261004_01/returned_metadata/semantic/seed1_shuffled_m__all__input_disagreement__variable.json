@@ -1,0 +1,88 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "selection_sha256": "33e22072a3543e5d7a284ad3018604ae098be8de6edc3f6c68780e75424ba63c",
+  "task": {
+    "id": "seed1_shuffled_m__all__input_disagreement__variable",
+    "lm_seed": 1,
+    "representation": "shuffled",
+    "hook": "m",
+    "label": "input_disagreement",
+    "domain": "variable",
+    "prefixes": false,
+    "candidates": null,
+    "candidate_limit": "all",
+    "shuffle_seed": 15221646972318412531,
+    "bootstrap_seed": 7059872767287507208,
+    "full_references": []
+  },
+  "status": "passed",
+  "test_support": [
+    {
+      "class_id": 0,
+      "positions": 1356,
+      "sequences": 801
+    },
+    {
+      "class_id": 1,
+      "positions": 1162,
+      "sequences": 741
+    }
+  ],
+  "reports": {
+    "full": {
+      "balanced_accuracy": 0.5048525327606254,
+      "macro_f1": 0.34309071776200517,
+      "observed_class_balanced_accuracy": 0.5048525327606254,
+      "confusion_matrix": [
+        [
+          40,
+          1316
+        ],
+        [
+          23,
+          1139
+        ]
+      ],
+      "positions": 2518,
+      "class_counts": [
+        1356,
+        1162
+      ],
+      "binary_auroc": 0.4640324889951716,
+      "cluster_bootstrap": {
+        "seed": 7059872767287507208,
+        "requested": 1000,
+        "clusters": 1066,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.4990876426048875,
+              0.5104205886805921
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.3297636952393478,
+              0.35590262832405695
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.44126471920026317,
+              0.4863710491949469
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {}
+    }
+  },
+  "predictions": {
+    "predictions/seed1_shuffled_m__all__input_disagreement__variable/full.npy": "460f709f7eed9af0bedeeb47ed196d8ed071481e530d797a8ff9365057ff6161"
+  },
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 0.42759858699992037
+}

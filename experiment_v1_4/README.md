@@ -1,6 +1,6 @@
 # experiment_v1_4
 
-**P1–P9 완료. 다음은 P10 선택 분석 결정과 P11 최종 집계다.**
+**P1–P10 완료. P11 최종 집계가 남았다.**
 
 12-block × 256-width Transformer 세 seed를 동결해 READ 표현을 분석한다.
 활성 corpus는 `data/language_v1_4/rebuild_01/`이며 세 LM 모두 validation gate를 통과했다.
@@ -22,7 +22,7 @@
 | P7 SAE 평가·개입 | 완료 | [24개 평가와 원본 재현 반환 감사](results/p7_final_audit_20260928_01/REPORT.md) |
 | P8 TC 학습·평가·개입 | 완료 | [24 runs 최종 감사](results/p8_final_audit_20260930_01/completion.json) |
 | P9 초기화 반복 | 완료: 16/16 학습·평가·원본 재현 감사 통과 | [P9 실행 파일과 상태](P9_STATUS.md) |
-| P10 선택 분석 | 미실행 | Update, 필수 집합 이외의 층, 길이 평가, m→m SAE |
+| P10 선택 분석 | 완료: Update 12/12 학습·평가·원본 재현 감사 통과 | [범위 결정·T4 실행 파일](P10_STATUS.md) |
 | P11 최종 집계 | 미완료 | 네 층·LM seed·sparse seed별 결과 및 실패·미완료 기록 |
 
 ## 다음 단계
@@ -30,7 +30,7 @@
 P6의 [선택 checkpoint 24개](results/p6_final_audit_20260925/selected_sae_manifest.json)와
 검증된 P5 cache/36개 scalar 통계를 사용한다. P7에서 층별 좌표/random·128후보 기준선,
 사후 감독 의미 평가, fidelity·근사 대체 및 모든 필수 인과 대조를 수행한다.
-P9 초기화 반복까지 필수 64개 dictionary 분석을 완료했다. P10 결정·P11 최종 집계가 남아 전체 실험은 미완료다.
+P9 초기화 반복까지 필수 64개 dictionary 분석을 완료했다. P11 최종 집계가 남아 전체 실험은 미완료다.
 
 ## 변경 기록
 

@@ -111,3 +111,34 @@ P9 SAE 8개·TC 8개 전체 평가 반환의 로컬 감사가 통과했다. 38,0
 16개 sparse seed 1 SAE/TC의 학습·전체 평가·원본 cache 재현 반환 감사를 통과했다. 필수 dictionary 64개 모두 학습·평가·감사 완료다. P10 선택 분석 결정과 P11 최종 집계는 남아 전체 실험은 미완료다. 앞선 P9 대기 안내는 당시 이력이다.
 
 [최종 감사](results/p9_final_audit_20261002_01/REPORT.md), [완료 판정](results/p9_final_audit_20261002_01/completion.json)을 따른다.
+
+
+## 2026-10-03 P10 Update 준비
+
+T4·잔여 24.59 CU 기준으로 Update block 3 한 층의 SAE/TC 12 runs와 의미·fidelity·probe 전이 분석을 선택했다. 추가 층·length·m→m SAE·Update 인과 개입은 이번 선택 범위에서 생략한다. [P10 상태·노트북·입력 ZIP](P10_STATUS.md)을 따른다. 로컬 입력 replay·CPU smoke·독립 번들 테스트는 통과했지만 실제 학습/평가 0/12로 P10과 전체 실험은 미완료다. 학습 반환 감사 후 선택 checkpoint를 평가에 연결한다.
+
+
+## 2026-10-03 P10 학습 반환 감사·평가 준비
+
+Update block 3 SAE/TC 12 runs의 252 checkpoint·240 validation MSE·선택 감사를 통과했다. [학습 감사](results/p10_training_audit_20261003_01/REPORT.md)를 따른다. 학습을 다시 실행하지 않는다.
+[평가 T4/CPU 노트북과 입력 ZIP](P10_STATUS.md)을 준비했다. T4에서 feature를 준비한 뒤 GPU 연결을 종료하고 CPU에서 probe·bootstrap을 실행한다. 실제 평가는 0/12이며 P10과 전체 실험은 미완료다. 앞선 학습 대기 안내는 당시 이력이다.
+
+
+## 2026-10-04 P10 평가 반환 로컬 감사·원본 재현 감사 준비
+
+Update SAE/TC 12개 평가 반환의 파일 hash·선택·1,248개 fit·2,016개 예측 점 지표·3,840개 paired 차이 로컬 감사를 통과했다. [감사 보고서](results/p10_return_audit_20261004_01/REPORT.md)를 따른다. 원본 cache refit·예측/fidelity/CI와 전체 GPU replay 감사는 남았다. [P10 상태의 추가 ZIP·T4/CPU 감사 노트북](P10_STATUS.md)을 실행한다. P10과 전체 실험은 미완료이며 앞선 평가 대기 절은 당시 이력이다.
+
+
+## 2026-10-04 P10 GPU 원본 감사 완료·CPU 재개 대기
+
+GPU replay와 dictionary 12개 원본 감사 반환 검증을 통과했다. CPU는 496/1,248개 task 완료 후 시간 제한으로 정상 일시정지했으며 752개가 남았다. [P10 재개 안내](P10_STATUS.md)를 따른다. T4 재실행과 파일 삭제는 필요 없다. P10·전체 실험은 미완료다.
+
+
+## 2026-10-04 P10 CPU 감사 1,033/1,248개
+
+두 번째 중간 반환 검증을 통과했다. GPU 완료 상태는 유지되며 CPU는 시간 제한으로 정상 일시정지해 215개 task가 남았다. [P10 재개 안내](P10_STATUS.md)를 따른다. P10과 전체 실험은 미완료다.
+
+
+## 2026-10-04 P10 완료
+
+Update block 3 SAE/TC 12개 학습·평가·원본 재현 반환 감사를 통과했다. GPU 480,000 position visits·960,000 latent positions와 CPU 1,248 refits·2,016 예측/CI 보고를 확인했다. [최종 감사](results/p10_final_audit_20261004_01/REPORT.md), [완료 판정](results/p10_final_audit_20261004_01/completion.json)을 따른다. 앞선 재개 대기 안내는 당시 이력이며 추가 Colab 실행은 필요 없다. 다음은 P11 최종 집계다. 전체 실험은 아직 미완료다.

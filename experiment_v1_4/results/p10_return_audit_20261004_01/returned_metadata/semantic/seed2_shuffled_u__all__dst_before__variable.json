@@ -1,0 +1,88 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "selection_sha256": "33e22072a3543e5d7a284ad3018604ae098be8de6edc3f6c68780e75424ba63c",
+  "task": {
+    "id": "seed2_shuffled_u__all__dst_before__variable",
+    "lm_seed": 2,
+    "representation": "shuffled",
+    "hook": "u",
+    "label": "dst_before",
+    "domain": "variable",
+    "prefixes": false,
+    "candidates": null,
+    "candidate_limit": "all",
+    "shuffle_seed": 13362103260076197259,
+    "bootstrap_seed": 4681859623946730853,
+    "full_references": []
+  },
+  "status": "passed",
+  "test_support": [
+    {
+      "class_id": 0,
+      "positions": 1310,
+      "sequences": 776
+    },
+    {
+      "class_id": 1,
+      "positions": 1208,
+      "sequences": 750
+    }
+  ],
+  "reports": {
+    "full": {
+      "balanced_accuracy": 0.5,
+      "macro_f1": 0.34221525600835945,
+      "observed_class_balanced_accuracy": 0.5,
+      "confusion_matrix": [
+        [
+          1310,
+          0
+        ],
+        [
+          1208,
+          0
+        ]
+      ],
+      "positions": 2518,
+      "class_counts": [
+        1310,
+        1208
+      ],
+      "binary_auroc": 0.41192179364036197,
+      "cluster_bootstrap": {
+        "seed": 4681859623946730853,
+        "requested": 1000,
+        "clusters": 1066,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.5,
+              0.5
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.33332894043226147,
+              0.35168233645531416
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.3911157692939261,
+              0.4326050951407063
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {}
+    }
+  },
+  "predictions": {
+    "predictions/seed2_shuffled_u__all__dst_before__variable/full.npy": "b29846449acf1dee5ccf11517a1a2e7e906981215bebe0749d29cf2f817c766f"
+  },
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 0.3135487640001884
+}

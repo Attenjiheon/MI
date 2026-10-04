@@ -1,0 +1,613 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "features_sha256": "c59cd495dc2ccdf8a2afa34840a6042617ac36c06a5be5cd3a1e029093916f82",
+  "task": {
+    "id": "seed2_l3_update_transcoder_k16_s0__128__src_before__variable",
+    "lm_seed": 2,
+    "representation": "latent",
+    "hook": "m",
+    "run": "seed2_l3_update_transcoder_k16_s0",
+    "tool": "transcoder",
+    "label": "src_before",
+    "domain": "variable",
+    "prefixes": true,
+    "candidates": [
+      1,
+      4,
+      6,
+      8,
+      30,
+      31,
+      34,
+      37,
+      41,
+      43,
+      44,
+      45,
+      48,
+      51,
+      55,
+      57,
+      60,
+      61,
+      66,
+      74,
+      77,
+      79,
+      80,
+      82,
+      85,
+      88,
+      90,
+      91,
+      92,
+      95,
+      99,
+      101,
+      106,
+      117,
+      118,
+      121,
+      123,
+      131,
+      137,
+      138,
+      145,
+      151,
+      152,
+      153,
+      165,
+      168,
+      171,
+      172,
+      179,
+      181,
+      182,
+      185,
+      188,
+      190,
+      194,
+      202,
+      210,
+      211,
+      213,
+      221,
+      224,
+      228,
+      231,
+      235,
+      236,
+      244,
+      246,
+      247,
+      266,
+      270,
+      280,
+      284,
+      285,
+      287,
+      295,
+      302,
+      310,
+      315,
+      319,
+      320,
+      325,
+      328,
+      338,
+      340,
+      347,
+      355,
+      356,
+      361,
+      362,
+      365,
+      367,
+      370,
+      376,
+      387,
+      388,
+      396,
+      399,
+      403,
+      408,
+      411,
+      416,
+      417,
+      428,
+      429,
+      435,
+      439,
+      442,
+      444,
+      445,
+      447,
+      451,
+      452,
+      458,
+      460,
+      467,
+      469,
+      472,
+      475,
+      479,
+      481,
+      486,
+      488,
+      490,
+      491,
+      495,
+      504,
+      507,
+      509
+    ],
+    "candidate_limit": "128",
+    "shuffle_seed": 10851196355173940240,
+    "bootstrap_seed": 10051878749528950042,
+    "full_references": [
+      "seed2_full_u__all__src_before__variable",
+      "seed2_full_m__all__src_before__variable"
+    ]
+  },
+  "fit": {
+    "status": "passed",
+    "support": {
+      "train": [
+        {
+          "class_id": 0,
+          "positions": 9867,
+          "sequences": 2889
+        },
+        {
+          "class_id": 1,
+          "positions": 9273,
+          "sequences": 2794
+        }
+      ],
+      "val": [
+        {
+          "class_id": 0,
+          "positions": 1891,
+          "sequences": 575
+        },
+        {
+          "class_id": 1,
+          "positions": 1858,
+          "sequences": 574
+        }
+      ]
+    },
+    "ranking": [
+      319,
+      99,
+      224,
+      244,
+      387,
+      34,
+      172,
+      171,
+      472,
+      235,
+      88,
+      101,
+      185,
+      491,
+      488,
+      137,
+      355,
+      399,
+      213,
+      179,
+      82,
+      447,
+      460,
+      411,
+      1,
+      287,
+      121,
+      44,
+      190,
+      444,
+      202,
+      188,
+      367,
+      302,
+      8,
+      45,
+      123,
+      246,
+      285,
+      43,
+      388,
+      310,
+      95,
+      145,
+      429,
+      403,
+      266,
+      4,
+      469,
+      138,
+      458,
+      247,
+      31,
+      74,
+      55,
+      320,
+      106,
+      451,
+      48,
+      210,
+      153,
+      61,
+      475,
+      439,
+      347,
+      416,
+      77,
+      452,
+      467,
+      284,
+      228,
+      85
+    ],
+    "candidate_count": 128,
+    "trace": [
+      {
+        "columns": [
+          319
+        ],
+        "lam": 0.01,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 9,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.65,
+        "validation_balanced_accuracy": 0.8179494791201197,
+        "validation_ce": 0.44713637301934767
+      },
+      {
+        "columns": [
+          319
+        ],
+        "lam": 0.1,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 7,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.6,
+        "validation_balanced_accuracy": 0.8179494791201197,
+        "validation_ce": 0.5195179017697585
+      },
+      {
+        "columns": [
+          319
+        ],
+        "lam": 1.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 5,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.7994830193899036,
+        "validation_ce": 0.6352685405183577
+      },
+      {
+        "columns": [
+          319
+        ],
+        "lam": 10.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 4,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.5,
+        "validation_ce": 0.6856214355385214
+      },
+      {
+        "columns": [
+          319,
+          99
+        ],
+        "lam": 0.01,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 11,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.75,
+        "validation_balanced_accuracy": 0.9010945849098813,
+        "validation_ce": 0.3691896496588703
+      },
+      {
+        "columns": [
+          319,
+          99
+        ],
+        "lam": 0.1,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 8,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.65,
+        "validation_balanced_accuracy": 0.8989839981921048,
+        "validation_ce": 0.4552962551230911
+      },
+      {
+        "columns": [
+          319,
+          99
+        ],
+        "lam": 1.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 7,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.8315767168600458,
+        "validation_ce": 0.5999260541499345
+      },
+      {
+        "columns": [
+          319,
+          99
+        ],
+        "lam": 10.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 7,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.45,
+        "validation_balanced_accuracy": 0.5177154944473823,
+        "validation_ce": 0.6793276512817114
+      },
+      {
+        "columns": [
+          319,
+          99,
+          224
+        ],
+        "lam": 0.01,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 13,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.6,
+        "validation_balanced_accuracy": 0.8820993044498926,
+        "validation_ce": 0.3302974589639152
+      },
+      {
+        "columns": [
+          319,
+          99,
+          224
+        ],
+        "lam": 0.1,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 9,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.55,
+        "validation_balanced_accuracy": 0.878137845177912,
+        "validation_ce": 0.4032037390231337
+      },
+      {
+        "columns": [
+          319,
+          99,
+          224
+        ],
+        "lam": 1.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 6,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.868396927488944,
+        "validation_ce": 0.5657381566477941
+      },
+      {
+        "columns": [
+          319,
+          99,
+          224
+        ],
+        "lam": 10.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 8,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.655005382131324,
+        "validation_ce": 0.6730479361649981
+      },
+      {
+        "columns": [
+          319,
+          99,
+          224,
+          244
+        ],
+        "lam": 0.01,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 14,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.9208957619771634,
+        "validation_ce": 0.22358688864530887
+      },
+      {
+        "columns": [
+          319,
+          99,
+          224,
+          244
+        ],
+        "lam": 0.1,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 10,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.55,
+        "validation_balanced_accuracy": 0.9208206227561408,
+        "validation_ce": 0.3072515534440838
+      },
+      {
+        "columns": [
+          319,
+          99,
+          224,
+          244
+        ],
+        "lam": 1.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 9,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.9198662977255017,
+        "validation_ce": 0.5241660556662735
+      },
+      {
+        "columns": [
+          319,
+          99,
+          224,
+          244
+        ],
+        "lam": 10.0,
+        "attempts": [
+          {
+            "maxiter": 2000,
+            "iterations": 9,
+            "success": true,
+            "message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL"
+          }
+        ],
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.6862640096223742,
+        "validation_ce": 0.666641617759319
+      }
+    ],
+    "selected": {
+      "up_to_four": {
+        "classes": 2,
+        "columns": [
+          319,
+          99,
+          224,
+          244
+        ],
+        "mean": [
+          1.044281044990883,
+          1.7387128654104447,
+          1.3614884128943943,
+          1.441512294906574
+        ],
+        "std": [
+          1.7630546400443585,
+          2.8580662287202627,
+          2.328333228089819,
+          1.923814206596694
+        ],
+        "coefficients": [
+          -1.0562716577667743,
+          -1.2952539881215384,
+          1.1581324185909352,
+          -1.5307728144584396,
+          -0.5007721580851613
+        ],
+        "lam": 0.01,
+        "removed_constant_columns": 56,
+        "threshold": 0.5,
+        "validation_balanced_accuracy": 0.9208957619771634,
+        "validation_ce": 0.22358688864530887
+      },
+      "single": {
+        "classes": 2,
+        "columns": [
+          319
+        ],
+        "mean": [
+          1.044281044990883
+        ],
+        "std": [
+          1.7630546400443585
+        ],
+        "coefficients": [
+          -2.465696415456047,
+          -0.7296776896340532
+        ],
+        "lam": 0.01,
+        "removed_constant_columns": 56,
+        "threshold": 0.65,
+        "validation_balanced_accuracy": 0.8179494791201197,
+        "validation_ce": 0.44713637301934767
+      }
+    }
+  },
+  "test_used_for_selection": false,
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 1.585167877999993
+}

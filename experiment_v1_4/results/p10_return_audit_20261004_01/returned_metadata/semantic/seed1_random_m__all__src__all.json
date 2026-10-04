@@ -1,0 +1,227 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "selection_sha256": "33e22072a3543e5d7a284ad3018604ae098be8de6edc3f6c68780e75424ba63c",
+  "task": {
+    "id": "seed1_random_m__all__src__all",
+    "lm_seed": 1,
+    "representation": "random",
+    "hook": "m",
+    "label": "src",
+    "domain": "all",
+    "prefixes": true,
+    "candidates": null,
+    "candidate_limit": "all",
+    "shuffle_seed": 15221646972318412531,
+    "bootstrap_seed": 1837174590568248971,
+    "full_references": [
+      "seed1_full_m__all__src__all"
+    ]
+  },
+  "status": "passed",
+  "test_support": [
+    {
+      "class_id": 0,
+      "positions": 2560,
+      "sequences": 1082
+    },
+    {
+      "class_id": 1,
+      "positions": 2602,
+      "sequences": 1097
+    },
+    {
+      "class_id": 2,
+      "positions": 2489,
+      "sequences": 1064
+    },
+    {
+      "class_id": 3,
+      "positions": 2511,
+      "sequences": 1078
+    }
+  ],
+  "reports": {
+    "up_to_four": {
+      "balanced_accuracy": 0.3838228185262708,
+      "macro_f1": 0.3769590777013764,
+      "observed_class_balanced_accuracy": 0.3838228185262708,
+      "confusion_matrix": [
+        [
+          633,
+          864,
+          517,
+          546
+        ],
+        [
+          623,
+          1406,
+          390,
+          183
+        ],
+        [
+          222,
+          524,
+          1064,
+          679
+        ],
+        [
+          455,
+          421,
+          831,
+          804
+        ]
+      ],
+      "positions": 10162,
+      "class_counts": [
+        2560,
+        2602,
+        2489,
+        2511
+      ],
+      "binary_auroc": null,
+      "cluster_bootstrap": {
+        "seed": 1837174590568248971,
+        "requested": 1000,
+        "clusters": 1255,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.37408754081184015,
+              0.393477831375461
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.3670063517104274,
+              0.38685952981467164
+            ]
+          },
+          "binary_auroc": {
+            "valid": 0,
+            "ci95": null
+          }
+        }
+      },
+      "paired_full_probe_gaps": {
+        "seed1_full_m__all__src__all": {
+          "balanced_accuracy": {
+            "difference": -0.4703345508403603,
+            "ci95": [
+              -0.48170887698077763,
+              -0.4597269493343287
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 1837174590568248971
+          },
+          "macro_f1": {
+            "difference": -0.47723302108837096,
+            "ci95": [
+              -0.48888219223099644,
+              -0.4661975094710372
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 1837174590568248971
+          }
+        }
+      }
+    },
+    "single": {
+      "balanced_accuracy": 0.3291038223031897,
+      "macro_f1": 0.2780959338150093,
+      "observed_class_balanced_accuracy": 0.3291038223031897,
+      "confusion_matrix": [
+        [
+          0,
+          1126,
+          860,
+          574
+        ],
+        [
+          0,
+          1618,
+          766,
+          218
+        ],
+        [
+          0,
+          786,
+          917,
+          786
+        ],
+        [
+          0,
+          672,
+          1020,
+          819
+        ]
+      ],
+      "positions": 10162,
+      "class_counts": [
+        2560,
+        2602,
+        2489,
+        2511
+      ],
+      "binary_auroc": null,
+      "cluster_bootstrap": {
+        "seed": 1837174590568248971,
+        "requested": 1000,
+        "clusters": 1255,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.3210223390743359,
+              0.33711667441209936
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.2707380412286839,
+              0.285338885418969
+            ]
+          },
+          "binary_auroc": {
+            "valid": 0,
+            "ci95": null
+          }
+        }
+      },
+      "paired_full_probe_gaps": {
+        "seed1_full_m__all__src__all": {
+          "balanced_accuracy": {
+            "difference": -0.5250535470634414,
+            "ci95": [
+              -0.5354664576418372,
+              -0.5151173018765645
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 1837174590568248971
+          },
+          "macro_f1": {
+            "difference": -0.576096164974738,
+            "ci95": [
+              -0.5859362991533004,
+              -0.5664829539073518
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 1837174590568248971
+          }
+        }
+      }
+    }
+  },
+  "predictions": {
+    "predictions/seed1_random_m__all__src__all/up_to_four.npy": "82959e0792a8a5bc3898df69ef656b254ce8f851204750d528e5da7a630781b5",
+    "predictions/seed1_random_m__all__src__all/single.npy": "6972bce6d4d311b20c2e67de88cf580ed7438c2cf67b116f83557fa4b6f22f90"
+  },
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 1.3966718279998531
+}

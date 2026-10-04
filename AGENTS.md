@@ -167,3 +167,8 @@ P9 SAE 8개·TC 8개 전체 평가 반환의 로컬 감사가 통과했다. 38,0
 16개 sparse seed 1 SAE/TC의 학습·전체 평가·원본 cache 재현 반환 감사를 통과했다. 필수 dictionary 64개 모두 학습·평가·감사 완료다. P10 선택 분석 결정과 P11 최종 집계는 남아 전체 실험은 미완료다. 앞선 P9 대기 안내는 당시 이력이다.
 
 근거는 `experiment_v1_4/results/p9_final_audit_20261002_01/completion.json`과 `REPORT.md`다. P9 학습·본평가를 다시 실행하지 않는다.
+
+
+## 2026-10-04 P10 완료
+
+Update block 3 SAE/TC 12개 학습·평가·원본 재현 반환 감사를 통과했다. 근거는 `experiment_v1_4/results/p10_final_audit_20261004_01/completion.json`과 `REPORT.md`다. 추가 층·length·m→m SAE·Update 인과 개입은 동결 사유대로 생략했다. 학습·평가·감사를 다시 실행하지 않는다. 다음은 P11 최종 집계이며 전체 실험은 아직 미완료다.

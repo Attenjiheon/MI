@@ -1,0 +1,38 @@
+{
+  "schema": "p10-source-audit-v1.4-r1",
+  "date": "2026-10-04",
+  "evaluation_contract_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "return_manifest": "experiment_v1_4/results/p10_return_audit_20261004_01/return_manifest.json",
+  "base_bundle_sha256": "69bb4191321ed5228cdb5a5dd0e90f9cbeaf1e506aedd1a85a87c9ef87b22e1e",
+  "activation_tolerance": {
+    "atol": 2e-05,
+    "rtol": 0.0002
+  },
+  "metric_tolerance": {
+    "atol": 2e-06,
+    "rtol": 2e-05
+  },
+  "numeric_recipe": "Float32 F.linear/ReLU/stable argsort TopK/F.linear, TF32 off; independent float64 fidelity; original float64 SciPy probe recipe for refit",
+  "planned": {
+    "activation_position_visits": 480000,
+    "unique_reserved_positions": 80000,
+    "trained_and_init_models": 6,
+    "raw_arrays": 54,
+    "dictionary_runs": 12,
+    "latent_positions": 960000,
+    "refits": 1248,
+    "semantic_reports": 2016
+  },
+  "rng": "Original frozen task seeds and source domains; no new selection rules or performance-dependent sampling",
+  "resume": "Completed chunk/dictionary/task audit receipt with identical audit/evaluation/return identity",
+  "tolerance_policy": "Fixed before source reproduction; mismatch stops and preserves evidence; no tolerance adjustment based on results",
+  "completion": "GPU replay and all CPU refit/prediction/fidelity/CI checks, then independent local returned-evidence review; p10_complete remains false here",
+  "files": {
+    "experiment_v1_4/results/p10_return_audit_20261004_01/return_manifest.json": "a65555b08a9e8649c0db18f83d452db310fc6b6054a0d0feba6a2e48ae9a9895",
+    "experiment_v1_4/results/p10_return_audit_20261004_01/status.json": "239a1148466d4ce56b9a19e94a301966a9f1022588e2e11d3efe6fdf3bf2d891",
+    "interp_v1_4/p10_source_audit.py": "67fe5421b3cdb8ef1f93dbaa76af30693995ec2d8162fc20326530274496956a",
+    "scripts/audit_v1_4_p10_evaluation_return.py": "c21118bc531ee2e0168b992e202363327a2bc77712b08a6a21b40f30bb88c395",
+    "scripts/build_v1_4_p10_source_audit.py": "e2aa049a90d5c57286c6ec50b2eb1e520eca9f0557a2aef46eaeec53cc17868e",
+    "tests_v1_4/test_p10_source_audit.py": "692724c3d0b68aa742499fcb32df4a1114976b9a69a9926a973bf6fd50a60ae0"
+  }
+}

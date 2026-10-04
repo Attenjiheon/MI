@@ -1,0 +1,318 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "selection_sha256": "33e22072a3543e5d7a284ad3018604ae098be8de6edc3f6c68780e75424ba63c",
+  "task": {
+    "id": "seed2_l3_update_sae_k4_s0__128__input_disagreement__variable",
+    "lm_seed": 2,
+    "representation": "latent",
+    "hook": "h",
+    "run": "seed2_l3_update_sae_k4_s0",
+    "tool": "sae",
+    "label": "input_disagreement",
+    "domain": "variable",
+    "prefixes": true,
+    "candidates": [
+      3,
+      8,
+      9,
+      24,
+      30,
+      31,
+      36,
+      40,
+      42,
+      43,
+      52,
+      56,
+      58,
+      59,
+      65,
+      69,
+      71,
+      74,
+      76,
+      80,
+      81,
+      86,
+      89,
+      92,
+      93,
+      98,
+      106,
+      107,
+      124,
+      128,
+      140,
+      142,
+      146,
+      152,
+      164,
+      165,
+      174,
+      186,
+      189,
+      190,
+      191,
+      195,
+      202,
+      205,
+      207,
+      209,
+      216,
+      217,
+      218,
+      220,
+      223,
+      237,
+      240,
+      243,
+      246,
+      248,
+      249,
+      252,
+      255,
+      259,
+      261,
+      264,
+      265,
+      267,
+      269,
+      273,
+      274,
+      278,
+      281,
+      284,
+      287,
+      289,
+      291,
+      293,
+      297,
+      300,
+      302,
+      311,
+      314,
+      320,
+      323,
+      327,
+      329,
+      333,
+      341,
+      349,
+      350,
+      354,
+      356,
+      359,
+      360,
+      363,
+      372,
+      377,
+      380,
+      381,
+      383,
+      385,
+      386,
+      391,
+      397,
+      402,
+      405,
+      414,
+      416,
+      421,
+      425,
+      426,
+      427,
+      428,
+      429,
+      431,
+      439,
+      444,
+      451,
+      466,
+      470,
+      472,
+      475,
+      483,
+      485,
+      486,
+      487,
+      491,
+      494,
+      496,
+      498,
+      510
+    ],
+    "candidate_limit": "128",
+    "shuffle_seed": 14330728847216379571,
+    "bootstrap_seed": 7246763269314036478,
+    "full_references": [
+      "seed2_full_h__all__input_disagreement__variable"
+    ]
+  },
+  "status": "passed",
+  "test_support": [
+    {
+      "class_id": 0,
+      "positions": 1356,
+      "sequences": 801
+    },
+    {
+      "class_id": 1,
+      "positions": 1162,
+      "sequences": 741
+    }
+  ],
+  "reports": {
+    "up_to_four": {
+      "balanced_accuracy": 0.5017211703958692,
+      "macro_f1": 0.35381812863164336,
+      "observed_class_balanced_accuracy": 0.5017211703958692,
+      "confusion_matrix": [
+        [
+          1356,
+          0
+        ],
+        [
+          1158,
+          4
+        ]
+      ],
+      "positions": 2518,
+      "class_counts": [
+        1356,
+        1162
+      ],
+      "binary_auroc": 0.5073149741824441,
+      "cluster_bootstrap": {
+        "seed": 7246763269314036478,
+        "requested": 1000,
+        "clusters": 1066,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.5004201416526376,
+              0.5036408319627921
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.3448390505434124,
+              0.36328692649258004
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.5044753812785133,
+              0.5110558390022676
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {
+        "seed2_full_h__all__input_disagreement__variable": {
+          "balanced_accuracy": {
+            "difference": 0.0017211703958691649,
+            "ci95": [
+              0.0004201416526375845,
+              0.0036408319627920654
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 7246763269314036478
+          },
+          "macro_f1": {
+            "difference": 0.0037923155185819457,
+            "ci95": [
+              0.0009258948527004762,
+              0.007971348185091225
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 7246763269314036478
+          }
+        }
+      }
+    },
+    "single": {
+      "balanced_accuracy": 0.5008605851979346,
+      "macro_f1": 0.3519248246286672,
+      "observed_class_balanced_accuracy": 0.5008605851979346,
+      "confusion_matrix": [
+        [
+          1356,
+          0
+        ],
+        [
+          1160,
+          2
+        ]
+      ],
+      "positions": 2518,
+      "class_counts": [
+        1356,
+        1162
+      ],
+      "binary_auroc": 0.5008605851979346,
+      "cluster_bootstrap": {
+        "seed": 7246763269314036478,
+        "requested": 1000,
+        "clusters": 1066,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.5,
+              0.5021554995214882
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.3431236296520099,
+              0.36093863433837264
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.5,
+              0.5021554995214882
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {
+        "seed2_full_h__all__input_disagreement__variable": {
+          "balanced_accuracy": {
+            "difference": 0.000860585197934638,
+            "ci95": [
+              0.0,
+              0.002155499521488216
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 7246763269314036478
+          },
+          "macro_f1": {
+            "difference": 0.0018990115156057863,
+            "ci95": [
+              0.0,
+              0.0047522096003232775
+            ],
+            "valid": 1000,
+            "requested": 1000,
+            "seed": 7246763269314036478
+          }
+        }
+      }
+    }
+  },
+  "predictions": {
+    "predictions/seed2_l3_update_sae_k4_s0__128__input_disagreement__variable/up_to_four.npy": "b69e87f8acb4d8bc009d58784ef271c1794cef7eb0bd1780db0c50588d184af6",
+    "predictions/seed2_l3_update_sae_k4_s0__128__input_disagreement__variable/single.npy": "ce35089c28a512a5c7df8d0d078e53045fe84bc880627176ec929e082bc071c2"
+  },
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 1.2207001530000525
+}
