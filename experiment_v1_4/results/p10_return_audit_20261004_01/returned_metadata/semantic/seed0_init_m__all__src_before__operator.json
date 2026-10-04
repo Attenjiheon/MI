@@ -1,0 +1,88 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "selection_sha256": "33e22072a3543e5d7a284ad3018604ae098be8de6edc3f6c68780e75424ba63c",
+  "task": {
+    "id": "seed0_init_m__all__src_before__operator",
+    "lm_seed": 0,
+    "representation": "init",
+    "hook": "m",
+    "label": "src_before",
+    "domain": "operator",
+    "prefixes": false,
+    "candidates": null,
+    "candidate_limit": "all",
+    "shuffle_seed": 15419551265015633345,
+    "bootstrap_seed": 11687423366292217749,
+    "full_references": []
+  },
+  "status": "passed",
+  "test_support": [
+    {
+      "class_id": 0,
+      "positions": 1684,
+      "sequences": 894
+    },
+    {
+      "class_id": 1,
+      "positions": 1628,
+      "sequences": 891
+    }
+  ],
+  "reports": {
+    "full": {
+      "balanced_accuracy": 0.6285089613474412,
+      "macro_f1": 0.6276544171820007,
+      "observed_class_balanced_accuracy": 0.6285089613474412,
+      "confusion_matrix": [
+        [
+          1160,
+          524
+        ],
+        [
+          703,
+          925
+        ]
+      ],
+      "positions": 3312,
+      "class_counts": [
+        1684,
+        1628
+      ],
+      "binary_auroc": 0.6909155835818543,
+      "cluster_bootstrap": {
+        "seed": 11687423366292217749,
+        "requested": 1000,
+        "clusters": 1163,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.6113624749662881,
+              0.6451594370290151
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.6102878002621223,
+              0.6446096149679212
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.671436921766879,
+              0.7087511483796946
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {}
+    }
+  },
+  "predictions": {
+    "predictions/seed0_init_m__all__src_before__operator/full.npy": "0b9a49502b26d6e6c1f98b1bf99748c5e078ed7a89f9328fc962ab8df0c906ee"
+  },
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 0.3594567749998987
+}

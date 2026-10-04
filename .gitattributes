@@ -76,3 +76,10 @@ experiment_v1_4/smoke/p9*/**/nvidia-smi.txt whitespace=-blank-at-eol
 scripts/audit_v1_4_p9_metadata.py whitespace=-blank-at-eof
 scripts/audit_v1_4_p9_sae_sources.py whitespace=-blank-at-eof
 scripts/audit_v1_4_p9_tc_sources.py whitespace=-blank-at-eof
+
+# P10 immutable deliveries, returns and selected Update dictionaries.
+experiment_v1_4/bundles/P10/*.zip filter=lfs diff=lfs merge=lfs -text
+experiment_v1_4/evidence/P10/*.zip filter=lfs diff=lfs merge=lfs -text
+experiment_v1_4/results/p10_training_audit_*/selected/**/*.pt filter=lfs diff=lfs merge=lfs -text
+experiment_v1_4/results/p10*/**/nvidia-smi.txt whitespace=-blank-at-eol
+experiment_v1_4/smoke/p10*/**/nvidia-smi.txt whitespace=-blank-at-eol

@@ -8,9 +8,9 @@
 
 ## 현재 활성 버전 — v1.4 (2026-09-25)
 
-**P1–P9 완료. 다음은 P10 선택 분석 결정과 P11 최종 집계다.**
+**P1–P10 완료. P11 최종 집계가 남았다.**
 Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 frozen test 반환 감사를 마쳤다.
-세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. 필수 READ 분석은 완료했으며 P10 결정·P11 최종 집계가 남아 전체 실험은 미완료다.
+세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. 필수 READ 분석은 완료했으며 P11 최종 집계가 남아 전체 실험은 미완료다.
 
 | 단계 | v1.4 현재 상태 | 근거 또는 다음 조건 |
 |---|---|---|
@@ -23,7 +23,7 @@ Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 froz
 | P7 | 완료 | [24개 평가·원본 재현 최종 감사](experiment_v1_4/results/p7_final_audit_20260928_01/completion.json) |
 | P8 | 완료 | [24 TC 최종 감사](experiment_v1_4/results/p8_final_audit_20260930_01/completion.json) |
 | P9 | 완료: 16/16 학습·평가·원본 재현 감사 통과 | LM seed 0에서 네 층 × SAE/TC × k=4/16, sparse seed 1의 16 runs 및 전체 평가 |
-| P10 | 미실행·선택 분석 | 필수 READ 분석 및 sparse 초기화 반복 완료 후 결정 |
+| P10 | 완료: Update 12/12 학습·평가·원본 재현 감사 통과 | T4·24.59 CU; [실행 파일·범위 결정](experiment_v1_4/P10_STATUS.md) |
 | P11 | 최종 집계 미완료 | 필수 분석 완료; 통합 보고·최종 집계 대기 |
 
 ## 1. 전체 순서와 우선순위
@@ -281,12 +281,14 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 
 **선행 조건:** P9 및 남은 자원 확인. 기본 READ보다 우선하지 않는다.
 
+2026-10-03: P9 선행 증빙을 확인하고 T4·잔여 24.59 CU 기준으로 **Update block 3 한 층의 의미·fidelity·probe 전이 분석**을 선택했다. LM seed 0/1/2 × SAE/TC × k=4/16, sparse seed 0의 12 runs다. 추가 층·length·m→m SAE·Update 인과 개입은 자원 우선순위에 따라 생략한다. [별도 계약·Colab 전달물·로컬 검증](experiment_v1_4/P10_STATUS.md)을 따른다. 2026-10-04 학습·평가 12/12 반환 로컬 감사를 통과했다. 원본 재현 반환 감사도 통과하여 P10을 완료했다. [최종 증빙](experiment_v1_4/results/p10_final_audit_20261004_01/completion.json)을 따른다.
+
 권장 순서는 update → 필수 집합 이외의 층 → 길이 평가다. 각 분석의 실행/생략 결정을 기록한다.
 
-- [ ] Update: 초기화 제외 update 위치의 별도 cache/전처리/SAE/TC와 입력·관계·결과 라벨 분석. AND/OR→XOR probe 전이 포함.
-- [ ] 필수 집합 이외의 층: {1,2,4,5,6,8,9,10} 중 실행할 층·위치·예산을 config에 고정하고 별도 dictionary·hook·실험 ID로 실행한다. Residual은 final LN 이전 값을 사용한다.
-- [ ] Length: CPU에서 예약한 33~48블록 test를 기존 RoPE 설정으로 평가한다. 결과를 gate나 모델 재선택에 사용하지 않는다.
-- [ ] 필요 시 m→m SAE를 별도 실험으로 추가하고 동일 target 조건의 TC 비교임을 표시한다.
+- [x] Update: 초기화 제외 update 위치의 별도 cache/전처리/SAE/TC와 입력·관계·결과 라벨 분석. AND/OR→XOR probe 전이 포함.
+- [x] **생략 결정 완료:** 필수 집합 이외의 층: {1,2,4,5,6,8,9,10} 중 실행할 층·위치·예산을 config에 고정하고 별도 dictionary·hook·실험 ID로 실행한다. Residual은 final LN 이전 값을 사용한다.
+- [x] **생략 결정 완료:** Length: CPU에서 예약한 33~48블록 test를 기존 RoPE 설정으로 평가한다. 결과를 gate나 모델 재선택에 사용하지 않는다.
+- [x] **생략 결정 완료:** 필요 시 m→m SAE를 별도 실험으로 추가하고 동일 target 조건의 TC 비교임을 표시한다.
 
 **산출물:** 별도 config·결과, 실행/생략 사유와 추가 자원 사용량.
 
@@ -330,7 +332,7 @@ v1.4는 seed당 명목 64M,
 | READ SAE+TC, sparse seed 0 | SAE 24 runs 완료, TC 24 runs 학습·평가·원본 재현 감사 완료 |
 | LM seed 0 READ, sparse seed 1 | 학습 16/16 반환 감사 통과: 80k updates/40.96M draws; 전체 평가·원본 재현 감사 16/16 통과 |
 | G=3 전체 필수 dictionary | 총 64 runs 학습 완료: 320k updates/163.84M draws. 64개 모두 학습·전체 평가·최종 감사 완료 |
-| Update 선택 분석 | 선택한 층마다 12 runs; 필수 집합 이외의 층도 층·위치별 별도 계상 |
+| Update 선택 분석 | block 3 12 runs 완료: 60k updates/30.72M draws; 학습·평가·원본 재현 감사 통과 |
 
 예상 시간은 고정된 일수가 아니라 측정 처리량으로 갱신한다. LM은 `남은 토큰/tokens_per_second + 평가·저장 시간`, dictionary는 `남은 updates*seconds_per_update + 평가 시간`으로 산정한다. CPU, GPU 학습, activation 추출, validation, probe, bootstrap, patching 비용은 각각 기록한다.
 

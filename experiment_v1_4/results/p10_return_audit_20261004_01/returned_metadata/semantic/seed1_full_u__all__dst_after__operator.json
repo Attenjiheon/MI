@@ -1,0 +1,88 @@
+{
+  "config_sha256": "e052f6bf36a8529b461ae3e3315bedf82231e9610b7f9ccacb07a56ad6e05258",
+  "selection_sha256": "33e22072a3543e5d7a284ad3018604ae098be8de6edc3f6c68780e75424ba63c",
+  "task": {
+    "id": "seed1_full_u__all__dst_after__operator",
+    "lm_seed": 1,
+    "representation": "full",
+    "hook": "u",
+    "label": "dst_after",
+    "domain": "operator",
+    "prefixes": false,
+    "candidates": null,
+    "candidate_limit": "all",
+    "shuffle_seed": 6195580551672370802,
+    "bootstrap_seed": 6127889640921198197,
+    "full_references": []
+  },
+  "status": "passed",
+  "test_support": [
+    {
+      "class_id": 0,
+      "positions": 1773,
+      "sequences": 951
+    },
+    {
+      "class_id": 1,
+      "positions": 1539,
+      "sequences": 884
+    }
+  ],
+  "reports": {
+    "full": {
+      "balanced_accuracy": 0.7308556218521487,
+      "macro_f1": 0.7030226880369383,
+      "observed_class_balanced_accuracy": 0.7308556218521487,
+      "confusion_matrix": [
+        [
+          867,
+          906
+        ],
+        [
+          42,
+          1497
+        ]
+      ],
+      "positions": 3312,
+      "class_counts": [
+        1773,
+        1539
+      ],
+      "binary_auroc": 0.526061084486194,
+      "cluster_bootstrap": {
+        "seed": 6127889640921198197,
+        "requested": 1000,
+        "clusters": 1163,
+        "metrics": {
+          "balanced_accuracy": {
+            "valid": 1000,
+            "ci95": [
+              0.7178223807015096,
+              0.7443595934079263
+            ]
+          },
+          "macro_f1": {
+            "valid": 1000,
+            "ci95": [
+              0.687057953352134,
+              0.7183373636434637
+            ]
+          },
+          "binary_auroc": {
+            "valid": 1000,
+            "ci95": [
+              0.5012714220975693,
+              0.5513270719115183
+            ]
+          }
+        }
+      },
+      "paired_full_probe_gaps": {}
+    }
+  },
+  "predictions": {
+    "predictions/seed1_full_u__all__dst_after__operator/full.npy": "5aa5b3ab8154a30a73e77a68585100c48fa309560b5ea065ac486e386e51ef3b"
+  },
+  "environment_id": "9ee13b7194181dfb",
+  "elapsed_seconds": 0.48223408799958634
+}
