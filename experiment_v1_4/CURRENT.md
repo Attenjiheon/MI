@@ -1,6 +1,8 @@
 # v1.4 현재 안내
 
-2026-09-30. **P1–P9 완료. 다음은 P10 선택 분석 결정과 P11 최종 집계다.**
+2026-10-05. **P1–P11 완료. 필수 READ 64개·선택 Update 12개 분석과 최종 집계·보고를 완료했다.**
+
+[최종 보고서](results/p11_final_20261005_01/report.md) · [P11 상태](P11_STATUS.md) · [완료 판정](results/p11_final_20261005_01/completion.json)
 
 현재 규격은 [연구 설계](../01_experiment_design.md), [언어·코퍼스](../02_language_and_corpus.md),
 [상세 명세](../03_experiment_spec.md), [실행 계획](../phase.md)을 따른다.
@@ -26,7 +28,7 @@
 - 네 층의 같은 READ 위치·라벨·causal origin을 사용하고 층별 전처리·dictionary·feature 선택을 별도 저장한다.
 - 한 번에 한 층·한 READ 위치를 개입하고 층별 결과와 층간 차이를 보고한다.
 
-## 현재 증빙과 다음 단계
+## P6 당시 증빙과 다음 단계 (이력)
 
 P6의 24 SAE runs/120,000 updates/61.44M draws를 완료하고 전체 checkpoint 반환 감사를 통과했다.
 [완료 판정](results/p6_final_audit_20260925/completion.json), [감사 보고](results/p6_final_audit_20260925/REPORT.md),
@@ -142,3 +144,10 @@ GPU replay와 dictionary 12개 원본 감사 반환 검증을 통과했다. CPU�
 ## 2026-10-04 P10 완료
 
 Update block 3 SAE/TC 12개 학습·평가·원본 재현 반환 감사를 통과했다. GPU 480,000 position visits·960,000 latent positions와 CPU 1,248 refits·2,016 예측/CI 보고를 확인했다. [최종 감사](results/p10_final_audit_20261004_01/REPORT.md), [완료 판정](results/p10_final_audit_20261004_01/completion.json)을 따른다. 앞선 재개 대기 안내는 당시 이력이며 추가 Colab 실행은 필요 없다. 다음은 P11 최종 집계다. 전체 실험은 아직 미완료다.
+
+
+## 2026-10-05 P11 완료 — v1.4 최종 집계
+
+필수 READ dictionary 64개와 선택 Update 12개의 결과·층간 paired CI·seed 변동·13개 그림 및 재현 정보를 통합하고 검증했다. P1–P11 완료로 v1.4의 필수 분석 전체를 완료했다. 추가 층·length·m→m SAE·Update 인과 개입은 동결 사유대로 생략했다. 학습·평가·선택을 다시 실행하지 않는다.
+
+[최종 보고서](results/p11_final_20261005_01/report.md), [완료 판정](results/p11_final_20261005_01/completion.json), [P11 상태](P11_STATUS.md)를 따른다. 앞선 미완료·다음 단계 문구는 당시 이력이다.

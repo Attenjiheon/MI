@@ -172,3 +172,10 @@ P9 SAE 8개·TC 8개 전체 평가 반환의 로컬 감사가 통과했다. 38,0
 ## 2026-10-04 P10 완료
 
 Update block 3 SAE/TC 12개 학습·평가·원본 재현 반환 감사를 통과했다. 근거는 `experiment_v1_4/results/p10_final_audit_20261004_01/completion.json`과 `REPORT.md`다. 추가 층·length·m→m SAE·Update 인과 개입은 동결 사유대로 생략했다. 학습·평가·감사를 다시 실행하지 않는다. 다음은 P11 최종 집계이며 전체 실험은 아직 미완료다.
+
+
+## 2026-10-05 P11 완료 — v1.4 최종 집계
+
+필수 READ dictionary 64개와 선택 Update 12개의 결과·층간 paired CI·seed 변동·13개 그림 및 재현 정보를 통합하고 검증했다. P1–P11 완료로 v1.4의 필수 분석 전체를 완료했다. 추가 층·length·m→m SAE·Update 인과 개입은 동결 사유대로 생략했다. 학습·평가·선택을 다시 실행하지 않는다.
+
+[최종 보고서](experiment_v1_4/results/p11_final_20261005_01/report.md), [완료 판정](experiment_v1_4/results/p11_final_20261005_01/completion.json), [P11 상태](experiment_v1_4/P11_STATUS.md)를 따른다. 앞선 미완료·다음 단계 문구는 당시 이력이다.

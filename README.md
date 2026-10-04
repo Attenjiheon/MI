@@ -2,7 +2,7 @@
 
 Boolean 상태 추적 언어를 학습한 Transformer에서 READ 표현의 선형 접근성,
 **block 0·3·7·11** SAE·Transcoder feature의 의미와 인과적 효과를 분석한다.
-**P1–P6 완료. 다음은 P7 READ SAE 의미·fidelity·인과 평가다. 전체 해석 실험은 아직 미완료다.**
+**P1–P11 완료. 필수 READ 64개·선택 Update 12개 분석과 [최종 보고](experiment_v1_4/results/p11_final_20261005_01/report.md)를 완료했다.**
 
 ## 1. 시작할 문서
 
@@ -49,14 +49,14 @@ MI/
 | v1.1 | 4-block, 3M | [행동 gate 실패](archive/legacy/experiment_v1_1/results/p3_stop_report.md) |
 | v1.2 | 4-block, 16M | [행동 gate 실패](archive/legacy/experiment_v1_2/results/p3_stop_report.md) |
 | v1.3 | 6-cell pilot, 32M confirm | [Confirm gate 실패](archive/legacy/experiment_v1_3/P3_STATUS.md) |
-| **v1.4** | **12×256, read4, 64M/seed** | [P6 완료·선택 SAE 24개](experiment_v1_4/P6_STATUS.md), P7 평가 대기 |
+| **v1.4** | **12×256, read4, 64M/seed** | [P11 완료·최종 보고](experiment_v1_4/P11_STATUS.md) |
 
 Seed 0/1/2 일반 READ test는 99.9410% / 99.9472% / 99.9659%이며,
 선택 update는 7,983 / 7,983 / 8,399다. 세 seed 모두 해석 대상이다.
 [동결 모델 목록](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)을 따른다.
-네 층 각각의 SAE·TC·인과 평가·sparse seed 반복까지 마쳐야 전체 실험 완료다.
-P6 SAE 24 runs, P8 TC 24 runs, P9 초기화 반복 16 runs로 총 64 dictionary runs를 수행한다.
-학습 예산은 320,000 updates, 163.84M position draws이며 [P6 완료 상태](experiment_v1_4/P6_STATUS.md)를 따른다.
+네 층 각각의 SAE·TC·인과 평가·sparse seed 반복과 최종 집계를 완료했다.
+P6 SAE 24 runs, P8 TC 24 runs, P9 초기화 반복 16 runs로 총 64 dictionary runs를 완료했다.
+학습 예산은 320,000 updates, 163.84M position draws이며 [P11 최종 상태](experiment_v1_4/P11_STATUS.md)를 따른다.
 
 ## 4. 원본 보존과 검증
 
@@ -86,3 +86,10 @@ python scripts/verify_repository_layout.py
 2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
 수정 전 원문: [보존본](maintenance/read_layers_20260925/originals/README.md).
 동결 DESIGN/README의 기존 manifest hash는 [원본 경로·hash 목록](maintenance/read_layers_20260925/originals.json)의 snapshot에서 검증한다.
+
+
+## 2026-10-05 P11 완료 — v1.4 최종 집계
+
+필수 READ dictionary 64개와 선택 Update 12개의 결과·층간 paired CI·seed 변동·13개 그림 및 재현 정보를 통합하고 검증했다. P1–P11 완료로 v1.4의 필수 분석 전체를 완료했다. 추가 층·length·m→m SAE·Update 인과 개입은 동결 사유대로 생략했다. 학습·평가·선택을 다시 실행하지 않는다.
+
+[최종 보고서](experiment_v1_4/results/p11_final_20261005_01/report.md), [완료 판정](experiment_v1_4/results/p11_final_20261005_01/completion.json), [P11 상태](experiment_v1_4/P11_STATUS.md)를 따른다. 앞선 미완료·다음 단계 문구는 당시 이력이다.

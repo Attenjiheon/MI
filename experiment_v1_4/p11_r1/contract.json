@@ -1,0 +1,43 @@
+{
+  "schema": "p11-final-aggregation-v1.4-r1",
+  "date": "2026-10-04",
+  "mode": "reporting_only_no_training_fitting_selection_or_model_inference",
+  "output": "experiment_v1_4/results/p11_final_20261005_01",
+  "read_layers": [
+    0,
+    3,
+    7,
+    11
+  ],
+  "lm_seeds": [
+    0,
+    1,
+    2
+  ],
+  "k_values": [
+    4,
+    16
+  ],
+  "required_read_runs": 64,
+  "optional_update_runs": 12,
+  "uncertainty": {
+    "existing": "Reuse hash-verified, previously audited 1000-draw sequence/origin cluster percentile 95% intervals; preserve seeds, valid counts and NA",
+    "layer_differences": "Reuse paired higher-minus-lower contrasts on shared sequences/origins, preserving matching intersections; add paired replacement contrasts from saved arrays",
+    "new_bootstrap_namespace": "20260909|experiment-spec-v1.0|bootstrap|v1.4|P11|replacement|lm={lm}|tool={tool}|k={k}|sparse={sparse}",
+    "draws": 1000,
+    "rng": "PCG64 with first 8 SHA256 bytes unsigned big-endian",
+    "lm_summary": "Separate mean/min/max across LM seeds 0,1,2 within each layer/tool/k/sparse seed 0; no population CI over three models",
+    "sparse_summary": "LM seed 0 paired point differences only, sparse seed 1 minus 0; no cross-dictionary latent alignment"
+  },
+  "selection": "All original train/validation choices frozen; both k values, all layers, controls and negative results retained",
+  "target_rule": "SAE h reconstruction and TC m prediction are distinct targets, never pooled as equal-target fidelity comparisons",
+  "exploratory": "Layer expansion followed P5 test observation; Update followed READ results; neither retrospectively preregistered",
+  "skipped": [
+    "additional dictionary layers",
+    "length GPU evaluation",
+    "m-to-m SAE",
+    "Update causal intervention"
+  ],
+  "completion": "All prerequisite evidence, 64 READ and 12 selected Update identities, metrics, controls, uncertainty, figures, provenance and reproduction commands validated",
+  "completed_build_date": "2026-10-05"
+}

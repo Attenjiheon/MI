@@ -83,3 +83,6 @@ experiment_v1_4/evidence/P10/*.zip filter=lfs diff=lfs merge=lfs -text
 experiment_v1_4/results/p10_training_audit_*/selected/**/*.pt filter=lfs diff=lfs merge=lfs -text
 experiment_v1_4/results/p10*/**/nvidia-smi.txt whitespace=-blank-at-eol
 experiment_v1_4/smoke/p10*/**/nvidia-smi.txt whitespace=-blank-at-eol
+
+# Preserve Matplotlib-generated P11 vector figures byte-for-byte.
+experiment_v1_4/results/p11_final_*/figures/*.svg whitespace=-blank-at-eol

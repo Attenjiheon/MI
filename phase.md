@@ -8,9 +8,9 @@
 
 ## 현재 활성 버전 — v1.4 (2026-09-25)
 
-**P1–P10 완료. P11 최종 집계가 남았다.**
+**P1–P11 완료. 필수 분석 전체와 선택 Update 분석의 최종 집계·보고를 완료했다.**
 Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 frozen test 반환 감사를 마쳤다.
-세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. 필수 READ 분석은 완료했으며 P11 최종 집계가 남아 전체 실험은 미완료다.
+세 seed 모두 validation gate를 통과해 해석 대상은 **G=3**이다. P5 cache·3,510 probe와 독립 수치 반환 감사를 완료했다. 필수 READ 분석과 P11 최종 집계를 완료했다.
 
 | 단계 | v1.4 현재 상태 | 근거 또는 다음 조건 |
 |---|---|---|
@@ -24,7 +24,7 @@ Seed 0·1·2의 학습·validation gate·checkpoint 선택 동결과 전체 froz
 | P8 | 완료 | [24 TC 최종 감사](experiment_v1_4/results/p8_final_audit_20260930_01/completion.json) |
 | P9 | 완료: 16/16 학습·평가·원본 재현 감사 통과 | LM seed 0에서 네 층 × SAE/TC × k=4/16, sparse seed 1의 16 runs 및 전체 평가 |
 | P10 | 완료: Update 12/12 학습·평가·원본 재현 감사 통과 | T4·24.59 CU; [실행 파일·범위 결정](experiment_v1_4/P10_STATUS.md) |
-| P11 | 최종 집계 미완료 | 필수 분석 완료; 통합 보고·최종 집계 대기 |
+| P11 | 완료 | [최종 보고](experiment_v1_4/results/p11_final_20261005_01/report.md) · [완료 증빙](experiment_v1_4/results/p11_final_20261005_01/completion.json) |
 
 ## 1. 전체 순서와 우선순위
 
@@ -312,11 +312,13 @@ P5 config에 고정한다. P6는 이 cache에서 block 0·3·7·11을 사용한�
 | `figures/` | 네 층별 위 4종 비교, 깊이에 따른 차이와 LM/sparse seed·현재≠과거·전이 분포 |
 | `run_registry.csv`, `report.md` | 모든 run 상태, 실패/생략, 해석 한계, CI, 환경/hash/명령 |
 
-- [ ] 원본 config·환경 lock·코드/data/checkpoint hash와 실제 재현 명령이 연결된다.
-- [ ] Test 선택 누출, 잘못된 표본 단위, 서로 다른 target의 단순 우열 해석이 없다.
-- [ ] 필수 분석 전체 완료 / 행동 학습 단계 중단 / 자원으로 미완료를 정확히 구분했다.
+- [x] 원본 config·환경 lock·코드/data/checkpoint hash와 실제 재현 명령이 연결된다.
+- [x] Test 선택 누출, 잘못된 표본 단위, 서로 다른 target의 단순 우열 해석이 없다.
+- [x] 필수 분석 전체 완료 / 행동 학습 단계 중단 / 자원으로 미완료를 정확히 구분했다.
 
 **완료 조건:** [AGENTS.md §5](./AGENTS.md#5-단계-종료-판정)의 해당 종료 기준을 만족하는 보고서와 증빙이 있다. 부정적 결과도 결과로 보존한다.
+
+**2026-10-05 완료 증빙:** [최종 보고서](experiment_v1_4/results/p11_final_20261005_01/report.md), [독립 검증](experiment_v1_4/results/p11_final_20261005_01/verification.json), [완료 판정](experiment_v1_4/results/p11_final_20261005_01/completion.json). 필수 READ 64개·선택 Update 12개, 의미/인과 CI와 paired 층간 차이, 13개 그림·재현 정보를 검증했다.
 
 ## 14. 계산 예산과 운영 기록
 

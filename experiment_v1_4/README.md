@@ -1,6 +1,6 @@
 # experiment_v1_4
 
-**P1–P10 완료. P11 최종 집계가 남았다.**
+**P1–P11 완료. 필수 READ 64개·선택 Update 12개와 최종 집계·보고를 완료했다.**
 
 12-block × 256-width Transformer 세 seed를 동결해 READ 표현을 분석한다.
 활성 corpus는 `data/language_v1_4/rebuild_01/`이며 세 LM 모두 validation gate를 통과했다.
@@ -23,14 +23,11 @@
 | P8 TC 학습·평가·개입 | 완료 | [24 runs 최종 감사](results/p8_final_audit_20260930_01/completion.json) |
 | P9 초기화 반복 | 완료: 16/16 학습·평가·원본 재현 감사 통과 | [P9 실행 파일과 상태](P9_STATUS.md) |
 | P10 선택 분석 | 완료: Update 12/12 학습·평가·원본 재현 감사 통과 | [범위 결정·T4 실행 파일](P10_STATUS.md) |
-| P11 최종 집계 | 미완료 | 네 층·LM seed·sparse seed별 결과 및 실패·미완료 기록 |
+| P11 최종 집계 | 완료 | [보고서](results/p11_final_20261005_01/report.md) · [검증](results/p11_final_20261005_01/verification.json) |
 
-## 다음 단계
+## 최종 결과
 
-P6의 [선택 checkpoint 24개](results/p6_final_audit_20260925/selected_sae_manifest.json)와
-검증된 P5 cache/36개 scalar 통계를 사용한다. P7에서 층별 좌표/random·128후보 기준선,
-사후 감독 의미 평가, fidelity·근사 대체 및 모든 필수 인과 대조를 수행한다.
-P9 초기화 반복까지 필수 64개 dictionary 분석을 완료했다. P11 최종 집계가 남아 전체 실험은 미완료다.
+[최종 보고서](results/p11_final_20261005_01/report.md), [완료 판정](results/p11_final_20261005_01/completion.json), [P11 상태](P11_STATUS.md)를 따른다. 네 층·LM seed·sparse seed별 결과, 95% cluster CI, 대조군·matching coverage, 실패/생략 이력과 재현 정보를 통합했다. 추가 학습·Colab 실행은 필요 없다. 아래 준비·대기 문구는 당시 이력이다.
 
 ## 변경 기록
 
@@ -93,3 +90,10 @@ P9 SAE 8개·TC 8개 전체 평가 반환의 로컬 감사가 통과했다. 38,0
 16개 sparse seed 1 SAE/TC의 학습·전체 평가·원본 cache 재현 반환 감사를 통과했다. 필수 dictionary 64개 모두 학습·평가·감사 완료다. P10 선택 분석 결정과 P11 최종 집계는 남아 전체 실험은 미완료다. 앞선 P9 대기 안내는 당시 이력이다.
 
 [최종 감사](results/p9_final_audit_20261002_01/REPORT.md), [완료 판정](results/p9_final_audit_20261002_01/completion.json)을 따른다.
+
+
+## 2026-10-05 P11 완료 — v1.4 최종 집계
+
+필수 READ dictionary 64개와 선택 Update 12개의 결과·층간 paired CI·seed 변동·13개 그림 및 재현 정보를 통합하고 검증했다. P1–P11 완료로 v1.4의 필수 분석 전체를 완료했다. 추가 층·length·m→m SAE·Update 인과 개입은 동결 사유대로 생략했다. 학습·평가·선택을 다시 실행하지 않는다.
+
+[최종 보고서](results/p11_final_20261005_01/report.md), [완료 판정](results/p11_final_20261005_01/completion.json), [P11 상태](P11_STATUS.md)를 따른다. 앞선 미완료·다음 단계 문구는 당시 이력이다.
