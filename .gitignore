@@ -1,48 +1,5 @@
-.venv-p2/
 __pycache__/
 .pytest_cache/
+.venv/
 .DS_Store
 .ipynb_checkpoints/
-
-# Preserved local preparation attempts; final release evidence is tracked.
-experiment_v1_2/bundles/p3_16m_bundle_v1.*
-experiment_v1_2/smoke/cpu_01/
-experiment_v1_2/smoke/cpu_02/
-
-# v1.3: debug-only smoke checkpoints; their SHA-256 is recorded in smoke.json.
-experiment_v1_3/smoke/**/*.pt
-
-# v1.3: raw Colab return archives are compacted into evidence/pilot_summaries.
-experiment_v1_3/evidence/*.zip
-
-# v1.4 rejected initial corpus stays local at its original paths.
-/data/language_v1_4/*
-!/data/language_v1_4/rebuild_01/
-experiment_v1_4/smoke/**/*.pt
-
-# Superseded v1.4 preparation bundle stays immutable locally; r2 is the audited delivery.
-experiment_v1_4/bundles/v1_4_p3_bundle_r1.zip
-
-# Archived paths retain their original ignore / LFS rules.
-archive/legacy/experiment_v1_2/bundles/p3_16m_bundle_v1.*
-archive/legacy/experiment_v1_2/smoke/cpu_01/
-archive/legacy/experiment_v1_2/smoke/cpu_02/
-archive/legacy/experiment_v1_3/smoke/**/*.pt
-archive/legacy/experiment_v1_3/evidence/*.zip
-
-# This checksum was tracked before the archive move.
-!archive/legacy/experiment_v1_2/bundles/p3_16m_bundle_v1.sha256
-
-# Superseded P5 r1 delivery remains local; its contract and checksum are retained.
-experiment_v1_4/bundles/v1_4_p5_bundle_r1.zip
-
-# P7 numeric payload is preserved in the LFS return ZIP; do not duplicate its extraction.
-experiment_v1_4/results/p7_return_audit_20260927_01/returned/runs/*/causal/
-experiment_v1_4/results/p7_return_audit_20260927_01/returned/runs/*/replacement/
-experiment_v1_4/results/p7_return_audit_20260927_01/returned/runs/*/semantic_predictions.npz
-
-# P8 raw replacement chunks are preserved in the returned evaluation ZIP.
-experiment_v1_4/results/p8_return_audit_20260929_01/returned_metadata/runs/*/replacement/
-
-# P9 source-audit extraction duplicates the immutable return ZIP.
-experiment_v1_4/evidence/P9/v1_4_p9_source_audit_return_*/

@@ -1,95 +1,71 @@
-# Boolean 프로그램의 상태 표현 해석 — v1.4 본 실험
+# Boolean Transformer의 상태 표현과 인과 개입
 
-Boolean 상태 추적 언어를 학습한 Transformer에서 READ 표현의 선형 접근성,
-**block 0·3·7·11** SAE·Transcoder feature의 의미와 인과적 효과를 분석한다.
-**P1–P11 완료. 필수 READ 64개·선택 Update 12개 분석과 [최종 보고](experiment_v1_4/results/p11_final_20261005_01/report.md)를 완료했다.**
+**연구 질문:** 모델 내부에서 현재 상태를 잘 읽어 내는 sparse feature는, 그 상태에 대한 모델의 답도 바꿀 수 있는가?
 
-## 1. 시작할 문서
+Boolean 프로그램을 학습한 Transformer에서 선형 probe, Sparse Autoencoder(SAE), Transcoder(TC)를 비교했다. 핵심 관찰은 **높은 상태 판독 성능과 지정 위치에서의 개입 효과가 일치하지 않을 수 있다**는 것이다.
 
-| 문서 | 역할 |
-|---|---|
-| [AGENTS.md](AGENTS.md) | 세션 진입·단계별 필수 읽기·보존·실행 규칙 |
-| [실험 설계](01_experiment_design.md) | v1.4 연구 질문·범위·해석 한계 |
-| [언어·코퍼스](02_language_and_corpus.md) | 문법·metadata·split·누출 방지 |
-| [상세 명세](03_experiment_spec.md) | 모델·read4 학습·선택·gate·probe·SAE·TC·인과 평가 |
-| [실행 계획](phase.md) | 현재 P0–P11 순서·완료 조건·증빙·계산 예산 |
-| [v1.4 현재 안내](experiment_v1_4/CURRENT.md) | 동결 계약·상태·결과로 연결되는 색인 |
-
-루트 01–03과 [현재 설계](experiment_v1_4/DESIGN.md)는 v1.4 실행 규격이다.
-해석 범위·예산은 [READ 분석 계약](experiment_v1_4/analysis_plan.json), LM·corpus 입력은 동결 계약을 따른다.
-실제 완료 상태는 현재 안내와 단계 상태 문서의 증빙으로 확인한다.
-
-## 2. 저장소 구조
+## 실험 흐름
 
 ```text
-MI/
-├── AGENTS.md, README.md, phase.md, 01–03_*.md   현재 v1.4 문서
-├── experiment_v1_4/                           본 실험 계약·상태·증빙·노트북·결과
-├── interp_v1_4/                               본 실험 구현
-├── tests_v1_4/                                본 실험 검증
-├── data/language_v1_4/rebuild_01/              활성 동결 corpus
-├── corpus/                                   공용·버전별 생성기 및 replay
-├── scripts/                                  운영·번들·감사 도구
-├── requirements-{corpus,interp}.txt            의존성 목록
-├── maintenance/                              정리·이동·검증 기록
-└── archive/
-    ├── legacy/                               v1.0–v1.3 실험·코드·테스트·데이터 실체
-    └── specifications/pre_v1_4_integration/   통합 전 루트 문서 원문
+Boolean 프로그램 생성·독립 실행 검산
+    → Transformer 3개 학습·행동 gate·모델 동결
+    → 동일 READ 위치에서 activation 추출
+    → full probe + SAE / TC 학습
+    → 의미 접근성·복원·한 위치 대체·반사실 패칭
+    → sparse 초기화 반복·불확실성 검증
+    → 최종 결과 집계
 ```
 
-과거 버전은 `archive/legacy/`의 실제 경로로만 접근한다. 루트와 archive 내부의
-바로가기는 모두 제거했다. `interp_v1_4`가 사용하는 과거 공용 모듈은
-`archive.legacy.interp_v1_2`에서 직접 import한다.
+| 핵심 설정 | 값 |
+|---|---|
+| 언어 | 변수 4개, 토큰 15개, SET / NOT / AND / OR / XOR / READ |
+| 모델 | Decoder-only Transformer, 12 blocks, width 256, 4 heads, 약 9.49M parameters |
+| LM 학습 | seed 0·1·2, 동일 순서의 데이터, 각 약 64M prediction tokens |
+| 분석 위치 | READ 답 직전의 query-variable 토큰; block 0·3·7·11 |
+| Dictionary | width 512, TopK 4·16, 각 5,000 updates |
+| 반복 | 기본 READ 48개 + LM seed 0의 sparse 초기화 반복 16개 |
+| 추가 분석 | Update block 3의 12개 dictionary; READ 이후 선택한 탐색 분석 |
 
-## 3. 버전 계보와 현재 상태
+## 핵심 결과
 
-| 버전 | 설정 | 상태·근거 |
-|---|---|---|
-| v1.0 | 2-block, 3M | [행동 gate 실패](archive/legacy/experiment_v1/results/p3_stop_report.md) |
-| v1.1 | 4-block, 3M | [행동 gate 실패](archive/legacy/experiment_v1_1/results/p3_stop_report.md) |
-| v1.2 | 4-block, 16M | [행동 gate 실패](archive/legacy/experiment_v1_2/results/p3_stop_report.md) |
-| v1.3 | 6-cell pilot, 32M confirm | [Confirm gate 실패](archive/legacy/experiment_v1_3/P3_STATUS.md) |
-| **v1.4** | **12×256, read4, 64M/seed** | [P11 완료·최종 보고](experiment_v1_4/P11_STATUS.md) |
+세 LM 모두 독립 validation 행동 gate를 통과했다. 일반 READ test 정확도는 **99.941% / 99.947% / 99.966%**였다.
 
-Seed 0/1/2 일반 READ test는 99.9410% / 99.9472% / 99.9659%이며,
-선택 update는 7,983 / 7,983 / 8,399다. 세 seed 모두 해석 대상이다.
-[동결 모델 목록](experiment_v1_4/results/frozen_test_audit_20260922_01/frozen_lms.json)을 따른다.
-네 층 각각의 SAE·TC·인과 평가·sparse seed 반복과 최종 집계를 완료했다.
-P6 SAE 24 runs, P8 TC 24 runs, P9 초기화 반복 16 runs로 총 64 dictionary runs를 완료했다.
-학습 예산은 320,000 updates, 163.84M position draws이며 [P11 최종 상태](experiment_v1_4/P11_STATUS.md)를 따른다.
+아래는 기본 sparse seed 0, 최대 4개 feature의 현재 값 balanced accuracy(BA)와 changed-pair 답 전환율이다. 수치는 LM 3개의 산술평균이며, 패칭은 15-token argmax 기준이다.
 
-## 4. 원본 보존과 검증
+<!-- CORE_TABLE_START -->
+| 도구 | k | BA: block 0 | BA: block 3 | BA: block 7 | BA: block 11 | 답 전환율: block 11 |
+|---|---:|---:|---:|---:|---:|---:|
+| SAE | 4 | 0.5470 | 0.7629 | 0.9187 | 0.9499 | 0.3895 |
+| SAE | 16 | 0.5901 | 0.8631 | 0.9841 | 0.9992 | 0.7987 |
+| TC | 4 | 0.5544 | 0.8834 | 0.9727 | 0.9946 | 0.0000 |
+| TC | 16 | 0.5890 | 0.9022 | 0.9912 | 0.9987 | 0.0000 |
+<!-- CORE_TABLE_END -->
 
-- [바로가기 제거 기록](maintenance/remove_shortcuts_20260922/REPORT.md)에 현재 경로·소스 변경·검증을 기록한다.
-- [Archive 안내](archive/README.md)와 [정리 보고](maintenance/repository_cleanup_20260922/REPORT.md)에 이동 매핑과 검증을 기록한다.
-- 기존 manifest의 루트 문서 hash는 [통합 전 snapshot](archive/specifications/pre_v1_4_integration/README.md)에 대응한다. 동결 manifest 자체를 수정하지 않는다.
-- Corpus·config·checkpoint·번들·증빙 bytes를 보존한다. 기존 결과는 새 실행으로 덮어쓰지 않는다.
-- [이전 디스크 정리](maintenance/disk_cleanup_20260921/REPORT.md)에서 삭제된 파일은 그 기록을 따른다. 이번 정리는 데이터 삭제 작업이 아니다.
-- `.gitattributes`의 LFS 및 `.gitignore` 규칙은 archive 경로에도 적용한다.
+SAE는 residual 출력 `h`에, TC는 MLP 출력 `m`에 개입한다. 따라서 위 전환율은 **서로 다른 개입 위치의 결과**다. TC의 block 11 선택 패칭은 답을 전환하지 못했지만 반사실적 답 방향의 logit margin을 높였다. 이를 “TC에 인과 효과가 없다”로 해석하지 않는다. 좌표·random 방향도 강한 판독 성능을 보여, sparse feature의 독점적인 의미 분리를 주장하지 않는다.
 
-## 5. 로컬 확인
+같은 LM에서도 dictionary 초기화가 개입 결과를 크게 바꿨다. LM seed 0, block 11, k=16의 SAE는 sparse seed 0→1에서 **BA 0.9993→0.9991**, **답 전환율 0.8936→0.3857**이었다. 이 사례는 한 LM과 두 dictionary 초기화의 비교다.
 
-프로젝트 의존성을 설치한 Python 환경에서 저장소 루트를 기준으로 실행한다.
-현재 로컬 검증 환경은 `/opt/anaconda3/bin/python`이며 환경별 실제 lock은 실행 증빙을 따른다.
+![Dictionary 초기화에 따른 판독 성능과 개입 효과](figures/initialization_readout_and_patch.png)
+
+## 읽는 순서와 확인 방법
+
+1. [PIPELINE.md](PIPELINE.md): 데이터부터 개입까지의 방법·대조군·선택 규칙·코드 위치.
+2. [results/](results/): 전체 최종 결과표. 모든 층·k·대조군·반복·탐색 분석을 압축 CSV로 보존했다.
+3. [REPRODUCIBILITY.md](REPRODUCIBILITY.md): 제출본 검증, 코드 확인, 전체 재실행에 필요한 외부 입력.
+
+Python 3 표준 라이브러리만으로 제출본의 파일 hash, 원본 결과표 hash, 결과의 출처와 핵심 집계를 확인할 수 있다.
 
 ```bash
-python -m pytest tests_v1_4 -q
-python -m interp_v1_4.cli --help
-python scripts/verify_repository_layout.py
+python3 pipeline.py verify
+python3 pipeline.py summary
 ```
 
-기본 `pytest` 수집 대상도 `tests_v1_4/`다. 과거 검증은 해당 버전의 보존된 실행 환경과 `archive/legacy/tests_v1_*` 경로를 사용한다. 학습·gate/test 재실행은 위 확인 명령에 포함되지 않는다.
-단계 완료 후 Git 갱신은 AGENTS §6을 따른다.
+## 해석 범위
 
-## 변경 기록
+- Probe는 라벨을 이용한 사후 감독 판독이다. Dictionary 학습에는 상태 라벨을 사용하지 않았다.
+- 인과 결과는 한 층·한 READ 위치의 패칭에 한정된다. 전체 회로나 자연어 모델로 일반화하지 않는다.
+- LM은 3개다. 층과 sparse 초기화 반복을 독립 LM 표본으로 세지 않는다.
+- 네 층 분석 확장은 P5 test 관측 후 결정했고, Update는 READ 결과 후 선택했다. 사전등록으로 소급 표현하지 않는다.
+- 의미·인과 CI는 sequence/origin 단위 cluster bootstrap이다. Fidelity와 sparse 초기화 차이에 없는 CI를 덧붙이지 않는다.
 
-2026-09-25: 필수 READ 분석을 block 0·3·7·11로 확정하고 관련 범위·예산·완료 조건을 정리했다. P5 층별 결과를 확인한 뒤, 12층 모델의 깊이에 따른 표현 차이를 평가하기 위한 변경이다. 이 확장을 P5 test 관측 전 사전등록으로 취급하지 않는다.
-수정 전 원문: [보존본](maintenance/read_layers_20260925/originals/README.md).
-동결 DESIGN/README의 기존 manifest hash는 [원본 경로·hash 목록](maintenance/read_layers_20260925/originals.json)의 snapshot에서 검증한다.
-
-
-## 2026-10-05 P11 완료 — v1.4 최종 집계
-
-필수 READ dictionary 64개와 선택 Update 12개의 결과·층간 paired CI·seed 변동·13개 그림 및 재현 정보를 통합하고 검증했다. P1–P11 완료로 v1.4의 필수 분석 전체를 완료했다. 추가 층·length·m→m SAE·Update 인과 개입은 동결 사유대로 생략했다. 학습·평가·선택을 다시 실행하지 않는다.
-
-[최종 보고서](experiment_v1_4/results/p11_final_20261005_01/report.md), [완료 판정](experiment_v1_4/results/p11_final_20261005_01/completion.json), [P11 상태](experiment_v1_4/P11_STATUS.md)를 따른다. 앞선 미완료·다음 단계 문구는 당시 이력이다.
+실험 v1.4의 최종 집계일은 2026-10-05다. 이 제출본은 2026-10-23에 정리한 코드·결과 검토 패키지이며, 대형 학습 데이터와 checkpoint는 별도 보존 자료다.
