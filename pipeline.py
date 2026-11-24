@@ -33,7 +33,7 @@ def rows(name):
 
 
 def core_table(claims):
-    lines = ['| 도구 | k | BA: block 0 | BA: block 3 | BA: block 7 | BA: block 11 | 답 전환율: block 11 |',
+    lines = ['| Tool | k | BA: block 0 | BA: block 3 | BA: block 7 | BA: block 11 | Answer flip rate: block 11 |',
              '|---|---:|---:|---:|---:|---:|---:|']
     for tool, k in itertools.product(('sae', 'tc'), (4, 16)):
         values = [claims[f'iid_{tool}_k{k}_l{layer}']['value'] for layer in (0, 3, 7, 11)]
