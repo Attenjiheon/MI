@@ -1,26 +1,33 @@
-# 제출본 검증과 재현 범위
+# Package Verification and Scope of Reproduction
 
-## 바로 실행할 수 있는 검증
+## Checks you can run right away
 
-이 폴더는 별도 프로젝트 경로나 GPU 없이 결과를 검토할 수 있는 제출본이다.
+This folder is a submission package. You can review the results with it without a separate project path or a GPU.
 
 ```bash
 python3 pipeline.py verify
 python3 pipeline.py summary
 ```
 
-`verify`는 모든 포함 파일의 SHA-256, 압축 해제한 결과표와 동결 P11 hash의 일치, registry의 64 READ·12 Update run 구성, 논문 수치의 원본 CSV 행·필터·집계를 검사한다. `summary`는 검증 후 README의 핵심 표를 다시 계산한다. 어느 명령도 학습·추론·feature 선택을 수행하지 않는다.
+`verify` checks the following:
 
-| 폴더 | 내용 |
+- the SHA-256 of every included file;
+- that the decompressed result tables match the frozen P11 hashes;
+- that the registry contains 64 READ runs and 12 Update runs;
+- the source CSV rows, filters, and aggregations behind each number in the paper.
+
+`summary` first runs these checks and then recomputes the main table in the README. Neither command runs training, inference, or feature selection.
+
+| Folder | Contents |
 |---|---|
-| `code/` | 최종 v1.4 구현, 필요한 공용 함수, 동결 config, 핵심 수치 검증 tests |
-| `results/` | 최종 집계 CSV 전체를 gzip으로 무손실 압축; 모든 대조군·음성 결과 포함 |
-| `figures/` | 본문에 사용한 초기화 비교 그림 |
-| `provenance/` | 원본 완료 판정·검증·입력 hash·수치 출처·파일 이동 기록 |
+| `code/` | The final v1.4 implementation, the shared functions that it needs, the frozen configs, and tests that check the key numbers |
+| `results/` | All final aggregated CSVs, compressed losslessly with gzip; every control and negative result is included |
+| `figures/` | The figure that compares initializations, used in the main text |
+| `provenance/` | The original completion decision, verification records, input hashes, sources for each number, and records of moved files |
 
-## 코드 검사
+## Checking the code
 
-Python 환경에 아래 의존성을 설치한 뒤 제출 폴더에서 실행한다.
+Install the dependencies below in a Python environment. Then run the tests from the package folder.
 
 ```bash
 python3 -m pip install -r code/requirements-interp.txt
@@ -28,23 +35,23 @@ cd code
 python3 -m pytest -q tests
 ```
 
-동결 GPU/CPU 환경별 버전은 `results/environment_index.csv.gz`에 경로와 hash로 식별되어 있다. 의존성 목록은 설치 편의를 위한 것이며 과거 CUDA 환경을 동일하게 재구성하는 lock은 아니다. 패키지 검증 결과는 `provenance/package_validation.json`에 기록한다.
+The package versions for each frozen GPU or CPU environment are identified by path and hash in `results/environment_index.csv.gz`. The dependency list only makes installation easier. It is not a lock file, so it does not recreate the earlier CUDA environment exactly. The results of the package validation are recorded in `provenance/package_validation.json`.
 
-제출 코드의 기존 `archive.legacy.interp_v1_2` 공용 의존성은 `interp_v1_4/_support`에 포함했다. Import 경로 변경과 필요한 함수 이동은 `provenance/source_map.json`에 원본·제출본 hash로 기록했다. 제출본의 코드를 과거 GPU 실행 당시의 동일 bytes라고 주장하지 않는다. 원본 동결 config의 과거 경로와 hash는 식별 정보로 그대로 두었다.
+The submitted code originally depended on shared code in `archive.legacy.interp_v1_2`. This code is now included in `interp_v1_4/_support`. The changes to import paths and the functions that had to be moved are recorded in `provenance/source_map.json`, together with hashes of the original and packaged files. This package does not claim that its code is byte-for-byte identical to the code used in the original GPU runs. The original paths and hashes in the frozen configs are left unchanged, because they identify the original files.
 
-## 전체 실험을 다시 실행하려면
+## Rerunning the full experiment
 
-대형 corpus·activation cache·checkpoint·원시 pair별 예측 배열·Colab 반환 ZIP은 이 검토 패키지에 포함하지 않았다. 학습과 원본 감사를 재현하려면 별도 보존 자료에서 다음 입력을 확보해야 한다.
+This review package does not include the large corpus, the activation caches, the checkpoints, the raw per-pair prediction arrays, or the ZIP files returned from Colab. To reproduce the training and the original audits, you need to obtain the following inputs from the separately archived materials.
 
-1. 활성 `data/language_v1_4/rebuild_01/` corpus와 manifest, 이전 train prefix·중복 방지 registry.
-2. 동결 LM 3개의 checkpoint와 선택·행동 gate 증빙.
-3. P5 READ cache 및 층별 전처리 통계, 선택된 SAE/TC checkpoint.
-4. 원시 의미·대체·인과 평가와 단계별 보존 압축본, 당시 환경 lock.
+1. The active `data/language_v1_4/rebuild_01/` corpus and its manifest, and the earlier registry of train prefixes that is used to prevent duplicates.
+2. The checkpoints of the 3 frozen LMs, and the records of their selection and behavioral gate.
+3. The P5 READ cache, the preprocessing statistics for each layer, and the selected SAE and TC checkpoints.
+4. The raw semantic, substitution, and causal evaluations, the compressed archives saved at each stage, and the environment lock from that time.
 
-입력 식별은 `results/reproduction_inputs.csv.gz`, `provenance/input_manifest.json`, `code/experiment_v1_4/`의 계약을 따른다. 이 경로들은 **원본 저장소 기준의 출처**이며 모두 제출본 내부에 있다는 뜻이 아니다. 일부 비선택/debug checkpoint와 과거 전달 ZIP bytes는 기존 정리로 삭제되어 완전 복구할 수 없다.
+The inputs are identified in `results/reproduction_inputs.csv.gz`, `provenance/input_manifest.json`, and the contracts in `code/experiment_v1_4/`. These paths **refer to locations in the original repository**. They do not mean that every file is inside this package. Some non-selected and debug checkpoints, and the bytes of ZIP files delivered earlier, were deleted during an earlier cleanup. Therefore, they cannot be fully recovered.
 
-학습 코드에는 입력·현재 환경·smoke gate가 남아 있다. 누락 입력을 채우지 않고 실행을 강행하거나, 과거 hash 검사를 끄면 같은 실험의 재현이 아니다. Colab에서 전체 학습을 진행할 경우 원본 단계별 실행 노트북·입력 번들과 업로드 checksum, 환경 기록, 저장·재개·다운로드 절차가 추가로 필요하다. 제출본에는 사용자가 즉시 실행해야 할 Colab 작업이 없다.
+The training code still contains its checks on the inputs and the current environment, as well as its smoke gate. If you force a run without supplying the missing inputs, or if you turn off the checks against past hashes, the result is not a reproduction of the same experiment. Running the full training on Colab would also require the original notebooks for each stage, the input bundles with their upload checksums, the environment records, and the procedures for saving, resuming, and downloading. This package does not contain any Colab work that you need to run right away.
 
-## 포함·제외 원칙
+## What is included and what is excluded
 
-최종 v1.4의 방법과 결과 검증에 필요한 코드·설정·수치를 포함했다. 과거 버전의 별도 실험, 중간 전달 번들, 재개 로그, 용량 정리 기록, 반복된 상태 문서는 제출본에서 제외했다. 원본 MI 작업 폴더와 기존 증빙은 별도로 보존한다. 과거 architecture/budget pilot의 행동 gate 실패를 v1.4의 실패 seed 대체로 취급하지 않으며, 최종 모델과 분석을 다시 선택하지 않았다.
+The package includes the code, configs, and numbers that are needed to verify the methods and results of the final v1.4 experiment. It excludes separate experiments from earlier versions, intermediate delivery bundles, resume logs, records of storage cleanup, and repeated status documents. The original MI working folder and the existing evidence are archived separately. Earlier architecture and budget pilots failed the behavioral gate. These failures are not treated as failed v1.4 seeds that were replaced, and the final models and analyses were not selected again.
